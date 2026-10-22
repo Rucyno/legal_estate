@@ -125,34 +125,47 @@ def fetch_inn_and_cert(
         }, timeout=15)
         d_find = r_find.json()
         req_id = d_find.get("requestId")
+        token1 = d_find.get("token1")
         if not req_id:
             return {"inn": None, "cert_path": None}
 
         # Шаг 3: опрос get
         inn_val = None
+        token2 = None
         for _ in range(8):
-            time.sleep(2)
+            time.sleep(1.5)
             r_get = s.post(INN_PROC, data={"c": "get", "requestId": req_id}, timeout=15)
             d_get = r_get.json()
             inn_val = d_get.get("inn")
-            if inn_val:
+            token2 = d_get.get("token2")
+            if inn_val and token2:
                 break
             if d_get.get("state") == 0:
                 break
 
-        if not inn_val:
-            return {"inn": None, "cert_path": None}
+        if not inn_val or not token1 or not token2:
+            return {"inn": inn_val, "cert_path": None}
 
-        # Шаг 4: скачивание выписки с ЭЦП
-        now_str = datetime.now().strftime("%Y%m%d%H%M%S")
-        cert_filename = f"{inn_val}_{now_str}.pdf"
-        cert_path = os.path.join(output_dir, cert_filename)
-
-        r_cert = s.get(f"{INN_BASE}/inn-my-cert.do?inn={inn_val}", timeout=20)
-        if r_cert.content[:4] == b"%PDF":
-            with open(cert_path, "wb") as f:
-                f.write(r_cert.content)
-            return {"inn": inn_val, "cert_path": cert_path}
+        # Шаг 4: формирование официальной выписки КНД 1122003 с квалифицированной ЭЦП (c=excerpt)
+        for _ in range(12):
+            time.sleep(1.5)
+            r_exc = s.post(INN_PROC, data={
+                "c": "excerpt",
+                "token1": token1,
+                "token2": token2
+            }, timeout=15)
+            if "READY" in r_exc.text:
+                # Скачиваем готовый PDF
+                r_pdf = s.post(f"{INN_BASE}/inn.pdf", data={"token1": token1, "token2": token2}, timeout=20)
+                if r_pdf.content[:4] == b"%PDF":
+                    now_str = datetime.now().strftime("%Y%m%d%H%M%S")
+                    cert_filename = f"{inn_val}_{now_str}.pdf"
+                    cert_path = os.path.join(output_dir, cert_filename)
+                    with open(cert_path, "wb") as f:
+                        f.write(r_pdf.content)
+                    print(f"  [+] Официальная выписка ИНН (КНД 1122003) с ЭЦП успешно сохранена: {cert_filename}")
+                    return {"inn": inn_val, "cert_path": cert_path}
+                break
 
         return {"inn": inn_val, "cert_path": None}
     except Exception as e:
