@@ -396,31 +396,53 @@ def create_deal5_transfer_act():
     add_p(doc, "7. Настоящим актом Стороны подтверждают, что обязательства Продавца по фактической передаче Объекта недвижимости и имущества, а также обязательства Покупателя по его принятию исполнены полностью и надлежащим образом. Претензий по фактическому состоянию квартиры у Покупателя к Продавцу не имеется.", indent=0.35, before=0, after=2)
     add_p(doc, "8. Настоящий акт составлен и подписан в двух подлинных экземплярах, имеющих одинаковую юридическую силу: по одному экземпляру для каждой из Сторон.", indent=0.35, before=0, after=4)
     
-    add_p(doc, "Подписи Сторон:", align=WD_ALIGN_PARAGRAPH.CENTER, indent=0, before=2, after=4, bold=True)
+    add_p(doc, "Подписи Сторон:", align=WD_ALIGN_PARAGRAPH.LEFT, indent=0, before=6, after=3, bold=True)
     
-    # СТРОЧНЫЙ БЛОК: СДАЛ (ПРОДАВЕЦ)
-    add_p(doc, "СДАЛ (ПРОДАВЕЦ):", indent=0, before=2, after=2, bold=True)
-    add_p(doc, "Ветошкина Ирина Борисовна, в лице представителя по доверенности Финошиной Елены Александровны:", indent=0.35, before=0, after=2)
+    # БЛОК ПРОДАВЦА ПО ДОВЕРЕННОСТИ (формат ДКП)
+    p_seller_lbl = doc.add_paragraph()
+    p_seller_lbl.paragraph_format.line_spacing = 1.0
+    r = p_seller_lbl.add_run("Продавец:")
+    r.font.name = 'Times New Roman'; r.font.size = Pt(10)
     
-    p_as_s = add_p(doc, "Подпись: ______________________ / __________________________________________________________________________", indent=0, before=2, after=1)
-    p_as_s.runs[0].font.size = Pt(9)
-    p_as_sub_s = add_p(doc, "                 (личная подпись)                                       (фамилия, имя, отчество полностью от руки)", indent=0, before=0, after=2)
-    p_as_sub_s.runs[0].font.size = Pt(7.5)
+    p_seller_line = doc.add_paragraph()
+    p_seller_line.paragraph_format.line_spacing = 1.0
+    p_seller_line.paragraph_format.space_after = Pt(0)
+    r = p_seller_line.add_run("_" * 102)
+    r.font.name = 'Times New Roman'; r.font.size = Pt(10)
     
-    p_as_date_s = add_p(doc, "Дата: «___» ____________ 2026 года", indent=0, before=2, after=6)
-    p_as_date_s.runs[0].font.size = Pt(9)
+    p_seller_dov = doc.add_paragraph()
+    p_seller_dov.paragraph_format.line_spacing = 1.0
+    p_seller_dov.paragraph_format.space_after = Pt(0)
+    r = p_seller_dov.add_run("По доверенности")
+    r.font.name = 'Times New Roman'; r.font.size = Pt(10)
     
-    # СТРОЧНЫЙ БЛОК: ПРИНЯЛ (ПОКУПАТЕЛЬ)
-    add_p(doc, "ПРИНЯЛ (ПОКУПАТЕЛЬ):", indent=0, before=4, after=2, bold=True)
-    add_p(doc, "Шатрова Наталья Александровна:", indent=0.35, before=0, after=2)
+    p_seller_sub = doc.add_paragraph()
+    p_seller_sub.paragraph_format.line_spacing = 1.0
+    p_seller_sub.paragraph_format.space_after = Pt(0)
+    r = p_seller_sub.add_run("ФИО" + "\t" * 13 + "подпись")
+    r.font.name = 'Times New Roman'; r.font.size = Pt(10)
     
-    p_as_b = add_p(doc, "Подпись: ______________________ / __________________________________________________________________________", indent=0, before=2, after=1)
-    p_as_b.runs[0].font.size = Pt(9)
-    p_as_sub_b = add_p(doc, "                 (личная подпись)                                       (фамилия, имя, отчество полностью от руки)", indent=0, before=0, after=2)
-    p_as_sub_b.runs[0].font.size = Pt(7.5)
+    p_empty = doc.add_paragraph()
+    p_empty.paragraph_format.line_spacing = 1.0
+    p_empty.paragraph_format.space_after = Pt(0)
     
-    p_as_date_b = add_p(doc, "Дата: «___» ____________ 2026 года", indent=0, before=2, after=4)
-    p_as_date_b.runs[0].font.size = Pt(9)
+    # БЛОК ПОКУПАТЕЛЯ (формат ДКП)
+    p_buyer_lbl = doc.add_paragraph()
+    p_buyer_lbl.paragraph_format.line_spacing = 1.0
+    r = p_buyer_lbl.add_run("Покупатель:")
+    r.font.name = 'Times New Roman'; r.font.size = Pt(10)
+    
+    p_buyer_line = doc.add_paragraph()
+    p_buyer_line.paragraph_format.line_spacing = 1.0
+    p_buyer_line.paragraph_format.space_after = Pt(0)
+    r = p_buyer_line.add_run("_" * 102)
+    r.font.name = 'Times New Roman'; r.font.size = Pt(10)
+    
+    p_buyer_sub = doc.add_paragraph()
+    p_buyer_sub.paragraph_format.line_spacing = 1.0
+    p_buyer_sub.paragraph_format.space_after = Pt(0)
+    r = p_buyer_sub.add_run("ФИО" + "\t" * 13 + "подпись")
+    r.font.name = 'Times New Roman'; r.font.size = Pt(10)
     
     output_path = r'deals/05_Финошина_Ветошкина_Шатрова/готовые/2026_10_19_Ветошкина_Шатрова_Передаточный_акт.docx'
     doc.save(output_path)
