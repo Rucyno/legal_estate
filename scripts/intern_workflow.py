@@ -231,8 +231,23 @@ def build_full_intern_dossier(
         passport_issued_date=passport_issued_date,
         output_dir=local_person_dir
     )
+    inn_val = inn_res.get("inn")
 
-    # 4. Автоматическое перекладывание в СБ
+    # 4. Автоматическое снятие всех скриншотов СБ (Банкротство, КАД, РСФН, ФССП, Суды)
+    try:
+        from scripts.take_sb_screenshots import take_sb_screenshots
+        print("  -> Запуск автоматических скриншотов проверок СБ...")
+        take_sb_screenshots(
+            fio=fio,
+            birth_date=birth_date,
+            output_dir=local_person_dir,
+            inn=inn_val,
+            court_name=clean_addr_info.get("court")
+        )
+    except Exception as e:
+        print(f"  [-] Ошибка при снятии скриншотов СБ: {e}")
+
+    # 5. Автоматическое перекладывание в СБ
     sb_person_dir = os.path.join(SB_TARGET_DIR, fio.strip())
     transferred = False
     if auto_transfer_to_sb and os.path.exists(SB_TARGET_DIR):
@@ -250,7 +265,7 @@ def build_full_intern_dossier(
         "local_folder": local_person_dir,
         "sb_folder": sb_person_dir if transferred else None,
         "contract": contract_path,
-        "inn": inn_res.get("inn"),
+        "inn": inn_val,
         "cert_path": inn_res.get("cert_path"),
         "court_jurisdiction": clean_addr_info.get("court"),
         "transferred_to_sb": transferred
