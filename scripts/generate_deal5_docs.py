@@ -190,36 +190,54 @@ def create_deal5_dkp():
     add_p(doc, "4.4. Настоящий Договор содержит весь объем договоренностей между Сторонами в отношении предмета сделки, отменяет и делает недействительными все другие обязательства или представления, которые могли быть сделаны Сторонами в устной или письменной форме до подписания настоящего Договора.", indent=0.35, before=0, after=2)
     add_p(doc, "4.5. Настоящий Договор составлен и подписан в двух подлинных экземплярах, имеющих одинаковую юридическую силу: по одному экземпляру для каждой из Сторон.", indent=0.35, before=0, after=4)
     
-    # 5. Адреса, реквизиты и подписи Сторон (ПОСЛЕДОВАТЕЛЬНЫЙ СТРОЧНЫЙ ФОРМАТ)
-    add_p(doc, "5. Адреса, реквизиты и подписи Сторон", align=WD_ALIGN_PARAGRAPH.CENTER, indent=0, before=2, after=4, bold=True)
+    # 5. Подписи Сторон (ЛАКОНИЧНЫЙ СТРОЧНЫЙ ФОРМАТ БЕЗ ЛИШНИХ ПАСПОРТНЫХ ДАННЫХ)
+    add_p(doc, "5. Подписи Сторон", align=WD_ALIGN_PARAGRAPH.CENTER, indent=0, before=2, after=4, bold=True)
     
-    # БЛОК 1: ПРОДАВЕЦ
-    add_p(doc, "ПРОДАВЕЦ:", indent=0, before=2, after=2, bold=True)
-    add_p(doc, "Ветошкина Ирина Борисовна, 08.06.1976 г.р., паспорт гражданина РФ: серия 0821 № 734780, выдан 27.07.2021 г. УМВД России по Хабаровскому краю, код подразделения: 270-002, зарегистрированная по адресу: Хабаровский край, г. Хабаровск, Иртышский пр-зд, д. 14, кв. 16.", indent=0.35, before=0, after=2)
-    add_p(doc, "От имени Продавца по доверенности: Финошина Елена Александровна, 01.11.1978 г.р., паспорт гражданина РФ: серия 5623 № 770189, выдан 02.12.2023 г. УМВД России по Пензенской области, код подразделения: 580-001, зарегистрированная по адресу: Пензенская область, г. Пенза, ул. Красная/Свердлова, д. 19/55, кв. 222.", indent=0.35, before=0, after=2)
-    add_p(doc, "Доверенность: серия 27 А А № 2656612, удостоверена 22 октября 2026 года Яблоковой Натальей Геннадьевной, временно исполняющей обязанности нотариуса нотариального округа города Хабаровска Хабаровского края Бахаревой Кристины Викторовны, зарегистрирована в реестре за № 27/72-н/27-2026-5-1039 (равнозначность электронного документа удостоверена в реестре за № 27/72-н/27-2026-5-1040).", indent=0.35, before=0, after=3)
+    # БЛОК ПРОДАВЦА ПО ДОВЕРЕННОСТИ
+    p_seller_lbl = doc.add_paragraph()
+    p_seller_lbl.paragraph_format.line_spacing = 1.0
+    r = p_seller_lbl.add_run("Продавец:")
+    r.font.name = 'Times New Roman'; r.font.size = Pt(10)
     
-    add_p(doc, "Подпись представителя Продавца по доверенности:", indent=0, before=2, after=2, bold=True)
-    p_sign_s = add_p(doc, "Подпись: ______________________ / __________________________________________________________________________", indent=0, before=2, after=1)
-    p_sign_s.runs[0].font.size = Pt(9)
-    p_sub_s = add_p(doc, "                 (личная подпись)                                       (фамилия, имя, отчество полностью от руки)", indent=0, before=0, after=2)
-    p_sub_s.runs[0].font.size = Pt(7.5)
+    p_seller_line = doc.add_paragraph()
+    p_seller_line.paragraph_format.line_spacing = 1.0
+    p_seller_line.paragraph_format.space_after = Pt(0)
+    r = p_seller_line.add_run("_" * 102)
+    r.font.name = 'Times New Roman'; r.font.size = Pt(10)
     
-    p_date_s = add_p(doc, "Дата подписания: «___» ____________ 2026 года", indent=0, before=2, after=6)
-    p_date_s.runs[0].font.size = Pt(9)
+    p_seller_dov = doc.add_paragraph()
+    p_seller_dov.paragraph_format.line_spacing = 1.0
+    p_seller_dov.paragraph_format.space_after = Pt(0)
+    r = p_seller_dov.add_run("По доверенности")
+    r.font.name = 'Times New Roman'; r.font.size = Pt(10)
     
-    # БЛОК 2: ПОКУПАТЕЛЬ
-    add_p(doc, "ПОКУПАТЕЛЬ:", indent=0, before=4, after=2, bold=True)
-    add_p(doc, "Шатрова Наталья Александровна, 05.07.1974 г.р., паспорт гражданина РФ: серия 5619 № 516090, выдан 19.07.2019 г. УМВД России по Пензенской области, код подразделения: 580-001, зарегистрированная по адресу: Пензенская область, г. Пенза, ул. Кронштадтская, д. 4а, кв. 28.", indent=0.35, before=0, after=3)
+    p_seller_sub = doc.add_paragraph()
+    p_seller_sub.paragraph_format.line_spacing = 1.0
+    p_seller_sub.paragraph_format.space_after = Pt(0)
+    r = p_seller_sub.add_run("ФИО" + "\t" * 13 + "подпись")
+    r.font.name = 'Times New Roman'; r.font.size = Pt(10)
     
-    add_p(doc, "Подпись Покупателя:", indent=0, before=2, after=2, bold=True)
-    p_sign_b = add_p(doc, "Подпись: ______________________ / __________________________________________________________________________", indent=0, before=2, after=1)
-    p_sign_b.runs[0].font.size = Pt(9)
-    p_sub_b = add_p(doc, "                 (личная подпись)                                       (фамилия, имя, отчество полностью от руки)", indent=0, before=0, after=2)
-    p_sub_b.runs[0].font.size = Pt(7.5)
+    p_empty = doc.add_paragraph()
+    p_empty.paragraph_format.line_spacing = 1.0
+    p_empty.paragraph_format.space_after = Pt(0)
     
-    p_date_b = add_p(doc, "Дата подписания: «___» ____________ 2026 года", indent=0, before=2, after=4)
-    p_date_b.runs[0].font.size = Pt(9)
+    # БЛОК ПОКУПАТЕЛЯ
+    p_buyer_lbl = doc.add_paragraph()
+    p_buyer_lbl.paragraph_format.line_spacing = 1.0
+    r = p_buyer_lbl.add_run("Покупатель:")
+    r.font.name = 'Times New Roman'; r.font.size = Pt(10)
+    
+    p_buyer_line = doc.add_paragraph()
+    p_buyer_line.paragraph_format.line_spacing = 1.0
+    p_buyer_line.paragraph_format.space_after = Pt(0)
+    r = p_buyer_line.add_run("_" * 102)
+    r.font.name = 'Times New Roman'; r.font.size = Pt(10)
+    
+    p_buyer_sub = doc.add_paragraph()
+    p_buyer_sub.paragraph_format.line_spacing = 1.0
+    p_buyer_sub.paragraph_format.space_after = Pt(0)
+    r = p_buyer_sub.add_run("ФИО" + "\t" * 13 + "подпись")
+    r.font.name = 'Times New Roman'; r.font.size = Pt(10)
     
     # --------------------------------------------------------------------------
     # РАСПИСКА НА ОТДЕЛЬНОМ ЛИСТЕ (ЧЕРЕЗ ЖЕСТКИЙ PAGE_BREAK)
