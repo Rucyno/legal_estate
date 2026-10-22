@@ -82,6 +82,7 @@ def take_sb_screenshots(
         ctx = browser.new_context(
             viewport={"width": 1280, "height": 900},
             locale="ru-RU",
+            ignore_https_errors=True,
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
         )
 
@@ -91,14 +92,17 @@ def take_sb_screenshots(
             page = ctx.new_page()
             page.goto("https://bankrot.fedresurs.ru/", wait_until="domcontentloaded", timeout=20000)
             accept_cookies(page)
-            page.wait_for_timeout(1000)
-            inp = page.locator("input[placeholder*='Введите наименование лица, ИНН, ОГРН']")
+            page.wait_for_timeout(1500)
+            inp = page.locator("input[placeholder*='Введите наименование лица, ИНН, ОГРН'], input[formcontrolname='searchString'], input.search-input")
             if inp.count() > 0:
                 query = inn if inn else fio
                 inp.first.fill(query)
                 inp.first.press("Enter")
                 accept_cookies(page)
-                page.wait_for_timeout(2500)
+                page.wait_for_timeout(3000)
+                save_shot("банкротство", page)
+            else:
+                # Скриншот главной, если инпут изменился
                 save_shot("банкротство", page)
             page.close()
         except Exception as e:
@@ -172,26 +176,22 @@ def take_sb_screenshots(
             print(f"  [-] Ошибка ФССП: {e}")
 
         # 5. Районный суд (Гражданские и Уголовные дела)
-        court_label = court_name if court_name else "Железнодорожный"
+        court_label = court_name if court_name else "Ленинский"
         court_key = court_label.lower().replace("районный", "").strip()
         court_url = PENZA_COURTS_MAP.get(court_key, "http://leninsky.pnz.sudrf.ru")
 
         try:
             print(f"  -> Проверка суда ({court_label} суд: гражданские и уголовные дела)...")
-            # Гражданский суд
+            import urllib.parse
+            # sudrf поиск напрямую по параметрам
+            name_encoded = urllib.parse.quote(fio.encode('windows-1251'))
+            search_url = f"{court_url}/modules.php?name=sud_delo&srv_num=1&name_op=1&f_name={name_encoded}"
             page = ctx.new_page()
-            page.goto(f"{court_url}/modules.php?name=sud_delo&srv_num=1", wait_until="domcontentloaded", timeout=20000)
+            page.goto(search_url, wait_until="domcontentloaded", timeout=20000)
             accept_cookies(page)
-            page.wait_for_timeout(1000)
-            # Ищем дела
-            search_input = page.locator("input[name='f_name'], input[name='q']")
-            if search_input.count() > 0:
-                search_input.first.fill(fio)
-                search_input.first.press("Enter")
-                page.wait_for_timeout(2500)
-                save_shot(f"{court_label} гр суд", page)
-                # Уголовный суд
-                save_shot(f"{court_label} уг суд", page)
+            page.wait_for_timeout(2000)
+            save_shot(f"{court_label} гр суд", page)
+            save_shot(f"{court_label} уг суд", page)
             page.close()
         except Exception as e:
             print(f"  [-] Ошибка судов: {e}")

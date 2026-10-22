@@ -102,18 +102,13 @@ def generate_intern_contract(
         r.font.name = "Times New Roman"
         r.font.size = docx.shared.Pt(10)
 
-    # 4. СОПД Преамбула (Параграф 145)
+    # 4. СОПД Преамбула (Параграф 145) - НЕ ДОЛЖНО быть жирным!
     p145 = doc.paragraphs[145]
     p145.text = ""
-    r_ya = p145.add_run("Я, Гр. ")
+    r_ya = p145.add_run(f"Я, Гр. {fio}")
     r_ya.font.name = "Times New Roman"
     r_ya.font.size = docx.shared.Pt(9)
-    r_ya.bold = True
-
-    r_fio_sopd = p145.add_run(fio)
-    r_fio_sopd.font.name = "Times New Roman"
-    r_fio_sopd.font.size = docx.shared.Pt(9)
-    r_fio_sopd.bold = True
+    r_ya.bold = False
 
     sopd_tail = (
         f", {birth_date} г.р., паспорт гражданина Российской Федерации {passport_series} {passport_number} "
@@ -132,18 +127,26 @@ def generate_intern_contract(
     # 5. Таблица 1 — Реквизиты и подписи сторон
     t1 = doc.tables[1]
     cell_p = t1.rows[1].cells[0]
-    cell_p.text = (
-        f"Гр. {fio}, \n"
+    cell_p.text = ""
+    p_lead = cell_p.paragraphs[0]
+    
+    # ФИО в реквизитах ОБЯЗАТЕЛЬНО жирным:
+    r_bold_fio = p_lead.add_run(f"Гр. {fio},\n")
+    r_bold_fio.font.name = "Times New Roman"
+    r_bold_fio.font.size = docx.shared.Pt(9)
+    r_bold_fio.bold = True
+
+    # Остальной текст обычным шрифтом:
+    r_rest = p_lead.add_run(
         f"{birth_date} г.р., паспорт гражданина Российской Федерации {passport_series} {passport_number} "
         f"выдан {passport_issued_date} г. {passport_issued_by}, код подразделения {passport_department_code}, "
         f"адрес регистрации: {reg_address}, именуемый\n\n"
         f"E-mail: {email if email else '___________________________________'}\n\n"
         f"Телефон: {phone if phone else '_________________________________'}"
     )
-    for p in cell_p.paragraphs:
-        for r in p.runs:
-            r.font.name = "Times New Roman"
-            r.font.size = docx.shared.Pt(9)
+    r_rest.font.name = "Times New Roman"
+    r_rest.font.size = docx.shared.Pt(9)
+    r_rest.bold = False
 
     # Инициалы для подписи
     parts = fio.strip().split()
