@@ -140,14 +140,16 @@ def take_sb_screenshots(
             page.goto("https://fedsfm.ru/documents/terrorists-catalog-portal-act", wait_until="domcontentloaded", timeout=20000)
             accept_cookies(page)
             page.wait_for_timeout(1000)
-            inp = page.locator("input#search-string")
+            inp = page.locator("input#search-input, input#search-string, input[name='searchText']")
             if inp.count() > 0:
                 inp.first.fill(fio)
-                btn = page.locator("a#search-btn")
-                if btn.count() > 0: btn.first.click()
-                else: inp.first.press("Enter")
+                btn = page.locator("a#search-btn, button[type='submit']")
+                if btn.count() > 0 and btn.first.is_visible():
+                    btn.first.click()
+                else:
+                    inp.first.press("Enter")
                 accept_cookies(page)
-                page.wait_for_timeout(2000)
+                page.wait_for_timeout(2500)
                 save_shot("рсфн", page)
             page.close()
         except Exception as e:
