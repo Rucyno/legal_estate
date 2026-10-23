@@ -273,6 +273,14 @@ def build_full_intern_dossier(
                 shutil.copy2(s_file, d_file)
         transferred = True
 
+    # 6. Автоматическое обновление сводного реестра СБ MASTER_LOG.xlsx
+    try:
+        from scripts.generate_sb_master_log import update_master_log
+        print("  -> Обновление сводного реестра СБ MASTER_LOG.xlsx...")
+        update_master_log()
+    except Exception as e:
+        print(f"  [-] Ошибка при обновлении MASTER_LOG.xlsx: {e}")
+
     return {
         "fio": fio,
         "local_folder": local_person_dir,
