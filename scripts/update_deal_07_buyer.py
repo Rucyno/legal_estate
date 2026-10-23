@@ -19,10 +19,10 @@ def build_deal_07_documents():
     doc = docx.Document()
 
     for s in doc.sections:
-        s.top_margin = Inches(0.7)
-        s.bottom_margin = Inches(0.7)
-        s.left_margin = Inches(0.8)
-        s.right_margin = Inches(0.6)
+        s.top_margin = Inches(0.5)
+        s.bottom_margin = Inches(0.5)
+        s.left_margin = Inches(0.7)
+        s.right_margin = Inches(0.5)
 
     def set_font(run, size=10, bold=False, italic=False):
         run.font.name = 'Times New Roman'
@@ -31,7 +31,7 @@ def build_deal_07_documents():
         run.italic = italic
         run.font.color.rgb = RGBColor(0, 0, 0)
 
-    def add_p(text, size=10, bold=False, italic=False, align=WD_ALIGN_PARAGRAPH.JUSTIFY, space_after=3, line_spacing=1.1, indent=0.4):
+    def add_p(text, size=9.5, bold=False, italic=False, align=WD_ALIGN_PARAGRAPH.JUSTIFY, space_after=2, line_spacing=1.05, indent=0.35):
         p = doc.add_paragraph()
         p.alignment = align
         p.paragraph_format.space_after = Pt(space_after)
@@ -141,15 +141,21 @@ def build_deal_07_documents():
     add_p("6.3. Настоящий Договор составлен и подписан в 3 (трех) подлинных экземплярах, имеющих одинаковую юридическую силу: по одному экземпляру для каждой из Сторон и один экземпляр для органа регистрации прав (Росреестра).")
 
     # 7. ПОДПИСИ СТОРОН (НОВЫЙ ЧИСТЫЙ СТРОЧНЫЙ ФОРМАТ)
-    add_p("7. Подписи Сторон", size=10, bold=True, space_after=6)
+    p_sec7 = add_p("7. Подписи Сторон", size=9.5, bold=True, space_after=4)
+    p_sec7.paragraph_format.keep_with_next = True
 
-    add_p("Продавец:", size=10, bold=True, indent=0, space_after=1)
-    add_p("_____________________________________________________________________________________________________", size=10, indent=0, space_after=0)
-    add_p("ФИО                                                                                                                                           подпись", size=8, italic=True, indent=0, space_after=10)
+    p_sel_t = add_p("Продавец:", size=9.5, bold=True, indent=0, space_after=1)
+    p_sel_t.paragraph_format.keep_with_next = True
+    p_sel_l = add_p("_____________________________________________________________________________________________________", size=9.5, indent=0, space_after=0)
+    p_sel_l.paragraph_format.keep_with_next = True
+    p_sel_s = add_p("ФИО                                                                                                                                           подпись", size=8, italic=True, indent=0, space_after=6)
+    p_sel_s.paragraph_format.keep_with_next = True
 
-    add_p("Покупатель:", size=10, bold=True, indent=0, space_after=1)
-    add_p("_____________________________________________________________________________________________________", size=10, indent=0, space_after=0)
-    add_p("ФИО                                                                                                                                           подпись", size=8, italic=True, indent=0, space_after=10)
+    p_buy_t = add_p("Покупатель:", size=9.5, bold=True, indent=0, space_after=1)
+    p_buy_t.paragraph_format.keep_with_next = True
+    p_buy_l = add_p("_____________________________________________________________________________________________________", size=9.5, indent=0, space_after=0)
+    p_buy_l.paragraph_format.keep_with_next = True
+    add_p("ФИО                                                                                                                                           подпись", size=8, italic=True, indent=0, space_after=4)
 
     # Page Break for Raspiska
     doc.add_page_break()
@@ -170,15 +176,21 @@ def build_deal_07_documents():
     add_p("Обязательства Покупателя по оплате стоимости квартиры исполнены в полном объеме и надлежащим образом. Расчет произведен полностью, материальных и иных претензий имущественного или финансового характера Продавец к Медведеву Наилю Ядкяровичу не имеет.")
 
     # Чистые построчные подписи для расписки
-    add_p("Подписи Сторон:", size=10, bold=True, indent=0, space_after=4)
+    p_rasp_title = add_p("Подписи Сторон:", size=9.5, bold=True, indent=0, space_after=3)
+    p_rasp_title.paragraph_format.keep_with_next = True
 
-    add_p("Деньги получил (Продавец):", size=10, bold=True, indent=0, space_after=1)
-    add_p("_____________________________________________________________________________________________________", size=10, indent=0, space_after=0)
-    add_p("ФИО                                                                                                                                           подпись", size=8, italic=True, indent=0, space_after=8)
+    p_rg_t = add_p("Деньги получил (Продавец):", size=9.5, bold=True, indent=0, space_after=1)
+    p_rg_t.paragraph_format.keep_with_next = True
+    p_rg_l = add_p("_____________________________________________________________________________________________________", size=9.5, indent=0, space_after=0)
+    p_rg_l.paragraph_format.keep_with_next = True
+    p_rg_s = add_p("ФИО                                                                                                                                           подпись", size=8, italic=True, indent=0, space_after=6)
+    p_rg_s.paragraph_format.keep_with_next = True
 
-    add_p("Деньги передал (Покупатель):", size=10, bold=True, indent=0, space_after=1)
-    add_p("_____________________________________________________________________________________________________", size=10, indent=0, space_after=0)
-    add_p("ФИО                                                                                                                                           подпись", size=8, italic=True, indent=0, space_after=8)
+    p_rp_t = add_p("Деньги передал (Покупатель):", size=9.5, bold=True, indent=0, space_after=1)
+    p_rp_t.paragraph_format.keep_with_next = True
+    p_rp_l = add_p("_____________________________________________________________________________________________________", size=9.5, indent=0, space_after=0)
+    p_rp_l.paragraph_format.keep_with_next = True
+    add_p("ФИО                                                                                                                                           подпись", size=8, italic=True, indent=0, space_after=4)
 
     doc.save(out_dkp)
     print(f"Created DKP with clean signatures: {out_dkp}")
@@ -191,12 +203,12 @@ def build_deal_07_documents():
     doc_act = docx.Document()
 
     for s in doc_act.sections:
-        s.top_margin = Inches(0.7)
-        s.bottom_margin = Inches(0.7)
-        s.left_margin = Inches(0.8)
-        s.right_margin = Inches(0.6)
+        s.top_margin = Inches(0.5)
+        s.bottom_margin = Inches(0.5)
+        s.left_margin = Inches(0.7)
+        s.right_margin = Inches(0.5)
 
-    def add_p_act(text, size=10, bold=False, italic=False, align=WD_ALIGN_PARAGRAPH.JUSTIFY, space_after=3, line_spacing=1.1, indent=0.4):
+    def add_p_act(text, size=9.5, bold=False, italic=False, align=WD_ALIGN_PARAGRAPH.JUSTIFY, space_after=1.5, line_spacing=1.05, indent=0.35):
         p = doc_act.add_paragraph()
         p.alignment = align
         p.paragraph_format.space_after = Pt(space_after)
@@ -207,8 +219,8 @@ def build_deal_07_documents():
         set_font(run, size=size, bold=bold, italic=italic)
         return p
 
-    add_p_act("ПЕРЕДАТОЧНЫЙ АКТ", size=12, bold=True, align=WD_ALIGN_PARAGRAPH.CENTER, indent=0, space_after=1)
-    add_p_act("(АКТ ПРИЕМА-ПЕРЕДАЧИ КВАРТИРЫ)", size=10, bold=True, align=WD_ALIGN_PARAGRAPH.CENTER, indent=0, space_after=6)
+    add_p_act("ПЕРЕДАТОЧНЫЙ АКТ", size=11, bold=True, align=WD_ALIGN_PARAGRAPH.CENTER, indent=0, space_after=1)
+    add_p_act("(АКТ ПРИЕМА-ПЕРЕДАЧИ КВАРТИРЫ)", size=9.5, bold=True, align=WD_ALIGN_PARAGRAPH.CENTER, indent=0, space_after=4)
     add_header_table(doc_act, "Российская Федерация, город Пенза", "«23» октября 2026 года")
 
     add_p_act("Мы, нижеподписавшиеся:")
@@ -230,13 +242,18 @@ def build_deal_07_documents():
     add_p_act("7. Обязательства Продавца по передаче Объекта и обязательства Покупателя по принятию Объекта и его полной оплате исполнены полностью и надлежащим образом. Взаимных претензий Стороны друг к другу не имеют.")
     add_p_act("8. Настоящий акт составлен и подписан в 2 (двух) подлинных экземплярах, имеющих одинаковую юридическую силу: по одному экземпляру для каждой из Сторон.")
 
-    add_p_act("Сдал (Продавец):", size=10, bold=True, indent=0, space_after=1)
-    add_p_act("_____________________________________________________________________________________________________", size=10, indent=0, space_after=0)
-    add_p_act("ФИО                                                                                                                                           подпись", size=8, italic=True, indent=0, space_after=8)
+    p_seller_title = add_p_act("Сдал (Продавец):", size=9.5, bold=True, indent=0, space_after=1)
+    p_seller_title.paragraph_format.keep_with_next = True
+    p_seller_line = add_p_act("_____________________________________________________________________________________________________", size=9.5, indent=0, space_after=0)
+    p_seller_line.paragraph_format.keep_with_next = True
+    p_seller_sub = add_p_act("ФИО                                                                                                                                           подпись", size=8, italic=True, indent=0, space_after=6)
+    p_seller_sub.paragraph_format.keep_with_next = True
 
-    add_p_act("Принял (Покупатель):", size=10, bold=True, indent=0, space_after=1)
-    add_p_act("_____________________________________________________________________________________________________", size=10, indent=0, space_after=0)
-    add_p_act("ФИО                                                                                                                                           подпись", size=8, italic=True, indent=0, space_after=8)
+    p_buyer_title = add_p_act("Принял (Покупатель):", size=9.5, bold=True, indent=0, space_after=1)
+    p_buyer_title.paragraph_format.keep_with_next = True
+    p_buyer_line = add_p_act("_____________________________________________________________________________________________________", size=9.5, indent=0, space_after=0)
+    p_buyer_line.paragraph_format.keep_with_next = True
+    add_p_act("ФИО                                                                                                                                           подпись", size=8, italic=True, indent=0, space_after=4)
 
     doc_act.save(out_act)
     print(f"Created Act with clean signatures: {out_act}")
