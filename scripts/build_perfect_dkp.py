@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import docx, os, sys
 from docx.shared import Pt
 from docx.oxml import parse_xml
@@ -51,6 +51,17 @@ set_run_ru(r4_8, bold=True)
 r4_9 = p4.add_run("», с другой стороны,")
 set_run_ru(r4_9)
 
+# 2.1 Update Clause 3.2 (14 calendar days instead of 3 days)
+for p in doc.paragraphs:
+    if "3.2. Продавец обязуется фактически освободить" in p.text:
+        p.text = ""
+        p.paragraph_format.first_line_indent = Pt(21.25)
+        p.paragraph_format.space_after = Pt(2.0)
+        p.paragraph_format.line_spacing = 1.0791666666666666
+        r32 = p.add_run("3.2. Продавец обязуется фактически освободить «Объект» от находящегося в нем личного имущества и передать его Покупателю по Передаточному акту вместе с комплектом ключей в течение 14 (четырнадцати) календарных дней после полной оплаты Покупателем стоимости «Объекта», указанной в п. 2.1 настоящего Договора.")
+        set_run_ru(r32)
+        break
+
 # 3. Insert Clause 3.6 after 3.5 (before P32)
 p32 = doc.paragraphs[32]
 p36 = p32.insert_paragraph_before()
@@ -59,6 +70,17 @@ p36.paragraph_format.space_after = Pt(2.0)
 p36.paragraph_format.line_spacing = 1.0791666666666666
 r36 = p36.add_run("3.6. По соглашению Сторон в отчуждаемом «Объекте» передается и остается следующее имущество: в ванной комнате — тумба с раковиной, смесители; в комнате — люстра и потолочные светильники. Стоимость указанного имущества включена в общую цену «Объекта» по настоящему Договору.")
 set_run_ru(r36)
+
+# 3.1 Update Clause 5.2 (Registered persons: Lazutina E.V. and minor Lazutin Makar Viktorovich, 10 days deregistration)
+for p in doc.paragraphs:
+    if "5.2. Продавец гарантирует" in p.text:
+        p.text = ""
+        p.paragraph_format.first_line_indent = Pt(21.25)
+        p.paragraph_format.space_after = Pt(2.0)
+        p.paragraph_format.line_spacing = 1.0791666666666666
+        r52 = p.add_run("5.2. На момент подписания настоящего Договора в «Объекте» зарегистрированы по месту жительства: Лазутина Елена Викторовна и несовершеннолетний Лазутин Макар Викторович, 12.10.2016 года рождения. Продавец обязуется обеспечить снятие себя и несовершеннолетнего Лазутина Макара Викторовича с регистрационного учета по месту жительства из отчуждаемого «Объекта» в течение 10 (десяти) календарных дней после полной оплаты стоимости «Объекта» по настоящему Договору. Иных лиц, сохраняющих право пользования жилым помещением в соответствии со статьями 292, 558 Гражданского кодекса РФ, не имеется.")
+        set_run_ru(r52)
+        break
 
 # 4. Update Table 1 (DKP Signatures)
 tbl1 = doc.tables[1]
