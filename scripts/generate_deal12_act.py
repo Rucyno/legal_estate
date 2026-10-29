@@ -1,23 +1,22 @@
 """
-Генератор Передаточного акта (акта приема-передачи квартиры) к ДКП от 26.10.2026 г.
-Сделка 12: Орнатские (Олег Александрович и Юлия Юрьевна) -> Рыжаков Дмитрий Александрович
-Объект: г. Пенза, ул. Зеленодольская, д. 74, кв. 45 (кад. № 58:29:3001006:1846)
-Дата акта: 29 октября 2026 года (сегодняшнее число)
-Требования:
-- Ровно 1 страница А4 (без висячих строк)
-- Шрифт: Times New Roman 9.5-10 pt
-- Построчные подписи по Правилу 10 (на всю ширину листа)
-- 0 мягких переносов строк
-- Формат: только .docx
+Генератор Передаточного акта (акта приема-передачи квартиры) к ДКП.
+Стандарт:
+- Исключен п. 6 о взаиморасчетах (т.к. расчеты регулируются ДКП и аккредитивом/распиской, при физической передаче объекта этот пункт излишен).
+- Пункт 5 (Показания приборов учета): показания каждого счетчика идут отдельной строкой с визуальным межстрочным интервалом/отступом для удобного рукописного заполнения цифр ручкой.
+- Пункт 6: Экземпляры документа.
+- Блок подписантов по Правилу 10 с комфортным отступом перед подписями.
+- Верстка строго на 1 страницу А4.
+- Шрифт: Times New Roman 9.5 pt (заголовки 10.5 pt, подстрочники 7.5 pt).
+- 0 мягких переносов строк.
 """
 import os
 import sys
 import docx
 from docx.shared import Pt, Inches, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ALIGN_VERTICAL
+from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.oxml import OxmlElement
-from docx.oxml.ns import qn, nsdecls
+from docx.oxml.ns import qn
 from docx.oxml import parse_xml
 
 def set_cell_margins(cell, top=0, bottom=0, left=0, right=0):
@@ -45,11 +44,12 @@ def set_run_ru(run, font_name="Times New Roman", size_pt=10.0, bold=False, itali
     rFonts.set(qn('w:eastAsia'), font_name)
     rPr.append(rFonts)
 
-def add_p(doc, text="", size_pt=10.0, bold=False, italic=False, align=WD_ALIGN_PARAGRAPH.JUSTIFY, 
-          space_before=0.0, space_after=1.5, line_spacing=1.04, indent=18.0, keep_with_next=False):
+def add_p(doc, text="", size_pt=9.5, bold=False, italic=False, align=WD_ALIGN_PARAGRAPH.JUSTIFY, 
+          space_before=0.0, space_after=1.5, line_spacing=1.03, indent=16.0, keep_with_next=False):
     p = doc.add_paragraph()
     p.alignment = align
-    p.paragraph_format.space_before = Pt(space_before)
+    if space_before > 0:
+        p.paragraph_format.space_before = Pt(space_before)
     p.paragraph_format.space_after = Pt(space_after)
     p.paragraph_format.line_spacing = line_spacing
     if indent > 0:
@@ -86,7 +86,7 @@ def add_header_table(doc, left_text, right_text):
     p_l.paragraph_format.space_after = Pt(2.0)
     p_l.paragraph_format.line_spacing = 1.0
     r_l = p_l.add_run(left_text)
-    set_run_ru(r_l, size_pt=10.0, bold=False)
+    set_run_ru(r_l, size_pt=9.5, bold=False)
     
     p_r = cell_r.paragraphs[0]
     p_r.alignment = WD_ALIGN_PARAGRAPH.RIGHT
@@ -94,7 +94,7 @@ def add_header_table(doc, left_text, right_text):
     p_r.paragraph_format.space_after = Pt(2.0)
     p_r.paragraph_format.line_spacing = 1.0
     r_r = p_r.add_run(right_text)
-    set_run_ru(r_r, size_pt=10.0, bold=False)
+    set_run_ru(r_r, size_pt=9.5, bold=False)
 
 def add_signer_block_rule10(doc, title, full_name, space_before=2.0, space_after=1.0):
     p_title = doc.add_paragraph()
@@ -140,10 +140,10 @@ def add_signer_block_rule10(doc, title, full_name, space_before=2.0, space_after
     r2 = p_sub.add_run("\tподпись")
     set_run_ru(r2, size_pt=7.5, italic=True)
 
-def generate_acceptance_act(out_path):
+def generate_deal12_act(out_path):
     doc = docx.Document()
     
-    # Поля страницы А4 (компактные для строгого размещения на 1 лист)
+    # Поля страницы А4 (выверенные для идеального 1 листа)
     for s in doc.sections:
         s.top_margin = Pt(22.0)
         s.bottom_margin = Pt(22.0)
@@ -189,7 +189,7 @@ def generate_acceptance_act(out_path):
     )
     add_p(doc, p2, size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
 
-    # Пункт 3: Передаваемое имущество (из п. 1.3 ДКП)
+    # Пункт 3: Передаваемое имущество
     p3 = (
         "3. В соответствии с пунктом 1.3 Договора купли-продажи в Квартире передано и принято следующее имущество: "
         "встроенный кухонный гарнитур, варочная поверхность, вытяжка, встроенный холодильник, посудомоечная машина, микроволновая печь, "
@@ -204,27 +204,25 @@ def generate_acceptance_act(out_path):
     )
     add_p(doc, p4, size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
 
-    # Пункт 5: Показания счетчиков
-    p5 = (
-        "5. Показания приборов учета на момент передачи: электроэнергия № ___________, показ. _______ кВт*ч; "
-        "ХВС № __________, показ. _______ куб.м; ГВС № __________, показ. _______ куб.м; отопление № __________, показ. _______ Гкал."
-    )
-    add_p(doc, p5, size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
+    # Пункт 5: Показания счетчиков (построчно с удобным межстрочным пространством для записи рукой)
+    add_p(doc, "5. Показания приборов учета на момент передачи: ", size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "", size_pt=9.5, indent=0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "электроэнергия № ___________, показ. _______ кВт*ч; ", size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "", size_pt=9.5, indent=0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "ХВС № __________, показ. _______ куб.м; ", size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "", size_pt=9.5, indent=0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "ГВС № __________, показ. _______ куб.м; ", size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "", size_pt=9.5, indent=0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "отопление № __________, показ. _______ Гкал.", size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "", size_pt=9.5, indent=0, space_after=1.5, line_spacing=1.03)
 
-    # Пункт 6: Расчеты и отсутствие претензий
+    # Пункт 6: Экземпляры (без п. 6 о взаиморасчетах)
     p6 = (
-        "6. Финансовые расчеты производятся в соответствии с Договором купли-продажи с использованием безотзывного покрытого аккредитива "
-        "в ПАО «Банк ПСБ» и кредитных средств по Кредитному договору № 16460079 от 26.10.2026 г. Оплата задатка в размере 50 000 руб. подтверждена распиской. "
-        "Обязательства Продавцов по передаче Квартиры и Покупателя по ее принятию исполнены надлежащим образом. Взаимных претензий Стороны не имеют."
+        "6. Настоящий акт составлен и подписан в двух подлинных экземплярах, имеющих равную юридическую силу: "
+        "один экземпляр для Продавцов, один для Покупателя."
     )
-    add_p(doc, p6, size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
-
-    # Пункт 7: Экземпляры
-    p7 = (
-        "7. Настоящий акт составлен и подписан в трех подлинных экземплярах, имеющих равную юридическую силу: "
-        "по одному экземпляру для Продавцов, Покупателя и ПАО «Банк ПСБ»."
-    )
-    add_p(doc, p7, size_pt=9.5, indent=16.0, space_after=2.0, line_spacing=1.03)
+    add_p(doc, p6, size_pt=9.5, indent=16.0, space_after=2.0, line_spacing=1.03)
+    add_p(doc, "", size_pt=9.5, indent=0, space_after=2.0, line_spacing=1.03)
 
     # Подписанты по Правилу 10 (построчные во всю ширину 17 см)
     add_signer_block_rule10(doc, "Сдал (Продавец):", "Орнатский Олег Александрович", space_before=2.0, space_after=1.0)
@@ -234,8 +232,102 @@ def generate_acceptance_act(out_path):
     doc.save(out_path)
     print(f"File saved successfully to: {out_path}")
 
+def generate_template_act(out_path):
+    doc = docx.Document()
+    
+    for s in doc.sections:
+        s.top_margin = Pt(22.0)
+        s.bottom_margin = Pt(22.0)
+        s.left_margin = Pt(32.0)
+        s.right_margin = Pt(32.0)
+
+    # Заголовок документа
+    add_p(doc, "ПЕРЕДАТОЧНЫЙ АКТ", size_pt=10.5, bold=True, align=WD_ALIGN_PARAGRAPH.CENTER, indent=0, space_before=0, space_after=1.0)
+    add_p(doc, "к Договору купли-продажи квартиры от «___» ____________ 202_ года", size_pt=9.5, bold=True, align=WD_ALIGN_PARAGRAPH.CENTER, indent=0, space_before=0, space_after=2.0)
+
+    # Дата и город
+    add_header_table(doc, "город Пенза", "«___» ____________ 202_ года")
+
+    # Преамбула Сторон
+    preamble = (
+        "Мы, нижеподписавшиеся: гражданин [ФИО Продавца], [дата рождения] года рождения, пол: [пол], "
+        "паспорт гражданина Российской Федерации: серия [серия] № [номер], выдан [кем выдан] [дата выдачи] г., "
+        "код подразделения [код], зарегистрированный по адресу: [адрес регистрации], именуемый в дальнейшем «Продавец», с одной стороны, и "
+        "гражданин [ФИО Покупателя], [дата рождения] года рождения, пол: [пол], паспорт гражданина Российской Федерации: "
+        "серия [серия] № [номер], выдан [кем выдан] [дата выдачи] г., код подразделения [код], "
+        "зарегистрированный по адресу: [адрес регистрации], именуемый в дальнейшем «Покупатель», с другой стороны, "
+        "совместно именуемые «Стороны», составили настоящий Передаточный акт о нижеследующем:"
+    )
+    add_p(doc, preamble, size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
+
+    # Пункт 1: Передача квартиры
+    p1 = (
+        "1. В соответствии со статьей 556 Гражданского кодекса Российской Федерации и условиями Договора купли-продажи квартиры "
+        "от «___» ____________ 202_ года Продавец передал, а Покупатель принял в собственность следующее недвижимое имущество: "
+        "жилое помещение — квартиру, расположенную по адресу: [Адрес объекта], "
+        "назначение: жилое, общей площадью [Площадь] кв.м, расположенную на [Этаж] этаже многоквартирного жилого дома, кадастровый номер: [Кадастровый номер] (далее — «Квартира»)."
+    )
+    add_p(doc, p1, size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
+
+    # Пункт 2: Осмотр и качество
+    p2 = (
+        "2. Квартира осмотрена Покупателем до подписания настоящего акта. Покупатель подтверждает, что состояние Квартиры, "
+        "конструктивных элементов, дверей, окон, остекления, сантехнического, инженерного и электрооборудования соответствует условиям "
+        "Договора и пригодно для проживания. Скрытых и явных недостатков не обнаружено. Претензий по техническому состоянию у Покупателя не имеется."
+    )
+    add_p(doc, p2, size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
+
+    # Пункт 3: Передаваемое имущество
+    p3 = (
+        "3. В соответствии с условиями Договора купли-продажи в Квартире передано и принято следующее имущество: "
+        "[Перечень передаваемой мебели, техники и предметов интерьера]. "
+        "Претензий по наличию, исправности и комплектности указанного имущества не имеется."
+    )
+    add_p(doc, p3, size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
+
+    # Пункт 4: Ключи и документы ЖКУ
+    p4 = (
+        "4. Одновременно с Квартирой Продавец передал Покупателю полный комплект ключей от входной двери, подъезда и домофона, "
+        "а также документацию и квитанции, подтверждающие отсутствие задолженности по коммунальным услугам, капремонту, электроэнергии и ТКО."
+    )
+    add_p(doc, p4, size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
+
+    # Пункт 5: Показания счетчиков (построчно с интервалом под рукописное заполнение)
+    add_p(doc, "5. Показания приборов учета на момент передачи: ", size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "", size_pt=9.5, indent=0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "электроэнергия № ___________, показ. _______ кВт*ч; ", size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "", size_pt=9.5, indent=0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "ХВС № __________, показ. _______ куб.м; ", size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "", size_pt=9.5, indent=0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "ГВС № __________, показ. _______ куб.м; ", size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "", size_pt=9.5, indent=0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "отопление № __________, показ. _______ Гкал.", size_pt=9.5, indent=16.0, space_after=1.5, line_spacing=1.03)
+    add_p(doc, "", size_pt=9.5, indent=0, space_after=1.5, line_spacing=1.03)
+
+    # Пункт 6: Экземпляры (без п. 6 о расчетах)
+    p6 = (
+        "6. Настоящий акт составлен и подписан в двух подлинных экземплярах, имеющих равную юридическую силу: "
+        "один экземпляр для Продавца, один для Покупателя."
+    )
+    add_p(doc, p6, size_pt=9.5, indent=16.0, space_after=2.0, line_spacing=1.03)
+    add_p(doc, "", size_pt=9.5, indent=0, space_after=2.0, line_spacing=1.03)
+
+    # Подписанты по Правилу 10 (построчные во всю ширину 17 см)
+    add_signer_block_rule10(doc, "Сдал (Продавец):", "[ФИО Продавца полностью]", space_before=2.0, space_after=1.0)
+    add_signer_block_rule10(doc, "Принял (Покупатель):", "[ФИО Покупателя полностью]", space_before=2.0, space_after=0.5)
+
+    doc.save(out_path)
+    print(f"Template saved successfully to: {out_path}")
+
 if __name__ == "__main__":
-    out_dir = r"d:\Антигравити\legal_estate\deals\12_Орнатские_Рыжаков_Зеленодольская\готовые"
-    os.makedirs(out_dir, exist_ok=True)
-    out_file = os.path.join(out_dir, "2026_10_29_Передаточный_акт_Орнатские_Рыжаков.docx")
-    generate_acceptance_act(out_file)
+    # Обновляем файл сделки 12
+    deal12_out = r"D:\Антигравити\legal_estate\deals\12_Орнатские_Рыжаков_Зеленодольская\готовые\2026_10_29_Передаточный_акт_Орнатские_Рыжаков.docx"
+    generate_deal12_act(deal12_out)
+    
+    # Сохраняем в корпоративные эталонные шаблоны
+    tpl_out_1 = r"D:\Антигравити\legal_estate\templates\ШАБЛОН_Передаточный_акт_Этажи_квартира.docx"
+    generate_template_act(tpl_out_1)
+    
+    tpl_out_2 = r"D:\ШАБЛОНЫ_ДОГОВОРОВ_ЭТАЖИ\ШАБЛОН_Передаточный_акт_Этажи_квартира.docx"
+    if os.path.exists(r"D:\ШАБЛОНЫ_ДОГОВОРОВ_ЭТАЖИ"):
+        generate_template_act(tpl_out_2)
