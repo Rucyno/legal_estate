@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Матрица финансовых расчетов и залогов — LegalEstate</title>
+  <style>
+    :root {
+      --etagi-red: #C8102E;
+      --etagi-red-dark: #9B0A21;
+      --etagi-red-light: #FDF2F4;
+      --slate-900: #0F172A;
+      --slate-800: #1E293B;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748B;
+      --slate-200: #E2E8F0;
+      --slate-100: #F1F5F9;
+      --slate-50: #F8FAFC;
+      --green-600: #16A34A;
+      --green-50: #F0FDF4;
+      --green-200: #BBF7D0;
+      --amber-600: #D97706;
+      --amber-50: #FFFBEB;
+      --amber-200: #FDE68A;
+      --blue-600: #2563EB;
+      --blue-50: #EFF6FF;
+      --purple-600: #9333EA;
+      --purple-50: #FAF5FF;
+      --border-radius: 12px;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--slate-50);
+      color: var(--slate-900);
+      line-height: 1.5;
+      padding: 24px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-top: 5px solid var(--etagi-red);
+      border-radius: var(--border-radius);
+      padding: 24px 32px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .badge-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 4px 10px;
+      border-radius: 9999px;
+    }
+
+    .badge-red { background: var(--etagi-red); color: white; }
+    .badge-slate { background: var(--slate-100); color: var(--slate-700); }
+    .badge-green { background: var(--green-50); color: var(--green-600); border: 1px solid var(--green-200); }
+    .badge-amber { background: var(--amber-50); color: var(--amber-600); border: 1px solid var(--amber-200); }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--slate-600);
+      max-width: 1000px;
+    }
+
+    /* Quick Filter Toolbar */
+    .toolbar {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--border-radius);
+      padding: 16px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 260px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      font-size: 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: 8px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--etagi-red);
+      box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.12);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--slate-500);
+      pointer-events: none;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid var(--slate-200);
+      background: white;
+      color: var(--slate-700);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tab-btn:hover {
+      background: var(--slate-100);
+    }
+
+    .tab-btn.active {
+      background: var(--slate-900);
+      color: white;
+      border-color: var(--slate-900);
+    }
+
+    .action-btn {
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid var(--etagi-red);
+      background: var(--etagi-red);
+      color: white;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .action-btn:hover {
+      background: var(--etagi-red-dark);
+    }
+
+    /* Main Grid: 2 Pillars */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 1024px) {
+      .pillars-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .pillar {
+      background: white;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .pillar-header {
+      padding: 20px 24px;
+      border-bottom: 2px solid var(--slate-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .pillar-1 .pillar-header {
+      background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+      border-bottom-color: var(--green-600);
+    }
+
+    .pillar-2 .pillar-header {
+      background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+      border-bottom-color: var(--amber-600);
+    }
+
+    .pillar-title {
+      font-size: 18px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pillar-subtitle {
+      font-size: 12px;
+      color: var(--slate-600);
+      margin-top: 4px;
+    }
+
+    .scenarios-list {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Scenario Card */
+    .scenario-card {
+      border: 1px solid var(--slate-200);
+      border-radius: 10px;
+      background: white;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .scenario-card:hover {
+      border-color: var(--slate-400);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-header {
+      padding: 14px 18px;
+      background: var(--slate-50);
+      border-bottom: 1px solid var(--slate-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .card-header:hover {
+      background: var(--slate-100);
+    }
+
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--slate-900);
+    }
+
+    .chevron {
+      font-size: 14px;
+      color: var(--slate-500);
+      transition: transform 0.2s;
+    }
+
+    .scenario-card.open .chevron {
+      transform: rotate(180deg);
+    }
+
+    .card-body {
+      padding: 16px 18px;
+      display: none;
+    }
+
+    .scenario-card.open .card-body {
+      display: block;
+    }
+
+    /* Sub-methods (instruments) inside scenario */
+    .instrument-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .instrument-item {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 13px;
+    }
+
+    .instrument-item.active-method {
+      background: white;
+      border-color: var(--slate-400);
+    }
+
+    .method-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+    }
+
+    .method-badge.cash { background: #DCFCE7; color: #15803D; }
+    .method-badge.sbr { background: #E0E7FF; color: #4338CA; }
+    .method-badge.accred { background: #FEF3C7; color: #B45309; }
+    .method-badge.safe { background: #F1F5F9; color: #475569; }
+
+    .rule-box {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .rule-receipt {
+      background: #EFF6FF;
+      border-left: 3px solid var(--blue-600);
+      color: #1E3A8A;
+    }
+
+    .rule-law {
+      background: #FDF2F4;
+      border-left: 3px solid var(--etagi-red);
+      color: #881337;
+      margin-top: 6px;
+    }
+
+    .rule-warning {
+      background: #FFFBEB;
+      border-left: 3px solid var(--amber-600);
+      color: #92400E;
+      margin-top: 6px;
+    }
+
+    /* Reference Matrix Table */
+    .table-section {
+      background: white;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-sm);
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .table-section h2 {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .table-section p {
+      font-size: 13px;
+      color: var(--slate-600);
+      margin-bottom: 16px;
+    }
+
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    .matrix-table th {
+      background: var(--slate-900);
+      color: white;
+      padding: 12px 14px;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .matrix-table th:first-child { border-top-left-radius: 8px; }
+    .matrix-table th:last-child { border-top-right-radius: 8px; }
+
+    .matrix-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--slate-200);
+      vertical-align: top;
+    }
+
+    .matrix-table tr:hover td {
+      background: var(--slate-50);
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 4px;
+      background: var(--slate-100);
+      color: var(--slate-700);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--slate-500);
+      padding: 20px;
+      border-top: 1px solid var(--slate-200);
+    }
+
+    @media print {
+      body { padding: 0; background: white; }
+      .toolbar, .chevron, .action-btn { display: none !important; }
+      .card-body { display: block !important; }
+      .pillars-grid { grid-template-columns: 1fr; }
+      header { border-top: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <div class="badge-bar">
+      <span class="badge badge-red">LegalEstate 2.0</span>
+      <span class="badge badge-slate">Авторский стандарт Ильи Фролова</span>
+      <span class="badge badge-green">624+ проверенных сделок</span>
+      <span class="badge badge-amber">Консилиум: Брокер • Банк • Цивилист • Судебный юрист</span>
+    </div>
+    <h1>Полная карта финансовых расчетов и залогов в сделках</h1>
+    <p class="subtitle">
+      Исчерпывающее дерево всех возможных комбинаций финансирования недвижимости: правила расписок, залоги по 102-ФЗ, условия исключения залога продавца (ст. 488 ГК РФ) и регламенты снятия обременений.
+    </p>
+  </header>
+
+  <!-- Toolbar & Filters -->
+  <div class="toolbar">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="search-input" placeholder="Поиск (аккредитив, трансферация, сбр, мат.капитал, ячейка, залог...)" oninput="filterCards()">
+    </div>
+    <div class="filter-tabs">
+      <button class="tab-btn active" onclick="setFilter('all', this)">Все (24 ветки)</button>
+      <button class="tab-btn" onclick="setFilter('clean', this)">Только Чистый объект</button>
+      <button class="tab-btn" onclick="setFilter('pledge', this)">Только В залоге у банка</button>
+      <button class="tab-btn" onclick="setFilter('matkap', this)">МСК и Субсидии</button>
+      <button class="tab-btn" onclick="setFilter('military', this)">Военная ипотека</button>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="tab-btn" onclick="toggleAllCards(true)">Развернуть всё</button>
+      <button class="tab-btn" onclick="toggleAllCards(false)">Свернуть всё</button>
+      <button class="action-btn" onclick="window.print()">🖨️ Печать / PDF</button>
+    </div>
+  </div>
+
+  <!-- Pillars Grid -->
+  <div class="pillars-grid">
+
+    <!-- PILLAR 1: ЧИСТЫЙ ОБЪЕКТ -->
+    <div class="pillar pillar-1" id="pillar-clean">
+      <div class="pillar-header">
+        <div>
+          <div class="pillar-title">
+            <span>🟢 СТВОЛ I: Объект БЕЗ обременения</span>
+          </div>
+          <div class="pillar-subtitle">Объект юридически чист, в залоге у банков и третьих лиц не состоит</div>
+        </div>
+        <span class="badge badge-green">4 сценария финансирования</span>
+      </div>
+
+      <div class="scenarios-list">
+
+        <!-- 1.1: 100% Собственные средства -->
+        <div class="scenario-card open" data-group="clean" data-tags="собственные средства наличные сбр аккредитив ячейка без ипотеки 488">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-title-group">
+              <span class="pill" style="background:#DCFCE7; color:#15803D;">1.1</span>
+              <span class="card-title">100% Собственные средства Покупателя</span>
+            </div>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <div style="font-size:12px; color:var(--slate-600); margin-bottom:8px;">
+              Покупатель приобретает объект исключительно на свои накопления. 4 варианта передачи денег:
+            </div>
+            <div class="instrument-grid">
+              
+              <div class="instrument-item">
+                <span class="method-badge cash">А. Полностью наличные</span>
+                <div>• Задаток на ПДКП + остаток налички до подписания ОДКП.</div>
+                <div class="rule-box rule-receipt">
+                  <b>📝 Расписка:</b> Составляется <b>одна общая расписка в день ОДКП</b> на полную сумму с фиксацией: в том числе задаток по ПДКП от [дата].
+                </div>
+                <div class="rule-box rule-law">
+                  <b>⚖️ Закон:</b> п. 5 ст. 488 ГК РФ — залог Продавца НЕ возникает.
+                </div>
+              </div>
+
+              <div class="instrument-item">
+                <span class="method-badge sbr">Б. СБР (Номинальный счет Домклик / М2)</span>
+                <div>• Задаток налом на ПДКП + остаток на номинальный счет (выплата за 1–5 дней после ЕГРН).</div>
+                <div class="rule-box rule-receipt">
+                  <b>📝 Расписка:</b> В день сделки Продавец пишет расписку <b>ТОЛЬКО на задаток</b>! На сумму СБР расписка не выдается (оплата закрывается банковской платежкой).
+                </div>
+                <div class="rule-box rule-law">
+                  <b>⚖️ Закон:</b> п. 5 ст. 488 ГК РФ — залог НЕ возникает. Заявление на открытие ПДн в Росреестр (218-ФЗ).
+                </div>
+              </div>
+
+              <div class="instrument-item">
+                <span class="method-badge accred">В. Аккредитив (Покрытый безотзывный)</span>
+                <div>• Задаток налом на ПДКП + остаток на счет покрытия в банке (раскрытие по выписке ЕГРН).</div>
+                <div class="rule-box rule-receipt">
+                  <b>📝 Расписка:</b> В день сделки расписка <b>ТОЛЬКО на сумму задатка</b>. На сумму аккредитива расписка не выдается.
+                </div>
+                <div class="rule-box rule-law">
+                  <b>⚖️ Закон:</b> п. 5 ст. 488 ГК РФ — залог НЕ возникает. Срок аккредитива 30–60 дней.
+                </div>
+              </div>
+
+              <div class="instrument-item">
+                <span class="method-badge safe">Г. Индивидуальный сейф (Ячейка)</span>
+                <div>• Задаток налом + остаток закладывается в ячейку до регистрации.</div>
+                <div class="rule-box rule-receipt">
+                  <b>📝 Расписка:</b> На задаток выдается сразу. На сумму в ячейке расписка <b>закладывается в сейф</b> и вручается Покупателю строго в момент выемки денег.
+                </div>
+                <div class="rule-box rule-law">
+                  <b>⚖️ Закон:</b> п. 5 ст. 488 ГК РФ — залог НЕ возникает. Условие доступа Продавца — выписка ЕГРН.
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- 1.2: Свои + МСК (Без ипотеки) -->
+        <div class="scenario-card" data-group="clean matkap" data-tags="собственные средства мск материнский капитал сфр без кредита 3 года">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-title-group">
+              <span class="pill" style="background:#FEE2E2; color:#B91C1C;">1.2</span>
+              <span class="card-title">Собственные средства + Материнский капитал (Без кредита)</span>
+            </div>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <div class="rule-box rule-warning">
+              <b>⚠️ КРИТИЧЕСКОЕ ПРАВИЛО МСК БЕЗ КРЕДИТА:</b>  
+              Ребенку, давшему право на сертификат (или младшему), на дату сделки <b>СТРОГО ДОЛЖНО БЫТЬ БОЛЬШЕ 3 ЛЕТ</b> (ч. 7 ст. 10 Закона № 256-ФЗ). Иначе СФР откажет в выплате!
+            </div>
+            <div class="instrument-grid">
+              <div class="instrument-item">
+                <span class="method-badge cash">Свои налом / СБР / Аккредитив</span>
+                <div>• ПВ оплачивается своими деньгами (налом до сделки либо через СБР/аккредитив).</div>
+                <div>• Средства МСК перечисляются Социальным фондом России (СФР) напрямую Продавцу не ранее госрегистрации и не позднее 21 календарного дня.</div>
+                <div class="rule-box rule-receipt">
+                  <b>📝 Расписка:</b> Продавец выдает расписку ТОЛЬКО на фактически полученные собственные средства. На сумму МСК расписка не пишется — оплата подтверждается платежным поручением казначейства СФР.
+                </div>
+                <div class="rule-box rule-law">
+                  <b>⚖️ Закон:</b> п. 5 ст. 488 ГК РФ — по соглашению сторон залог в пользу Продавца до перечисления МСК <b>НЕ ВОЗНИКАЕТ</b> (чтобы избежать блокировки повторной сделки).
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1.3: Свои + Ипотека банка -->
+        <div class="scenario-card" data-group="clean" data-tags="собственные средства ипотека сбер втб домрф псб кредит ст 77 64.1 64.2">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-title-group">
+              <span class="pill" style="background:#E0E7FF; color:#4338CA;">1.3</span>
+              <span class="card-title">Собственные средства (ПВ) + Ипотека банка (Целевой кредит)</span>
+            </div>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <div style="font-size:12px; color:var(--slate-600); margin-bottom:8px;">
+              Первоначальный взнос (ПВ) оплачивается наличными / СБР / аккредитивом, а остаток — целевыми кредитными средствами банка (Сбер, ВТБ, Дом.рф, ПСБ).
+            </div>
+            <div class="instrument-grid">
+              <div class="instrument-item">
+                <span class="method-badge sbr">Кредитные средства через СБР / Аккредитив</span>
+                <div>• ПВ вносится в день сделки налом или перечисляется на номинальный счет СБР / аккредитив.</div>
+                <div>• Кредитные средства переводятся банком на номинальный счет СБР / аккредитив и выплачиваются Продавцу после регистрации перехода права и ипотеки.</div>
+                <div class="rule-box rule-receipt">
+                  <b>📝 Расписка:</b> Выдается Продавцом только на сумму первоначального взноса, внесенного наличными. Кредитная часть закрывается платежным поручением банка.
+                </div>
+                <div class="rule-box rule-law">
+                  <b>⚖️ Залоги по закону:</b>  
+                  • Залог Продавца по п. 5 ст. 488 ГК РФ <b>НЕ ВОЗНИКАЕТ</b>!  
+                  • <b>Квартира:</b> залог в пользу Банка по <b>ст. 77 Федерального закона № 102-ФЗ</b>.  
+                  • <b>Земельный участок:</b> залог по <b>ст. 64.1 Федерального закона № 102-ФЗ</b>.  
+                  • <b>Жилой дом:</b> залог по <b>ст. 64.2 Федерального закона № 102-ФЗ</b> + разделение цен дома и земли по <b>ст. 555 ГК РФ</b>.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1.4: Свои + Ипотека + МСК (Комбо) -->
+        <div class="scenario-card" data-group="clean matkap" data-tags="собственные средства ипотека мск комбо тройная сделка">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-title-group">
+              <span class="pill" style="background:#F3E8FF; color:#7E22CE;">1.4</span>
+              <span class="card-title">Свои средства + Ипотека + Материнский капитал (Комбо)</span>
+            </div>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <div class="rule-box rule-receipt" style="background:#F0FDF4; border-color:var(--green-600); color:#166534;">
+              <b>👶 ВОЗРАСТ РЕБЕНКА НЕ ОГРАНИЧЕН:</b>  
+              Поскольку привлекается ипотечный кредит, средства МСК разрешено использовать <b>В ЛЮБОМ ВОЗРАСТЕ РЕБЕНКА</b> (хоть с рождения — ч. 6.1 ст. 10 Закона № 256-ФЗ).
+            </div>
+            <div class="instrument-grid">
+              <div class="instrument-item">
+                <div>• Три источника платежа: 1) Свои средства (ПВ), 2) Ипотечный кредит, 3) Средства МСК от СФР.</div>
+                <div>• Расчеты: ПВ и кредит — через СБР / аккредитив, МСК — прямой безналичный перевод от СФР Продавцу.</div>
+                <div class="rule-box rule-receipt">
+                  <b>📝 Расписка:</b> Продавец пишет расписку исключительно на наличный ПВ. На ипотеку и МСК расписки не составляются.
+                </div>
+                <div class="rule-box rule-law">
+                  <b>⚖️ Закон:</b> Залог Продавца исключен (ст. 488 ГК). Залог Банка по ст. 77 / 64.1 / 64.2 Закона № 102-ФЗ.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1.5: Военная ипотека (НИС) -->
+        <div class="scenario-card" data-group="clean military" data-tags="военная ипотека росвоенипотека цжз нис 117-фз">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-title-group">
+              <span class="pill" style="background:#FEF3C7; color:#92400E;">1.5</span>
+              <span class="card-title">Военная ипотека (НИС: ЦЖЗ + Кредит банка + Свои)</span>
+            </div>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <div style="font-size:12px; color:var(--slate-600); margin-bottom:8px;">
+              Федеральный закон № 117-ФЗ «О накопительно-ипотечной системе жилищного обеспечения военнослужащих». Финансирование из ФГКУ «Росвоенипотека» + ипотечный банк.
+            </div>
+            <div class="instrument-grid">
+              <div class="instrument-item">
+                <span class="method-badge accred">Аккредитив / Спецсчет банка</span>
+                <div>• Покупатель-военнослужащий привлекает средства целевого жилищного займа (ЦЖЗ) + кредит уполномоченного банка (ПСБ, ВТБ, Сбер, Дом.рф).</div>
+                <div class="rule-box rule-receipt">
+                  <b>📝 Расписка:</b> Только на сумму личных наличных средств (если они вносились военнослужащим сверх ЦЖЗ и кредита).
+                </div>
+                <div class="rule-box rule-law">
+                  <b>⚖️ Двойной залог в силу закона:</b>  
+                  1) В пользу Банка — по ст. 77 Федерального закона № 102-ФЗ;  
+                  2) В пользу Российской Федерации (в лице ФГКУ «Росвоенипотека») — по ст. 77 102-ФЗ до полного погашения ЦЖЗ.  
+                  Залог Продавца по п. 5 ст. 488 ГК РФ <b>НЕ ВОЗНИКАЕТ</b>.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PILLAR 2: ОБЪЕКТ В ЗАЛОГЕ У КРЕДИТОРА -->
+    <div class="pillar pillar-2" id="pillar-pledge">
+      <div class="pillar-header">
+        <div>
+          <div class="pillar-title">
+            <span>🟠 СТВОЛ II: Объект В ЗАЛОГЕ у банка Продавца</span>
+          </div>
+          <div class="pillar-subtitle">Ипотека / обременение у Продавца: требуется целевое гашение долга и снятие залога</div>
+        </div>
+        <span class="badge badge-amber">4 сценария перезалога</span>
+      </div>
+
+      <div class="scenarios-list">
+
+        <!-- 2.1: Свои средства у покупателя + Обременение у продавца -->
+        <div class="scenario-card open" data-group="pledge" data-tags="обременение залог погашение трансферация аккредитив перезалог">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-title-group">
+              <span class="pill" style="background:#FEF3C7; color:#92400E;">2.1</span>
+              <span class="card-title">Свои средства Покупателя ➔ Гашение залога Продавца</span>
+            </div>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <div style="font-size:12px; color:var(--slate-600); margin-bottom:8px;">
+              Покупатель с наличными покупает квартиру с ипотекой. Деньги расщепляются: транш на закрытие долга + остаток продавцу.
+            </div>
+            <div class="instrument-grid">
+
+              <div class="instrument-item">
+                <span class="method-badge cash">А. Наличные (досрочное гашение до ОДКП)</span>
+                <div>• Задаток на ПДКП передается Продавцу наличными под обязательство немедленно внести в банк для закрытия долга.</div>
+                <div class="rule-box rule-warning">
+                  <b>⚠️ Риск:</b> Продавец может растратить деньги. Безопасно только при небольшом долге (&lt; 200–300 тыс. руб.) и личном контроле внесения в кассу банка!
+                </div>
+                <div class="rule-box rule-receipt">
+                  <b>📝 Расписка:</b> Составляется в день передачи денег с целевым назначением «на погашение кредита перед Банком».
+                </div>
+              </div>
+
+              <div class="instrument-item active-method">
+                <span class="method-badge accred">Б. Покрытый трансферабельный аккредитив</span>
+                <div>• <b>Золотой стандарт 2026 года!</b> Покупатель открывает аккредитив с условием о трансферации в банке (Сбер, ВТБ).</div>
+                <div>• После регистрации перехода права банк автоматически списывает сумму долга Продавца для снятия ипотеки, а остаток выдает Продавцу.</div>
+                <div class="rule-box rule-receipt">
+                  <b>📝 Расписка:</b> На задаток — налом. На сумму аккредитива расписка не выдается (всё закрывается платежками банка).
+                </div>
+                <div class="rule-box rule-law">
+                  <b>⚖️ Закон:</b> п. 5 ст. 488 ГК РФ — залог Продавца НЕ возникает. Продавец обязуется обеспечить снятие залога за 5 рабочих дней.
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- 2.2: Свои + Ипотека Покупателя (Перезалог между банками) -->
+        <div class="scenario-card" data-group="pledge" data-tags="перезалог межгородовой ипотека на ипотеку сбер втб домклик">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-title-group">
+              <span class="pill" style="background:#FEE2E2; color:#B91C1C;">2.2</span>
+              <span class="card-title">Ипотека Покупателя ➔ Гашение залога Продавца (Перезалог)</span>
+            </div>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <div style="font-size:12px; color:var(--slate-600); margin-bottom:8px;">
+              У продавца залог (Банк А), у покупателя ипотека (Банк Б или тот же Банк А). Сделка проводится по внутрибанковской программе «Покупка из-под залога».
+            </div>
+            <div class="instrument-grid">
+              <div class="instrument-item">
+                <span class="method-badge sbr">Сервис банка (СБР Сбера / М2 ВТБ / Аккредитив)</span>
+                <div>• Если один банк (Сбер ➔ Сбер): программа Домклик «Сделка с залогом Сбера». Средства покупателя списываются напрямую на ссудный счет продавца без вывода на руки.</div>
+                <div>• Если разные банки (ВТБ ➔ Сбер): трансферабельный аккредитив или межгородовой сервис безопасных расчетов.</div>
+                <div class="rule-box rule-receipt">
+                  <b>📝 Расписка:</b> Продавец выдает расписку только на сумму первоначального взноса, внесенного наличными. Кредитная часть закрывается платежкой.
+                </div>
+                <div class="rule-box rule-law">
+                  <b>⚖️ Залоги:</b> Залог Продавца исключен по ст. 488 ГК. Сначала гасится старый залог Продавца, затем регистрируется залог Банка Покупателя (ст. 77 / 64.1 / 64.2).
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2.3: Свои + МСК + Обременение у Продавца -->
+        <div class="scenario-card" data-group="pledge matkap" data-tags="мск обременение залог продавца 3 года">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-title-group">
+              <span class="pill" style="background:#FEF3C7; color:#92400E;">2.3</span>
+              <span class="card-title">Свои + МСК (Без кредита) ➔ Объект с обременением</span>
+            </div>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <div class="rule-box rule-warning">
+              <b>⚠️ СФР НЕ ГАСИТ ЧУЖОЙ КРЕДИТ!</b>  
+              Социальный фонд России никогда не переведет средства МСК на погашение кредита Продавца! Средствами МСК можно оплатить только остаток стоимости Продавцу ПОСЛЕ снятия залога.
+            </div>
+            <div class="instrument-grid">
+              <div class="instrument-item">
+                <div>• Гашение долга Продавца осуществляется <b>ИСКЛЮЧИТЕЛЬНО из собственных средств Покупателя</b> (наличный задаток или аккредитив с трансферацией).</div>
+                <div>• МСК перечисляется вторым этапом (до 21 дня) на чистый счет Продавца после погашения записи об ипотеке в ЕГРН.</div>
+                <div class="rule-box rule-receipt">
+                  <b>📝 Возраст ребенка:</b> строго старше 3 лет!
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2.4: Свои + Ипотека + МСК + Обременение (Сложная комбо-сделка) -->
+        <div class="scenario-card" data-group="pledge matkap" data-tags="сложная сделка ипотека мск залог продавца трансферация">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-title-group">
+              <span class="pill" style="background:#F3E8FF; color:#7E22CE;">2.4</span>
+              <span class="card-title">Свои + Ипотека + МСК ➔ Объект с обременением (Максимальная сложность)</span>
+            </div>
+            <span class="chevron">▼</span>
+          </div>
+          <div class="card-body">
+            <div style="font-size:12px; color:var(--slate-600); margin-bottom:8px;">
+              Покупатель берет ипотеку + привлекает МСК, а квартира Продавца уже заложена.
+            </div>
+            <div class="instrument-grid">
+              <div class="instrument-item">
+                <div>• Погашение залога Продавца: привлекается ПВ покупателя + кредитные средства его банка через трансферацию / перезалог.</div>
+                <div>• Средства МСК направляются либо в ПВ (если согласовано банком), либо на досрочное погашение уже нового кредита Покупателя после сделки.</div>
+                <div class="rule-box rule-law">
+                  <b>⚖️ Контроль чистоты:</b> Требуется жесткий контроль снятия предыдущей закладной перед выдачей транша Продавцу.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Summary Reference Table -->
+  <div class="table-section">
+    <h2>Сводная матрица нормативных статей и правил расписок</h2>
+    <p>Быстрая шпаргалка для риелтора и юриста перед составлением договора купли-продажи:</p>
+    
+    <table class="matrix-table">
+      <thead>
+        <tr>
+          <th>Тип сделки</th>
+          <th>Залог Продавца (ст. 488 ГК)</th>
+          <th>Залог Банка (102-ФЗ)</th>
+          <th>Особые условия по закону</th>
+          <th>Порядок выдачи расписок</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>1. Наличные (100% свои)</b></td>
+          <td><span class="pill" style="background:#DCFCE7; color:#15803D;">НЕ возникает (п. 5 ст. 488)</span></td>
+          <td>Отсутствует</td>
+          <td>Ст. 556 ГК (акт п/п)</td>
+          <td><b>1 общая расписка</b> в день ОДКП (с учетом задатка)</td>
+        </tr>
+        <tr>
+          <td><b>2. СБР / Аккредитив (свои)</b></td>
+          <td><span class="pill" style="background:#DCFCE7; color:#15803D;">НЕ возникает (п. 5 ст. 488)</span></td>
+          <td>Отсутствует</td>
+          <td>Заявление об открытии ПДн в Росреестр (218-ФЗ)</td>
+          <td>Расписка <b>только на задаток</b>. Остаток — платежка банка</td>
+        </tr>
+        <tr>
+          <td><b>3. Ипотека: Квартира</b></td>
+          <td><span class="pill" style="background:#DCFCE7; color:#15803D;">НЕ возникает (п. 5 ст. 488)</span></td>
+          <td><span class="pill" style="background:#E0E7FF; color:#4338CA;">ст. 77 Федерального закона № 102-ФЗ</span></td>
+          <td>Реквизиты Кредитного договора (номер, дата, банк)</td>
+          <td>Расписка <b>только на наличный ПВ</b>. Кредит — платежка банка</td>
+        </tr>
+        <tr>
+          <td><b>4. Ипотека: Земельный участок</b></td>
+          <td><span class="pill" style="background:#DCFCE7; color:#15803D;">НЕ возникает (п. 5 ст. 488)</span></td>
+          <td><span class="pill" style="background:#E0E7FF; color:#4338CA;">ст. 64.1 Федерального закона № 102-ФЗ</span></td>
+          <td>Кадастровый номер, категория и ВРИ земли</td>
+          <td>Расписка <b>только на наличный ПВ</b></td>
+        </tr>
+        <tr>
+          <td><b>5. Ипотека: Дом + Земля</b></td>
+          <td><span class="pill" style="background:#DCFCE7; color:#15803D;">НЕ возникает (п. 5 ст. 488)</span></td>
+          <td><span class="pill" style="background:#E0E7FF; color:#4338CA;">ст. 64.1 (земля) + ст. 64.2 (дом)</span></td>
+          <td><b>Строго ст. 555 ГК РФ</b>: раздельные цены дома и участка!</td>
+          <td>Расписка <b>только на наличный ПВ</b></td>
+        </tr>
+        <tr>
+          <td><b>6. МСК без кредита</b></td>
+          <td><span class="pill" style="background:#DCFCE7; color:#15803D;">НЕ возникает (по соглашению)</span></td>
+          <td>Отсутствует</td>
+          <td><b>Ребенку > 3 лет!</b> Срок выплаты СФР до 21 дня</td>
+          <td>Расписка <b>только на ПВ</b>. МСК — платежка казначейства</td>
+        </tr>
+        <tr>
+          <td><b>7. МСК с ипотекой</b></td>
+          <td><span class="pill" style="background:#DCFCE7; color:#15803D;">НЕ возникает (п. 5 ст. 488)</span></td>
+          <td><span class="pill" style="background:#E0E7FF; color:#4338CA;">ст. 77 / 64.1 / 64.2</span></td>
+          <td>Возраст ребенка <b>любой</b> (хоть с рождения)</td>
+          <td>Расписка <b>только на наличный ПВ</b></td>
+        </tr>
+        <tr>
+          <td><b>8. Перезалог / Обременение</b></td>
+          <td><span class="pill" style="background:#DCFCE7; color:#15803D;">НЕ возникает (п. 5 ст. 488)</span></td>
+          <td>Старый залог гасится, новый регистрируется</td>
+          <td>Трансферация аккредитива / Снятие залога за 5 дней</td>
+          <td>Расписка на задаток. Остальное — банковские платежки</td>
+        </tr>
+        <tr>
+          <td><b>9. Военная ипотека (НИС)</b></td>
+          <td><span class="pill" style="background:#DCFCE7; color:#15803D;">НЕ возникает (п. 5 ст. 488)</span></td>
+          <td><span class="pill" style="background:#FEF3C7; color:#92400E;">ст. 77 Банку + ст. 77 Росвоенипотеке</span></td>
+          <td>117-ФЗ, согласование ДКП с Росвоенипотекой</td>
+          <td>Только на доплату своими (если была)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    LegalEstate 2.0 &bull; Экспертная база знаний &bull; Разработано для Ильи Сергеевича Фролова и команды экспертов «Этажи»
+  </footer>
+
+</div>
+
+<script>
+  function toggleCard(headerElement) {
+    const card = headerElement.closest('.scenario-card');
+    card.classList.toggle('open');
+  }
+
+  function toggleAllCards(isOpen) {
+    document.querySelectorAll('.scenario-card').forEach(card => {
+      if (isOpen) {
+        card.classList.add('open');
+      } else {
+        card.classList.remove('open');
+      }
+    });
+  }
+
+  function setFilter(filterType, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const cleanPillar = document.getElementById('pillar-clean');
+    const pledgePillar = document.getElementById('pillar-pledge');
+    const cards = document.querySelectorAll('.scenario-card');
+
+    if (filterType === 'all') {
+      cleanPillar.style.display = 'flex';
+      pledgePillar.style.display = 'flex';
+      cards.forEach(c => c.style.display = 'block');
+    } else if (filterType === 'clean') {
+      cleanPillar.style.display = 'flex';
+      pledgePillar.style.display = 'none';
+      cards.forEach(c => c.style.display = 'block');
+    } else if (filterType === 'pledge') {
+      cleanPillar.style.display = 'none';
+      pledgePillar.style.display = 'flex';
+      cards.forEach(c => c.style.display = 'block');
+    } else if (filterType === 'matkap') {
+      cleanPillar.style.display = 'flex';
+      pledgePillar.style.display = 'flex';
+      cards.forEach(c => {
+        if (c.dataset.group && c.dataset.group.includes('matkap')) {
+          c.style.display = 'block';
+          c.classList.add('open');
+        } else {
+          c.style.display = 'none';
+        }
+      });
+    } else if (filterType === 'military') {
+      cleanPillar.style.display = 'flex';
+      pledgePillar.style.display = 'none';
+      cards.forEach(c => {
+        if (c.dataset.group && c.dataset.group.includes('military')) {
+          c.style.display = 'block';
+          c.classList.add('open');
+        } else {
+          c.style.display = 'none';
+        }
+      });
+    }
+  }
+
+  function filterCards() {
+    const query = document.getElementById('search-input').value.toLowerCase().trim();
+    const cards = document.querySelectorAll('.scenario-card');
+
+    cards.forEach(card => {
+      const text = card.textContent.toLowerCase();
+      const tags = (card.dataset.tags || '').toLowerCase();
+      if (!query || text.includes(query) || tags.includes(query)) {
+        card.style.display = 'block';
+        if (query) {
+          card.classList.add('open');
+        }
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
