@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Матрица договоров недвижимости | ПДКП и ОДКП — «Этажи»</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --brand-red: #C8102E;
+      --brand-red-dark: #9B0D23;
+      --brand-red-light: #FEE2E2;
+      --slate-900: #0F172A;
+      --slate-800: #1E293B;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748B;
+      --slate-200: #E2E8F0;
+      --slate-100: #F1F5F9;
+      --slate-50: #F8FAFC;
+      --white: #FFFFFF;
+      --accent-blue: #0284C7;
+      --accent-green: #16A34A;
+      --accent-purple: #7C3AED;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--slate-50);
+      color: var(--slate-900);
+      line-height: 1.5;
+      padding-bottom: 60px;
+    }
+
+    /* HEADER */
+    header {
+      background: linear-gradient(135deg, var(--slate-900) 0%, var(--slate-800) 100%);
+      color: var(--white);
+      padding: 24px 32px;
+      border-bottom: 4px solid var(--brand-red);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+    .header-content {
+      max-width: 1600px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .brand-badge {
+      background: var(--brand-red);
+      color: var(--white);
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 6px;
+      letter-spacing: 1px;
+      font-size: 14px;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    .subtitle {
+      color: var(--slate-200);
+      font-size: 13px;
+      margin-top: 4px;
+    }
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--brand-red);
+      color: var(--white);
+    }
+    .btn-primary:hover {
+      background: var(--brand-red-dark);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: var(--slate-700);
+      color: var(--white);
+    }
+    .btn-secondary:hover {
+      background: var(--slate-600);
+    }
+
+    /* CONTROLS & TABS */
+    .controls-bar {
+      max-width: 1600px;
+      margin: 20px auto 0;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .tabs-group {
+      display: flex;
+      background: var(--slate-200);
+      padding: 4px;
+      border-radius: 8px;
+      gap: 4px;
+    }
+    .tab-btn {
+      padding: 8px 18px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--slate-600);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tab-btn.active {
+      background: var(--white);
+      color: var(--brand-red);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    .figma-tip {
+      background: #EFF6FF;
+      border: 1px solid #BFDBFE;
+      color: #1E40AF;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* MAIN CONTAINER */
+    .main-container {
+      max-width: 1600px;
+      margin: 20px auto;
+      padding: 0 24px;
+    }
+
+    /* GRIDS & CARDS */
+    .diagram-card {
+      background: var(--white);
+      border-radius: 12px;
+      border: 1px solid var(--slate-200);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .card-header {
+      padding: 16px 24px;
+      background: var(--slate-100);
+      border-bottom: 1px solid var(--slate-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .card-badge {
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-pdkp { background: #DBEAFE; color: #1D4ED8; }
+    .badge-odkp { background: #DCFCE7; color: #15803D; }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--slate-900);
+    }
+    .card-body {
+      padding: 24px;
+      overflow-x: auto;
+      display: flex;
+      justify-content: center;
+      background: #FAFBFD;
+      min-height: 500px;
+    }
+
+    /* SPLIT VIEW */
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    /* COMPARISON TABLE */
+    .table-card {
+      background: var(--white);
+      border-radius: 12px;
+      border: 1px solid var(--slate-200);
+      overflow: hidden;
+      margin-top: 30px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+    .comp-table th {
+      background: var(--slate-900);
+      color: var(--white);
+      padding: 14px 18px;
+      font-weight: 600;
+      border-bottom: 3px solid var(--brand-red);
+    }
+    .comp-table td {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--slate-200);
+      vertical-align: top;
+    }
+    .comp-table tr:nth-child(even) td {
+      background: var(--slate-50);
+    }
+    .comp-table tr:hover td {
+      background: #FFF1F2;
+    }
+    .block-name {
+      font-weight: 700;
+      color: var(--slate-800);
+    }
+    .pdkp-val {
+      color: #1E40AF;
+    }
+    .odkp-val {
+      color: #15803D;
+      font-weight: 600;
+    }
+
+    /* TOAST NOTIFICATION */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--slate-900);
+      color: var(--white);
+      padding: 14px 22px;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      font-size: 13.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 4px solid var(--brand-red);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000;
+    }
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* PRINT */
+    @media print {
+      header, .controls-bar, .card-header .btn, #toast { display: none !important; }
+      body { background: #fff; padding: 0; }
+      .diagram-card { border: none; box-shadow: none; }
+      .card-body { overflow: visible; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-content">
+      <div class="brand-title">
+        <span class="brand-badge">ЭТАЖИ</span>
+        <div>
+          <h1>Матрица договоров недвижимости: ПДКП и ОДКП</h1>
+          <div class="subtitle">Сквозная модульная архитектура LegalEstate • Структура веток, сторон, объектов и расчетов</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a href="deal_settlement_tree.html" class="btn btn-secondary">🌲 Дерево расчетов (24 ветки)</a>
+        <button class="btn btn-primary" onclick="window.print()">🖨️ Печать / PDF</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="controls-bar">
+    <div class="tabs-group">
+      <button class="tab-btn" onclick="switchView('pdkp')" id="tab-pdkp">1. Предварительный договор (ПДКП)</button>
+      <button class="tab-btn" onclick="switchView('odkp')" id="tab-odkp">2. Основной договор (ОДКП)</button>
+      <button class="tab-btn active" onclick="switchView('split')" id="tab-split">3. Сравнение рядом (Сплит)</button>
+    </div>
+    <div class="figma-tip">
+      💡 <b>Как перенести в FigJam:</b> Нажмите кнопку «📋 Скопировать для FigJam» и вставьте прямо на доску через <b>Ctrl + V</b>!
+    </div>
+  </div>
+
+  <main class="main-container">
+
+    <!-- VIEW CONTAINER -->
+    <div id="views-wrapper">
+
+      <!-- PDKP CARD -->
+      <div class="diagram-card" id="card-pdkp">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="card-badge badge-pdkp">ПДКП</span>
+            <span class="card-title">Архитектура Предварительного договора (ПДКП)</span>
+          </div>
+          <div>
+            <button class="btn btn-primary" onclick="copyMermaid('pdkp')">📋 Скопировать Mermaid для FigJam</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <pre class="mermaid" id="mermaid-pdkp">
+flowchart TD
+    subgraph TITLE_BLOCK ["📄 ШАПКА ПДКП"]
+        CITY_L["Место заключения (город)"]
+        TITLE_C["ПРЕДВАРИТЕЛЬНЫЙ ДОГОВОР КУПЛИ-ПРОДАЖИ (ПДКП)"]
+        DATE_R["Дата заключения"]
+    end
+
+    subgraph PARTIES ["👥 СТОРОНЫ ДОГОВОРА"]
+        direction LR
+        subgraph SELLER_BOX ["🟦 СТОРОНА ПРОДАВЦА"]
+            S_MAIN["Продавец (Собственник)"]
+            subgraph S_TYPES ["Варианты Продавца"]
+                S_A["1 / 2 / 3 Взрослых собственника"]
+                S_U14["1 / 2 / 3 Собственника до 14 лет (родители)"]
+                S_1418["1 / 2 / 3 Собственника 14-18 лет (с согласия)"]
+                S_SPOUSE["2 Взрослых супруга (совместная собств.)"]
+            end
+        end
+
+        subgraph BUYER_BOX ["🟥 СТОРОНА ПОКУПАТЕЛЯ"]
+            B_MAIN["Покупатель (Приобретатель)"]
+            subgraph B_TYPES ["Варианты Покупателя"]
+                B_A["1 / 2 / 3 Взрослых покупателя"]
+                B_U14["1 / 2 / 3 Покупателя до 14 лет (родители)"]
+                B_1418["1 / 2 / 3 Покупателя 14-18 лет (с согласия)"]
+                B_SPOUSE["2 Взрослых супруга (совместная / долевая)"]
+            end
+        end
+    end
+
+    subgraph CORE ["🎯 ПРЕДМЕТ И ОБЪЕКТ ПДКП"]
+        PREDMET["1. ПРЕДМЕТ: Обязательство заключить в будущем ОДКП до определенного срока (дедлайн)"]
+        DESC["2. ОПИСАТЕЛЬНЫЕ ДАННЫЕ ОБЪЕКТА: Адрес, кад. номер, площадь, документы, мебель/техника"]
+        
+        subgraph OBJECTS ["Виды объектов (1 или связка в сделке)"]
+            OBJ_FLAT["Квартира"]
+            OBJ_HOUSE["Жилой дом + Земельный участок"]
+            OBJ_LAND["Земельный участок (ИЖС/СНТ)"]
+            OBJ_LAND_BLD["ЗУ + Нежилое строение (баня, гараж, сарай)"]
+            OBJ_ROOM["Комната в коммуналке (ст. 250 ГК РФ)"]
+            OBJ_COMM["Нежилое коммерческое помещение"]
+            OBJ_COMM_LND["Нежилое коммерческое помещение + ЗУ"]
+        end
+        
+        STATUS_SHARE["Форма: ДОЛЯ В ПРАВЕ"]
+        STATUS_WHOLE["Форма: ОБЪЕКТ ЦЕЛИКОМ"]
+    end
+
+    subgraph FINANCE ["💰 ЦЕНА, ЗАДАТОК И СЦЕНАРИИ РАСЧЕТОВ"]
+        PRICE["Полная цена объекта и сумма ЗАДАТКА (ст. 380-381 ГК РФ)"]
+        SETTLE_TREE["Сценарии расчетов (24 ветки: Наличные / СБР / Аккредитив / Ячейка / Ипотека / МСК)"]
+    end
+
+    subgraph PREPARATION ["📋 НЕОБХОДИМАЯ ПОДГОТОВКА К СДЕЛКЕ"]
+        DOCS_S["Список документов от Продавца: выписка ЕГРН, ЖКХ, СФР по МСК, ПНД/НД"]
+        ACTIONS["Условия и действия: приказ опеки, согласие супругов, одобрение банка, снятие залогов"]
+        DOCS_B["Список документов от Покупателя: паспорта, кредитный договор, подтверждение средств"]
+    end
+
+    subgraph LEGAL_BLOCKS ["⚖️ ЗАЩИТНЫЕ УСЛОВИЯ И ОБЯЗАТЕЛЬСТВА"]
+        PARITET["3. ПАРИТЕТ НАМЕРЕНИЙ (Заверения об обстоятельствах ст. 431.2 ГК РФ)"]
+        REG_USERS["4. ЗАРЕГИСТРИРОВАННЫЕ ЛИЦА (Снятие с рег. учета до сделки или в срок после)"]
+        KEYS["5. СРОКИ ОСВОБОЖДЕНИЯ ОБЪЕКТА И ПЕРЕДАЧА КЛЮЧЕЙ (Передаточный акт ст. 556 ГК)"]
+        LIABILITY["6. ОТВЕТСТВЕННОСТЬ СТОРОН (Судьба задатка ст. 381 ГК РФ, неустойка 0.1%/день)"]
+        FORCE_MAJEURE["7. ФОРС-МАЖОР (Форс-мажор ст. 401 ГК, отказ банка, мобилизация)"]
+        CLOSING["8. ЗАКЛЮЧИТЕЛЬНЫЕ ПОЛОЖЕНИЯ И ПОДПИСИ СТОРОН (Построчный формат на всю ширину)"]
+    end
+
+    TITLE_BLOCK --> PARTIES
+    S_MAIN --> S_TYPES
+    B_MAIN --> B_TYPES
+
+    S_MAIN --> PREDMET
+    B_MAIN --> PREDMET
+    PREDMET --> DESC
+    DESC --> OBJECTS
+    OBJECTS --> STATUS_SHARE
+    OBJECTS --> STATUS_WHOLE
+
+    B_MAIN --> FINANCE
+    FINANCE --> S_MAIN
+
+    S_MAIN --> PREPARATION
+    B_MAIN --> PREPARATION
+
+    S_MAIN --> LEGAL_BLOCKS
+    B_MAIN --> LEGAL_BLOCKS
+          </pre>
+        </div>
+      </div>
+
+      <!-- ODKP CARD -->
+      <div class="diagram-card" id="card-odkp">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="card-badge badge-odkp">ОДКП</span>
+            <span class="card-title">Архитектура Основного договора купли-продажи (ОДКП)</span>
+          </div>
+          <div>
+            <button class="btn btn-primary" onclick="copyMermaid('odkp')">📋 Скопировать Mermaid для FigJam</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <pre class="mermaid" id="mermaid-odkp">
+flowchart TD
+    subgraph TITLE_BLOCK_O ["📄 ШАПКА ОДКП"]
+        CITY_O["Место заключения (город)"]
+        TITLE_O["ОСНОВНОЙ ДОГОВОР КУПЛИ-ПРОДАЖИ (ОДКП)"]
+        DATE_O["Дата заключения"]
+    end
+
+    subgraph PARTIES_O ["👥 СТОРОНЫ ДОГОВОРА (ПЕРЕХОД ПРАВА)"]
+        direction LR
+        subgraph SELLER_BOX_O ["🟦 СТОРОНА ПРОДАВЦА"]
+            SO_MAIN["Продавец (Собственник)"]
+            subgraph SO_TYPES ["Режим отчуждения Продавца"]
+                SO_A["1 / 2 / 3 Взрослых собственника"]
+                SO_U14["1 / 2 / 3 До 14 лет (приказ опеки + нотариус)"]
+                SO_1418["1 / 2 / 3 От 14 до 18 лет (согласие + опека)"]
+                SO_SPOUSE["2 Взрослых супруга (согласие супруга ст. 35 СК)"]
+            end
+        end
+
+        subgraph BUYER_BOX_O ["🟥 СТОРОНА ПОКУПАТЕЛЯ"]
+            BO_MAIN["Покупатель (Приобретатель)"]
+            subgraph BO_TYPES ["Режим приобретения Покупателя"]
+                BO_INDIV["В индивидуальную собственность"]
+                BO_JOINT["В общую совместную собственность супругов"]
+                BO_SHARE["В общую долевую собственность (доли детям/взрослым)"]
+                BO_KIDS["С участием несовершеннолетних (маткапитал 256-ФЗ)"]
+            end
+        end
+    end
+
+    subgraph CORE_O ["🎯 ПРЕДМЕТ ДОГОВОРА И ОБЪЕКТ (СТ. 549-550 ГК РФ)"]
+        PREDMET_O["1. ПРЕДМЕТ: Продавец передает в собственность, а Покупатель принимает и оплачивает объект"]
+        DESC_O["2. ОПИСАТЕЛЬНЫЕ ДАННЫЕ: Адрес по ФИАС, кад. номер, площадь, этаж, документы-основания права"]
+        
+        subgraph OBJECTS_O ["Виды объектов (1 или связка в сделке)"]
+            OBJO_FLAT["Квартира"]
+            OBJO_HOUSE["Жилой дом + Земельный участок (ст. 552, 555 ГК РФ)"]
+            OBJO_LAND["Земельный участок (ИЖС/СНТ)"]
+            OBJO_LAND_BLD["ЗУ + Нежилое строение (баня, гараж, сарай)"]
+            OBJO_ROOM["Комната в коммуналке (отказы соседей ст. 250 ГК)"]
+            OBJO_COMM["Нежилое коммерческое помещение"]
+            OBJO_COMM_LND["Нежилое коммерческое помещение + ЗУ"]
+        end
+        
+        STATUS_SHARE_O["Форма: ДОЛЯ В ПРАВЕ"]
+        STATUS_WHOLE_O["Форма: ОБЪЕКТ ЦЕЛИКОМ"]
+    end
+
+    subgraph FINANCE_O ["💰 ЦЕНА ДОГОВОРА И ИСПОЛНЕНИЕ РАСЧЕТОВ"]
+        PRICE_O["Полная цена объекта (при Доме+ЗУ - раздельные цены ст. 555 ГК)"]
+        OFFSET_O["Зачет ранее внесенного задатка/аванса по ПДКП"]
+        SETTLE_O["Финальный расчет: СБР (номинальный счет) / Аккредитив / Ячейка / Наличные"]
+        MORTGAGE_O["Ипотечный кредит банка (ст. 77 / 64.1 / 64.2 102-ФЗ, залог в силу закона)"]
+        MAT_CAP_O["Средства МСК / Сертификаты (безналично из СФР до 21 дня)"]
+        NO_PLEDGE_O["Отказ от залога Продавца (п. 5 ст. 488 ГК РФ НЕ применяется)"]
+    end
+
+    subgraph REGISTRATION_O ["🏛️ ГОСУДАРСТВЕННАЯ РЕГИСТРАЦИЯ ПРАВА (СТ. 551 ГК РФ)"]
+        REG_FILING_O["Подача: Электронная регистрация / Нотариус / МФЦ Росреестра"]
+        RIGHT_MOMENT_O["Момент возникновения права: внесение записи в ЕГРН (ст. 8.1, 223 ГК)"]
+        FEES_O["Распределение расходов: госпошлина, электронная регистрация, банк"]
+    end
+
+    subgraph ESSENTIAL_O ["⚖️ СУЩЕСТВЕННЫЕ И ЗАЩИТНЫЕ УСЛОВИЯ ОДКП"]
+        USERS_558_O["3. ПРАВА ПОЛЬЗОВАНИЯ (ст. 558 ГК РФ): отсутствие проживающих / обязательство выписки"]
+        TRANSFER_556_O["4. ПЕРЕДАЧА ОБЪЕКТА (ст. 556 ГК РФ): Передаточный акт в срок N дней / договор имеет силу акта"]
+        WARRANTIES_431_O["5. ЗАВЕРЕНИЯ ОБ ОБСТОЯТЕЛЬСТВАХ (ст. 431.2, 460, 461 ГК): юр. чистота, нет банкротства 127-ФЗ"]
+        LIABILITY_O["6. ОТВЕТСТВЕННОСТЬ СТОРОН: пени 0.1%/день за задержку оплаты или освобождения, ст. 461 ГК"]
+        FORCE_MAJEURE_O["7. ФОРС-МАЖОР (Обстоятельства непреодолимой силы ст. 401 ГК РФ)"]
+        SIGNATURES_O["8. АДРЕСА, РЕКВИЗИТЫ И ПОДПИСИ (Построчный формат на всю ширину листа 17 см)"]
+    end
+
+    TITLE_BLOCK_O --> PARTIES_O
+    SO_MAIN --> SO_TYPES
+    BO_MAIN --> BO_TYPES
+
+    SO_MAIN --> PREDMET_O
+    BO_MAIN --> PREDMET_O
+    PREDMET_O --> DESC_O
+    DESC_O --> OBJECTS_O
+    OBJECTS_O --> STATUS_SHARE_O
+    OBJECTS_O --> STATUS_WHOLE_O
+
+    BO_MAIN --> FINANCE_O
+    FINANCE_O --> SO_MAIN
+
+    SO_MAIN --> REGISTRATION_O
+    BO_MAIN --> REGISTRATION_O
+
+    SO_MAIN --> ESSENTIAL_O
+    BO_MAIN --> ESSENTIAL_O
+          </pre>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- COMPARISON TABLE -->
+    <div class="table-card">
+      <div class="card-header">
+        <span class="card-title">🔍 Сравнительная сквозная матрица: Чем отличаются блоки ПДКП и ОДКП</span>
+      </div>
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th style="width: 20%;">Блок договора</th>
+            <th style="width: 40%;">Предварительный договор (ПДКП)</th>
+            <th style="width: 40%;">Основной договор купли-продажи (ОДКП)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="block-name">1. Предмет договора</td>
+            <td class="pdkp-val"><b>Обязательство сторон заключить в будущем ОДКП</b> до указанного дедлайна (ст. 429 ГК РФ). Право собственности НЕ переходит.</td>
+            <td class="odkp-val"><b>Непосредственная передача имущества в собственность</b> (ст. 549 ГК РФ). Право переходит с момента регистрации в Росреестре.</td>
+          </tr>
+          <tr>
+            <td class="block-name">2. Цена и порядок расчетов</td>
+            <td class="pdkp-val">Фиксация будущей цены и <b>внесение ЗАДАТКА</b> (ст. 380, 381 ГК РФ). Определение схемы будущей оплаты.</td>
+            <td class="odkp-val">Зачет задатка + <b>полный расчет</b> (СБР, аккредитив, ипотека, МСК) + отказ от залога продавца (п. 5 ст. 488 ГК РФ).</td>
+          </tr>
+          <tr>
+            <td class="block-name">3. Подготовка / Регистрация</td>
+            <td class="pdkp-val"><b>Сбор пакета документов</b> (выписка ЕГРН, приказ опеки, справки ПНД, справка СФР по МСК, погашение долгов ЖКХ).</td>
+            <td class="odkp-val"><b>Государственная регистрация права</b> (ст. 551 ГК РФ) в Росреестре/МФЦ/Домклик, госпошлины и электронные каналы.</td>
+          </tr>
+          <tr>
+            <td class="block-name">4. Зарегистрированные лица</td>
+            <td class="pdkp-val">Обязательство продавца выписать всех жильцов ДО сделки либо указать срок выписки после сделки.</td>
+            <td class="odkp-val"><b>Существенное условие по ст. 558 ГК РФ!</b> Перечень лиц, сохраняющих право пользования, либо фиксация их отсутствия.</td>
+          </tr>
+          <tr>
+            <td class="block-name">5. Передача и ключи</td>
+            <td class="pdkp-val">Установление дедлайна и порядка будущей передачи объекта и описи мебели/техники.</td>
+            <td class="odkp-val"><b>Передаточный акт по ст. 556 ГК РФ</b> (отдельный документ либо сам договор имеет силу акта), фактическая вручка ключей.</td>
+          </tr>
+          <tr>
+            <td class="block-name">6. Заверения и гарантии</td>
+            <td class="pdkp-val">Паритет намерений: базовое подтверждение добросовестности и намерения выйти на сделку.</td>
+            <td class="odkp-val"><b>Жесткие заверения по ст. 431.2, 460, 461 ГК РФ</b>: отсутствие банкротства (127-ФЗ), арестов, прав третьих лиц, долгов.</td>
+          </tr>
+          <tr>
+            <td class="block-name">7. Ответственность</td>
+            <td class="pdkp-val"><b>Судьба задатка (ст. 381 ГК РФ)</b>: покупатель виноват — задаток сгорает; продавец виноват — возврат в двойном размере.</td>
+            <td class="odkp-val"><b>Пени 0.1%/день</b> за задержку расчета или освобождения, ст. 461 ГК РФ (возмещение рыночной цены при изъятии объекта).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <div id="toast">
+    <span>✅</span>
+    <span id="toast-text">Код Mermaid скопирован! Перейдите в FigJam и нажмите Ctrl + V.</span>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'neutral',
+      flowchart: {
+        curve: 'basis',
+        nodeSpacing: 40,
+        rankSpacing: 40,
+        useMaxWidth: false
+      }
+    });
+
+    const mermaidSources = {
+      pdkp: document.getElementById('mermaid-pdkp').innerText.trim(),
+      odkp: document.getElementById('mermaid-odkp').innerText.trim()
+    };
+
+    function switchView(mode) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + mode).classList.add('active');
+
+      const wrapper = document.getElementById('views-wrapper');
+      const cardP = document.getElementById('card-pdkp');
+      const cardO = document.getElementById('card-odkp');
+
+      if (mode === 'pdkp') {
+        wrapper.className = '';
+        cardP.style.display = 'block';
+        cardO.style.display = 'none';
+      } else if (mode === 'odkp') {
+        wrapper.className = '';
+        cardP.style.display = 'none';
+        cardO.style.display = 'block';
+      } else {
+        wrapper.className = 'split-grid';
+        cardP.style.display = 'block';
+        cardO.style.display = 'block';
+      }
+    }
+
+    // Default to split
+    switchView('split');
+
+    function copyMermaid(type) {
+      const code = mermaidSources[type];
+      navigator.clipboard.writeText(code).then(() => {
+        showToast(type === 'pdkp' ? 'Дерево ПДКП скопировано в буфер!' : 'Дерево ОДКП скопировано в буфер!');
+      }).catch(err => {
+        showToast('Ошибка копирования: ' + err);
+      });
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-text').innerText = text + ' Откройте FigJam и нажмите Ctrl + V!';
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 4000);
+    }
+  </script>
+</body>
+</html>
