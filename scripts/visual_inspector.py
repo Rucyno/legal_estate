@@ -1,5 +1,6 @@
 import os
 import sys
+import tempfile
 import win32com.client
 import fitz  # PyMuPDF
 
@@ -8,14 +9,15 @@ def inspect_and_render_docx(docx_path, output_dir=None):
     if not os.path.exists(docx_path):
         raise FileNotFoundError(f"DOCX not found: {docx_path}")
 
+    # Внутренний системный scratch агента, проект остается абсолютно чистым
     if output_dir is None:
-        output_dir = os.path.join(os.path.dirname(docx_path), "visual_inspect")
+        output_dir = os.path.join(tempfile.gettempdir(), "antigravity_visual_inspect")
     os.makedirs(output_dir, exist_ok=True)
 
     base_name = os.path.splitext(os.path.basename(docx_path))[0]
     pdf_path = os.path.join(output_dir, f"{base_name}.pdf")
 
-    # 1. Export via MS Word
+    # 1. Export via MS Word COM
     word = win32com.client.Dispatch("Word.Application")
     word.Visible = False
     try:
@@ -26,7 +28,7 @@ def inspect_and_render_docx(docx_path, output_dir=None):
     finally:
         word.Quit()
 
-    # 2. Render each page to 150 DPI PNG
+    # 2. Render each page to 150 DPI PNG for internal agent inspection
     pdf_doc = fitz.open(pdf_path)
     page_images = []
     page_stats = []
@@ -62,10 +64,16 @@ def inspect_and_render_docx(docx_path, output_dir=None):
             "bottom_line": lines[-1] if lines else ""
         })
 
+    pdf_doc.close()
+    if os.path.exists(pdf_path):
+        try:
+            os.remove(pdf_path)
+        except Exception:
+            pass
+
     return {
         "docx": docx_path,
-        "pdf": pdf_path,
-        "total_pages": len(pdf_doc),
+        "total_pages": len(page_stats),
         "word_pages": word_pages,
         "pages": page_stats
     }
