@@ -160,7 +160,7 @@ st.markdown("""
     .data-row-flex {
         display: flex;
         align-items: flex-start;
-        margin-bottom: 0;
+        margin-bottom: 8px;
         font-size: 13.5px;
         color: #334155;
         line-height: 1.5;
@@ -354,13 +354,13 @@ st.markdown("""
         border-top: 3px solid #DC2626 !important;
         border-radius: 12px !important;
         box-shadow: 0 1px 2px rgba(15,23,42,0.05), 0 6px 16px rgba(15,23,42,0.05);
-        padding: 6px 14px 12px 14px;
-        margin-bottom: 18px;
+        padding: 10px 18px 16px 18px;
+        margin-bottom: 20px;
     }
-    [class*="st-key-sec_card_"] [data-testid="stVerticalBlock"] { gap: 0.15rem; }
-    [class*="st-key-sec_card_"] [data-testid="stHorizontalBlock"] { gap: 0.5rem; }
-    [class*="st-key-sec_card_"] .stMarkdown p { margin-bottom: 0; }
-    [class*="st-key-sec_card_"] .section-head { margin-top: 6px; }
+    .st-key-sec_card_obj [data-testid="stVerticalBlock"] { gap: 0.15rem; }
+    .st-key-sec_card_obj [data-testid="stHorizontalBlock"] { gap: 0.5rem; }
+    .st-key-sec_card_obj .stMarkdown p { margin-bottom: 0; }
+    [class*="st-key-sec_card_"] .section-head { margin-top: 4px; }
     [class*="st-key-sec_card_"] [data-testid="stForm"] { padding: 8px 12px; margin: 2px 0 6px 0; background: #F8FAFC; }
 
     /* ===== Маленькие прозрачные карандаши ✏️ ===== */
