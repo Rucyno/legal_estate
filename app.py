@@ -264,6 +264,17 @@ st.markdown("""
         margin-top: 4px;
         margin-bottom: 8px;
     }
+    .right-row {
+        font-size: 13px;
+        line-height: 1.45;
+        color: #334155;
+        padding: 6px 0;
+    }
+    .right-holder-sep {
+        border-top: 1px dashed #E2E8F0;
+        margin: 4px 0 6px 0;
+    }
+    .doc-type-badge {
         display: inline-block;
         padding: 2px 8px;
         border-radius: 10px;
@@ -372,6 +383,34 @@ def save_deals_to_catalog(deals_data):
         st.error(f"Ошибка сохранения каталога: {e}")
         return False
 
+def inline_edit_row(row_html, key, fields, on_save, on_delete=None, help_txt="Изменить строку"):
+    """Строка карточки с карандашом ✏️: клик открывает мини-форму, Enter/«Сохранить» пишет в каталог.
+    fields — список (подпись, текущее значение); on_save получает список новых значений."""
+    show_key = f"show_{key}"
+    c_txt, c_btn = st.columns([12, 1])
+    with c_txt:
+        st.markdown(row_html, unsafe_allow_html=True)
+    with c_btn:
+        if st.button("✏️", key=f"btn_{key}", help=help_txt):
+            st.session_state[show_key] = not st.session_state.get(show_key, False)
+            st.rerun()
+    if st.session_state.get(show_key, False):
+        with st.form(key=f"form_{key}"):
+            new_vals = [st.text_input(lbl, value=str(val or "")) for lbl, val in fields]
+            b1, b2, _ = st.columns([1, 1, 2])
+            save_clicked = b1.form_submit_button("💾 Сохранить")
+            del_clicked = b2.form_submit_button("🗑 Удалить") if on_delete else False
+            if save_clicked:
+                on_save([v.strip() for v in new_vals])
+                save_deals_to_catalog(all_deals)
+                st.session_state[show_key] = False
+                st.rerun()
+            if del_clicked:
+                on_delete()
+                save_deals_to_catalog(all_deals)
+                st.session_state[show_key] = False
+                st.rerun()
+
 # =========================================================================
 # РЕЖИМ 1: ДЕТАЛЬНАЯ КАРТОЧКА СДЕЛКИ (ОТДЕЛЬНЫЙ ЭКРАН / ДОСЬЕ ДЕЛА)
 # =========================================================================
@@ -408,407 +447,331 @@ if "opened_deal_id" in st.session_state and st.session_state["opened_deal_id"]:
     # ---------------------------------------------------------------------
     # БЛОК 1: ОБЪЕКТ НЕДВИЖИМОСТИ (ИДЕАЛЬНОЕ ВЫРАВНИВАНИЕ + КЛИКАБЕЛЬНЫЕ КН + БЕЗ ЛИШНИХ РАМОК)
     # ---------------------------------------------------------------------
-    c_head1, c_head2 = st.columns([4, 1])
-    with c_head1:
-        st.markdown('<div class="section-head">🏢 1. Карточка Объекта Недвижимости (Сведения из ЕГРН)</div>', unsafe_allow_html=True)
-    with c_head2:
-        if st.session_state[edit_obj_key]:
-            if st.button("❌ Отмена", key=f"btn_cancel_obj_{cd.get('id')}", use_container_width=True):
-                st.session_state[edit_obj_key] = False
-                st.rerun()
-        else:
-            if st.button("✏️ Редактировать объект", key=f"btn_edit_obj_{cd.get('id')}", use_container_width=True, type="secondary"):
-                st.session_state[edit_obj_key] = True
-                st.rerun()
+    st.markdown('<div class="section-head">🏢 1. Карточка Объекта Недвижимости (Сведения из ЕГРН)</div>', unsafe_allow_html=True)
 
-    if not st.session_state[edit_obj_key]:
-        # РЕЖИМ ПРОСМОТРА КАРТОЧКИ ОБЪЕКТА
-        col_obj_1, col_obj_2 = st.columns([1, 1], gap="large")
-        with col_obj_1:
-            st.markdown('<div class="sub-section-head">📋 Лист 1: Основные характеристики объекта</div>', unsafe_allow_html=True)
-            
-            # --- 1. Вид объекта ---
-            c_v1, c_v2 = st.columns([12, 1])
-            with c_v1:
-                st.markdown(f'''
-                <div class="data-row-flex">
-                    <div class="data-label-fixed">Вид объекта:</div>
-                    <div class="data-val-fixed"><b>{obj.get("object_type", "Помещение")}</b></div>
-                </div>
-                ''', unsafe_allow_html=True)
-            with c_v2:
-                btn_ed_type = st.button("✏️", key=f"btn_inline_objtype_{cd.get('id')}", help="Изменить вид объекта")
-            if btn_ed_type:
+    # РЕЖИМ ПРОСМОТРА КАРТОЧКИ ОБЪЕКТА (ПОСТРОЧНОЕ РЕДАКТИРОВАНИЕ ПО КАРАНДАШУ)
+    col_obj_1, col_obj_2 = st.columns([1, 1], gap="large")
+    with col_obj_1:
+        st.markdown('<div class="sub-section-head">📋 Лист 1: Основные характеристики объекта</div>', unsafe_allow_html=True)
+        
+        # --- 1. Вид объекта ---
+        c_v1, c_v2 = st.columns([12, 1])
+        with c_v1:
+            st.markdown(f'''
+            <div class="data-row-flex">
+                <div class="data-label-fixed">Вид объекта:</div>
+                <div class="data-val-fixed"><b>{obj.get("object_type", "Помещение")}</b></div>
+            </div>
+            ''', unsafe_allow_html=True)
+        with c_v2:
+            if st.button("✏️", key=f"btn_inline_objtype_{cd.get('id')}", help="Изменить вид объекта"):
                 st.session_state[f"show_ed_type_{cd.get('id')}"] = not st.session_state.get(f"show_ed_type_{cd.get('id')}", False)
-            if st.session_state.get(f"show_ed_type_{cd.get('id')}", False):
-                with st.form(key=f"form_ed_type_{cd.get('id')}"):
-                    new_val = st.text_input("Вид объекта (нажмите Enter для сохранения):", value=obj.get("object_type", "Помещение"))
-                    c_s1, c_s2 = st.columns([1, 3])
-                    submitted = c_s1.form_submit_button("Сохранить")
-                    if submitted:
-                        obj["object_type"] = new_val
-                        save_deals_to_catalog(all_deals)
-                        st.session_state[f"show_ed_type_{cd.get('id')}"] = False
-                        st.rerun()
-
-            # --- 2. Кадастровый номер ---
-            cad_items = obj.get("cadastral_numbers", [])
-            if not cad_items:
-                main_cn = obj.get("cadastral_num", cd.get("cadastral_num", "—"))
-                cad_items = [{"name": "Кадастровый номер", "number": main_cn}]
-
-            for c_idx, c_item in enumerate(cad_items):
-                lbl = c_item.get("name", "Кадастровый номер") + ":"
-                cn_val = c_item.get("number", "—")
-                rosreestr_url = f"https://lk.rosreestr.ru/eservices/real-estate-objects-online"
-                
-                c_cad1, c_cad2 = st.columns([12, 1])
-                with c_cad1:
-                    st.markdown(f'''
-                    <div class="data-row-flex">
-                        <div class="data-label-fixed">{lbl}</div>
-                        <div class="data-val-fixed">
-                            <span class="cadastral-link" title="Нажмите, чтобы скопировать" onclick="navigator.clipboard.writeText('{cn_val}'); alert('Кадастровый номер {cn_val} скопирован в буфер!\\nНа сайте Росреестра просто нажмите Ctrl+V в строке поиска.');">{cn_val}</span>
-                            <a href="{rosreestr_url}" target="_blank" onclick="navigator.clipboard.writeText('{cn_val}');" class="rosreestr-btn" title="Скопировать КН {cn_val} и открыть Росреестр">📋 Росреестр (Ctrl+V)</a>
-                        </div>
-                    </div>
-                    ''', unsafe_allow_html=True)
-                with c_cad2:
-                    btn_ed_cad = st.button("✏️", key=f"btn_inline_cad_{cd.get('id')}_{c_idx}", help=f"Изменить {lbl}")
-                if btn_ed_cad:
-                    st.session_state[f"show_ed_cad_{cd.get('id')}_{c_idx}"] = not st.session_state.get(f"show_ed_cad_{cd.get('id')}_{c_idx}", False)
-                if st.session_state.get(f"show_ed_cad_{cd.get('id')}_{c_idx}", False):
-                    with st.form(key=f"form_ed_cad_{cd.get('id')}_{c_idx}"):
-                        new_cad_val = st.text_input(f"{lbl} (нажмите Enter для сохранения):", value=cn_val)
-                        c_s1, c_s2 = st.columns([1, 3])
-                        if c_s1.form_submit_button("Сохранить"):
-                            c_item["number"] = new_cad_val.strip()
-                            if c_idx == 0:
-                                obj["cadastral_num"] = new_cad_val.strip()
-                                cd["cadastral_num"] = new_cad_val.strip()
-                            obj["cadastral_numbers"] = cad_items
-                            save_deals_to_catalog(all_deals)
-                            st.session_state[f"show_ed_cad_{cd.get('id')}_{c_idx}"] = False
-                            st.rerun()
-
-            # --- 3. Точный адрес ЕГРН ---
-            c_a1, c_a2 = st.columns([12, 1])
-            with c_a1:
-                st.markdown(f'''
-                <div class="data-row-flex">
-                    <div class="data-label-fixed">Точный адрес (ЕГРН):</div>
-                    <div class="data-val-fixed"><b>{obj.get("address", cd.get("address", "—"))}</b></div>
-                </div>
-                ''', unsafe_allow_html=True)
-            with c_a2:
-                btn_ed_addr = st.button("✏️", key=f"btn_inline_addr_{cd.get('id')}", help="Изменить точный адрес")
-            if btn_ed_addr:
-                st.session_state[f"show_ed_addr_{cd.get('id')}"] = not st.session_state.get(f"show_ed_addr_{cd.get('id')}", False)
-            if st.session_state.get(f"show_ed_addr_{cd.get('id')}", False):
-                with st.form(key=f"form_ed_addr_{cd.get('id')}"):
-                    new_addr_val = st.text_input("Точный адрес объекта (нажмите Enter для сохранения):", value=obj.get("address", cd.get("address", "")))
-                    c_s1, c_s2 = st.columns([1, 3])
-                    if c_s1.form_submit_button("Сохранить"):
-                        obj["address"] = new_addr_val.strip()
-                        cd["address"] = new_addr_val.strip()
-                        save_deals_to_catalog(all_deals)
-                        st.session_state[f"show_ed_addr_{cd.get('id')}"] = False
-                        st.rerun()
-
-            # --- 4. Площадь ---
-            c_ar1, c_ar2 = st.columns([12, 1])
-            with c_ar1:
-                st.markdown(f'''
-                <div class="data-row-flex">
-                    <div class="data-label-fixed">Площадь, м²:</div>
-                    <div class="data-val-fixed"><b>{obj.get("area", "—")} м²</b></div>
-                </div>
-                ''', unsafe_allow_html=True)
-            with c_ar2:
-                btn_ed_area = st.button("✏️", key=f"btn_inline_area_{cd.get('id')}", help="Изменить площадь")
-            if btn_ed_area:
-                st.session_state[f"show_ed_area_{cd.get('id')}"] = not st.session_state.get(f"show_ed_area_{cd.get('id')}", False)
-            if st.session_state.get(f"show_ed_area_{cd.get('id')}", False):
-                with st.form(key=f"form_ed_area_{cd.get('id')}"):
-                    new_area_val = st.text_input("Площадь объекта, м² (нажмите Enter для сохранения):", value=str(obj.get("area", "")))
-                    c_s1, c_s2 = st.columns([1, 3])
-                    if c_s1.form_submit_button("Сохранить"):
-                        obj["area"] = new_area_val.strip()
-                        save_deals_to_catalog(all_deals)
-                        st.session_state[f"show_ed_area_{cd.get('id')}"] = False
-                        st.rerun()
-
-            # --- 5. Этаж ---
-            c_fl1, c_fl2 = st.columns([12, 1])
-            with c_fl1:
-                st.markdown(f'''
-                <div class="data-row-flex">
-                    <div class="data-label-fixed">Этаж:</div>
-                    <div class="data-val-fixed">{obj.get("floor", "—")}</div>
-                </div>
-                ''', unsafe_allow_html=True)
-            with c_fl2:
-                btn_ed_floor = st.button("✏️", key=f"btn_inline_floor_{cd.get('id')}", help="Изменить этаж")
-            if btn_ed_floor:
-                st.session_state[f"show_ed_floor_{cd.get('id')}"] = not st.session_state.get(f"show_ed_floor_{cd.get('id')}", False)
-            if st.session_state.get(f"show_ed_floor_{cd.get('id')}", False):
-                with st.form(key=f"form_ed_floor_{cd.get('id')}"):
-                    new_floor_val = st.text_input("Этаж (нажмите Enter для сохранения):", value=str(obj.get("floor", "")))
-                    c_s1, c_s2 = st.columns([1, 3])
-                    if c_s1.form_submit_button("Сохранить"):
-                        obj["floor"] = new_floor_val.strip()
-                        save_deals_to_catalog(all_deals)
-                        st.session_state[f"show_ed_floor_{cd.get('id')}"] = False
-                        st.rerun()
-
-            # --- 6. Назначение / Вид ---
-            c_pur1, c_pur2 = st.columns([12, 1])
-            with c_pur1:
-                st.markdown(f'''
-                <div class="data-row-flex">
-                    <div class="data-label-fixed">Назначение / Вид:</div>
-                    <div class="data-val-fixed">{obj.get("purpose", "Жилое")} ({obj.get("living_type", "Квартира")})</div>
-                </div>
-                ''', unsafe_allow_html=True)
-            with c_pur2:
-                btn_ed_pur = st.button("✏️", key=f"btn_inline_pur_{cd.get('id')}", help="Изменить назначение и вид")
-            if btn_ed_pur:
-                st.session_state[f"show_ed_pur_{cd.get('id')}"] = not st.session_state.get(f"show_ed_pur_{cd.get('id')}", False)
-            if st.session_state.get(f"show_ed_pur_{cd.get('id')}", False):
-                with st.form(key=f"form_ed_pur_{cd.get('id')}"):
-                    c_p_sub1, c_p_sub2 = st.columns(2)
-                    new_p_val = c_p_sub1.text_input("Назначение:", value=obj.get("purpose", "Жилое"))
-                    new_l_val = c_p_sub2.text_input("Вид жилого помещения:", value=obj.get("living_type", "Квартира"))
-                    if st.form_submit_button("Сохранить"):
-                        obj["purpose"] = new_p_val.strip()
-                        obj["living_type"] = new_l_val.strip()
-                        save_deals_to_catalog(all_deals)
-                        st.session_state[f"show_ed_pur_{cd.get('id')}"] = False
-                        st.rerun()
-
-            # --- 7. Наименование ---
-            c_nm1, c_nm2 = st.columns([12, 1])
-            with c_nm1:
-                st.markdown(f'''
-                <div class="data-row-flex">
-                    <div class="data-label-fixed">Наименование:</div>
-                    <div class="data-val-fixed">{obj.get("name", "Данные отсутствуют")}</div>
-                </div>
-                ''', unsafe_allow_html=True)
-            with c_nm2:
-                btn_ed_name = st.button("✏️", key=f"btn_inline_name_{cd.get('id')}", help="Изменить наименование объекта")
-            if btn_ed_name:
-                st.session_state[f"show_ed_name_{cd.get('id')}"] = not st.session_state.get(f"show_ed_name_{cd.get('id')}", False)
-            if st.session_state.get(f"show_ed_name_{cd.get('id')}", False):
-                with st.form(key=f"form_ed_name_{cd.get('id')}"):
-                    new_nm_val = st.text_input("Наименование объекта (нажмите Enter для сохранения):", value=obj.get("name", ""))
-                    c_s1, c_s2 = st.columns([1, 3])
-                    if c_s1.form_submit_button("Сохранить"):
-                        obj["name"] = new_nm_val.strip()
-                        save_deals_to_catalog(all_deals)
-                        st.session_state[f"show_ed_name_{cd.get('id')}"] = False
-                        st.rerun()
-
-            # --- 8. Кадастровая стоимость ---
-            c_cst1, c_cst2 = st.columns([12, 1])
-            with c_cst1:
-                st.markdown(f'''
-                <div class="data-row-flex">
-                    <div class="data-label-fixed">Кадастровая стоимость:</div>
-                    <div class="data-val-fixed"><b>{obj.get("cadastral_cost", "—")}</b></div>
-                </div>
-                ''', unsafe_allow_html=True)
-            with c_cst2:
-                btn_ed_cost = st.button("✏️", key=f"btn_inline_cost_{cd.get('id')}", help="Изменить кадастровую стоимость")
-            if btn_ed_cost:
-                st.session_state[f"show_ed_cost_{cd.get('id')}"] = not st.session_state.get(f"show_ed_cost_{cd.get('id')}", False)
-            if st.session_state.get(f"show_ed_cost_{cd.get('id')}", False):
-                with st.form(key=f"form_ed_cost_{cd.get('id')}"):
-                    new_cost_val = st.text_input("Кадастровая стоимость, ₽ (нажмите Enter для сохранения):", value=str(obj.get("cadastral_cost", "")))
-                    c_s1, c_s2 = st.columns([1, 3])
-                    if c_s1.form_submit_button("Сохранить"):
-                        obj["cadastral_cost"] = new_cost_val.strip()
-                        save_deals_to_catalog(all_deals)
-                        st.session_state[f"show_ed_cost_{cd.get('id')}"] = False
-                        st.rerun()
-
-        with col_obj_2:
-            st.markdown('<div class="sub-section-head">📑 Правоустановка, Ограничения, Ипотеки и Аресты</div>', unsafe_allow_html=True)
-            
-            # 1. ПРАВООБЛАДАТЕЛИ И ОСНОВАНИЯ ПРАВА (Лист 2 ЕГРН)
-            rights_list = obj.get("rights", [])
-            if rights_list:
-                for r_idx, r in enumerate(rights_list):
-                    st.markdown(f"""
-                    <div class="right-clean-block">
-                        <div><b>Правообладатель:</b> <span style="font-weight:700; color:#0F172A;">{r.get('owner', '—')}</span></div>
-                        <div style="margin-top:2px;"><b>Вид собственности и доля:</b> {r.get('prop_type', 'Собственность')} (доля <b>{r.get('share', '1/1')}</b>)</div>
-                        <div style="margin-top:2px;"><b>Номер и дата записи регистрации:</b> <span style="font-weight:600; color:#0F172A;">{r.get('reg_record', '—')}</span></div>
-                        <div style="margin-top:2px;"><b>Документ-основание:</b> {r.get('basis_doc', '—')}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
-            else:
-                st.markdown(f'<div class="data-row-flex"><div class="data-label-fixed">Основание права:</div><div class="data-val-fixed"><b>{obj.get("basis_doc", "Договор купли-продажи")}</b></div></div>', unsafe_allow_html=True)
-
-            # 2. ИПОТЕКИ И ЗАЛОГИ
-            mortgages = obj.get("mortgages", [])
-            if mortgages:
-                for m in mortgages:
-                    st.markdown(f"""
-                    <div class="legal-alert" style="border-left: 4px solid #2563EB; background: #EFF6FF;">
-                        <b style="color:#1D4ED8;">🏦 ИПОТЕКА / ЗАЛОГ: ЗАРЕГИСТРИРОВАНО</b><br>
-                        <div style="margin-top:4px;"><b>Номер и дата записи:</b> {m.get('reg_record', '—')}</div>
-                        <div style="margin-top:2px;"><b>В пользу кого (Банк):</b> <b style="color:#0F172A;">{m.get('beneficiary', '—')}</b></div>
-                        <div style="margin-top:2px;"><b>Срок ограничения:</b> {m.get('term', '—')}</div>
-                        <div style="margin-top:2px;"><b>Документ-основание:</b> {m.get('basis_doc', '—')}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
-
-            # 3. АРЕСТЫ И ЗАПРЕТЫ
-            arrests = obj.get("arrests", [])
-            if arrests:
-                for a in arrests:
-                    st.markdown(f"""
-                    <div class="legal-alert" style="border-left: 4px solid #DC2626; background: #FEF2F2;">
-                        <b style="color:#B91C1C;">🚨 АРЕСТ / ЗАПРЕЩЕНИЕ РЕГИСТРАЦИИ (РОСП ФССП)</b><br>
-                        <div style="margin-top:4px;"><b>Номер и дата записи:</b> {a.get('reg_record', '—')}</div>
-                        <div style="margin-top:2px;"><b>В пользу кого / Кем наложен:</b> <b style="color:#0F172A;">{a.get('beneficiary', '—')}</b></div>
-                        <div style="margin-top:2px;"><b>Документ-основание (ИП):</b> {a.get('basis_doc', '—')}</div>
-                    </div>
-                    """, unsafe_allow_html=True)
-
-            # Если нет ни ипотек, ни арестов
-            if not mortgages and not arrests:
-                st.markdown("""
-                <div class="legal-alert" style="border-left: 4px solid #16A34A; background: #F0FDF4;">
-                    <b style="color:#15803D;">✅ СТАТУС ОБРЕМЕНЕНИЙ: НЕ ЗАРЕГИСТРИРОВАНО</b><br>
-                    Ограничения прав, ипотеки, аресты и запреты в ЕГРН отсутствуют.
-                </div>
-                """, unsafe_allow_html=True)
-    else:
-        # ТОЧЕЧНОЕ РЕДАКТИРОВАНИЕ ОБЪЕКТА (БЕЗ ФОРМЫ, ЧТОБЫ ENTER НЕ ЗАКРЫВАЛ КАРТОЧКУ!)
-        st.info("💡 Редактирование характеристик объекта недвижимости. Enter сохраняет текущее поле без закрытия всей карточки. Для сохранения нажмите кнопку внизу.")
-        c_ed1, c_ed2 = st.columns(2, gap="large")
-        with c_ed1:
-            st.markdown("**Характеристики Объекта (ЕГРН Лист 1):**")
-            inp_obj_type = st.text_input("Вид объекта", value=obj.get("object_type", "Помещение"), key=f"fld_obj_type_{cd.get('id')}")
-            
-            # Поддержка нескольких кадастровых номеров (дом + зу, здание + зу)
-            curr_cads = obj.get("cadastral_numbers", [])
-            main_cad_val = curr_cads[0].get("number") if curr_cads else obj.get("cadastral_num", cd.get("cadastral_num", ""))
-            land_cad_val = curr_cads[1].get("number") if len(curr_cads) > 1 else ""
-            
-            inp_cad_main = st.text_input("Основной кадастровый номер (квартира / дом / здание)", value=main_cad_val, key=f"fld_cad_main_{cd.get('id')}")
-            inp_cad_land = st.text_input("Второй кадастровый номер (земельный участок / доп. строение)", value=land_cad_val, key=f"fld_cad_land_{cd.get('id')}", placeholder="Заполните для составных объектов (Дом + ЗУ)...")
-            
-            inp_address = st.text_input("Точный адрес объекта", value=obj.get("address", cd.get("address", "")), key=f"fld_addr_{cd.get('id')}")
-            inp_area = st.text_input("Площадь, м²", value=str(obj.get("area", "42.5")), key=f"fld_area_{cd.get('id')}")
-            inp_floor = st.text_input("Этаж", value=obj.get("floor", "03 Этаж"), key=f"fld_floor_{cd.get('id')}")
-            inp_purpose = st.text_input("Назначение", value=obj.get("purpose", "Жилое"), key=f"fld_purp_{cd.get('id')}")
-            inp_living = st.text_input("Вид жилого помещения", value=obj.get("living_type", "Квартира"), key=f"fld_liv_{cd.get('id')}")
-            inp_name = st.text_input("Наименование объекта", value=obj.get("name", "Данные отсутствуют"), key=f"fld_name_{cd.get('id')}")
-            inp_cad_cost = st.text_input("Кадастровая стоимость", value=str(obj.get("cadastral_cost", "")), key=f"fld_cost_{cd.get('id')}")
-
-        with c_ed2:
-            st.markdown("**Правоустановка (Правообладатели, доли и основания):**")
-            curr_rights = obj.get("rights", [])
-            if not curr_rights:
-                curr_rights = [{}]
-            
-            num_rights_key = f"num_rights_{cd.get('id')}"
-            if num_rights_key not in st.session_state:
-                st.session_state[num_rights_key] = len(curr_rights)
-            
-            col_r_btns = st.columns([1, 1])
-            with col_r_btns[0]:
-                if st.button("➕ Добавить сособственника", key=f"btn_add_r_{cd.get('id')}", use_container_width=True):
-                    st.session_state[num_rights_key] += 1
+                st.rerun()
+        if st.session_state.get(f"show_ed_type_{cd.get('id')}", False):
+            with st.form(key=f"form_ed_type_{cd.get('id')}"):
+                new_val = st.text_input("Вид объекта (нажмите Enter для сохранения):", value=obj.get("object_type", "Помещение"))
+                c_s1, c_s2 = st.columns([1, 3])
+                if c_s1.form_submit_button("Сохранить"):
+                    obj["object_type"] = new_val.strip()
+                    save_deals_to_catalog(all_deals)
+                    st.session_state[f"show_ed_type_{cd.get('id')}"] = False
                     st.rerun()
-            with col_r_btns[1]:
-                if st.session_state[num_rights_key] > 1:
-                    if st.button("➖ Убрать правообладателя", key=f"btn_del_r_{cd.get('id')}", use_container_width=True):
-                        st.session_state[num_rights_key] -= 1
+
+        # --- 2. Кадастровый номер ---
+        cad_items = obj.get("cadastral_numbers", [])
+        if not cad_items:
+            main_cn = obj.get("cadastral_num", cd.get("cadastral_num", "—"))
+            cad_items = [{"name": "Кадастровый номер", "number": main_cn}]
+
+        for c_idx, c_item in enumerate(cad_items):
+            lbl = c_item.get("name", "Кадастровый номер") + ":"
+            cn_val = c_item.get("number", "—")
+            rosreestr_url = f"https://lk.rosreestr.ru/eservices/real-estate-objects-online"
+            
+            c_cad1, c_cad2 = st.columns([12, 1])
+            with c_cad1:
+                st.markdown(f'''
+                <div class="data-row-flex">
+                    <div class="data-label-fixed">{lbl}</div>
+                    <div class="data-val-fixed">
+                        <span class="cadastral-link" title="Нажмите, чтобы скопировать" onclick="navigator.clipboard.writeText('{cn_val}'); alert('Кадастровый номер {cn_val} скопирован в буфер!\\nНа сайте Росреестра просто нажмите Ctrl+V в строке поиска.');">{cn_val}</span>
+                        <a href="{rosreestr_url}" target="_blank" onclick="navigator.clipboard.writeText('{cn_val}');" class="rosreestr-btn" title="Скопировать КН {cn_val} и открыть Росреестр">📋 Росреестр (Ctrl+V)</a>
+                    </div>
+                </div>
+                ''', unsafe_allow_html=True)
+            with c_cad2:
+                if st.button("✏️", key=f"btn_inline_cad_{cd.get('id')}_{c_idx}", help=f"Изменить {lbl}"):
+                    st.session_state[f"show_ed_cad_{cd.get('id')}_{c_idx}"] = not st.session_state.get(f"show_ed_cad_{cd.get('id')}_{c_idx}", False)
+                    st.rerun()
+            if st.session_state.get(f"show_ed_cad_{cd.get('id')}_{c_idx}", False):
+                with st.form(key=f"form_ed_cad_{cd.get('id')}_{c_idx}"):
+                    new_cad_val = st.text_input(f"{lbl} (нажмите Enter для сохранения):", value=cn_val)
+                    c_s1, c_s2 = st.columns([1, 3])
+                    if c_s1.form_submit_button("Сохранить"):
+                        c_item["number"] = new_cad_val.strip()
+                        if c_idx == 0:
+                            obj["cadastral_num"] = new_cad_val.strip()
+                            cd["cadastral_num"] = new_cad_val.strip()
+                        obj["cadastral_numbers"] = cad_items
+                        save_deals_to_catalog(all_deals)
+                        st.session_state[f"show_ed_cad_{cd.get('id')}_{c_idx}"] = False
                         st.rerun()
 
-            rights_form_fields = []
-            for r_idx in range(st.session_state[num_rights_key]):
-                r_item = curr_rights[r_idx] if r_idx < len(curr_rights) else {}
-                with st.expander(f"Правообладатель #{r_idx+1}: {r_item.get('owner', 'Новый владелец')}", expanded=True):
-                    inp_r_owner = st.text_input(f"ФИО Правообладателя #{r_idx+1}", value=r_item.get("owner", ""), key=f"fld_r_own_{cd.get('id')}_{r_idx}")
-                    inp_r_prop = st.text_input(f"Вид собственности #{r_idx+1}", value=r_item.get("prop_type", "Общая долевая собственность"), key=f"fld_r_prop_{cd.get('id')}_{r_idx}")
-                    inp_r_share = st.text_input(f"Доля в праве #{r_idx+1}", value=r_item.get("share", "1/1"), key=f"fld_r_share_{cd.get('id')}_{r_idx}")
-                    inp_r_reg = st.text_input(f"Номер и дата записи регистрации #{r_idx+1}", value=r_item.get("reg_record", ""), key=f"fld_r_reg_{cd.get('id')}_{r_idx}")
-                    inp_r_base = st.text_area(f"Документ-основание регистрации #{r_idx+1}", value=r_item.get("basis_doc", ""), height=60, key=f"fld_r_base_{cd.get('id')}_{r_idx}")
-                    rights_form_fields.append({
-                        "owner": inp_r_owner,
-                        "prop_type": inp_r_prop,
-                        "share": inp_r_share,
-                        "reg_record": inp_r_reg,
-                        "basis_doc": inp_r_base,
-                        "is_active": True
-                    })
+        # --- 3. Точный адрес ЕГРН ---
+        c_a1, c_a2 = st.columns([12, 1])
+        with c_a1:
+            st.markdown(f'''
+            <div class="data-row-flex">
+                <div class="data-label-fixed">Точный адрес (ЕГРН):</div>
+                <div class="data-val-fixed"><b>{obj.get("address", cd.get("address", "—"))}</b></div>
+            </div>
+            ''', unsafe_allow_html=True)
+        with c_a2:
+            if st.button("✏️", key=f"btn_inline_addr_{cd.get('id')}", help="Изменить точный адрес"):
+                st.session_state[f"show_ed_addr_{cd.get('id')}"] = not st.session_state.get(f"show_ed_addr_{cd.get('id')}", False)
+                st.rerun()
+        if st.session_state.get(f"show_ed_addr_{cd.get('id')}", False):
+            with st.form(key=f"form_ed_addr_{cd.get('id')}"):
+                new_addr_val = st.text_input("Точный адрес объекта (нажмите Enter для сохранения):", value=obj.get("address", cd.get("address", "")))
+                c_s1, c_s2 = st.columns([1, 3])
+                if c_s1.form_submit_button("Сохранить"):
+                    obj["address"] = new_addr_val.strip()
+                    cd["address"] = new_addr_val.strip()
+                    save_deals_to_catalog(all_deals)
+                    st.session_state[f"show_ed_addr_{cd.get('id')}"] = False
+                    st.rerun()
 
-            st.markdown("**Обременения (Ипотека и Аресты):**")
-            has_hyp_check = st.checkbox("Зарегистрирована ипотека / залог", value=bool(obj.get("mortgages")), key=f"chk_hyp_{cd.get('id')}")
-            curr_m = obj.get("mortgages", [{}])[0] if obj.get("mortgages") else {}
-            inp_m_reg = st.text_input("Ипотека: номер и дата записи", value=curr_m.get("reg_record", "Ипотека в силу закона, от 28.01.2025"), key=f"fld_m_reg_{cd.get('id')}")
-            inp_m_ben = st.text_input("Ипотека: в пользу кого (Банк)", value=curr_m.get("beneficiary", "ПАО Сбербанк"), key=f"fld_m_ben_{cd.get('id')}")
+        # --- 4. Площадь ---
+        c_ar1, c_ar2 = st.columns([12, 1])
+        with c_ar1:
+            st.markdown(f'''
+            <div class="data-row-flex">
+                <div class="data-label-fixed">Площадь, м²:</div>
+                <div class="data-val-fixed"><b>{obj.get("area", "—")} м²</b></div>
+            </div>
+            ''', unsafe_allow_html=True)
+        with c_ar2:
+            if st.button("✏️", key=f"btn_inline_area_{cd.get('id')}", help="Изменить площадь"):
+                st.session_state[f"show_ed_area_{cd.get('id')}"] = not st.session_state.get(f"show_ed_area_{cd.get('id')}", False)
+                st.rerun()
+        if st.session_state.get(f"show_ed_area_{cd.get('id')}", False):
+            with st.form(key=f"form_ed_area_{cd.get('id')}"):
+                new_area_val = st.text_input("Площадь объекта, м² (нажмите Enter для сохранения):", value=str(obj.get("area", "")))
+                c_s1, c_s2 = st.columns([1, 3])
+                if c_s1.form_submit_button("Сохранить"):
+                    obj["area"] = new_area_val.strip()
+                    save_deals_to_catalog(all_deals)
+                    st.session_state[f"show_ed_area_{cd.get('id')}"] = False
+                    st.rerun()
 
-            has_arr_check = st.checkbox("Зарегистрирован арест / запрещение РОСП ФССП", value=bool(obj.get("arrests")), key=f"chk_arr_{cd.get('id')}")
-            curr_a = obj.get("arrests", [{}])[0] if obj.get("arrests") else {}
-            inp_a_reg = st.text_input("Арест: номер и дата записи", value=curr_a.get("reg_record", "Запрещение регистрации, от 16.05.2025"), key=f"fld_a_reg_{cd.get('id')}")
-            inp_a_ben = st.text_input("Арест: кем наложен / в пользу кого", value=curr_a.get("beneficiary", "Никольское РОСП УФССП"), key=f"fld_a_ben_{cd.get('id')}")
-            inp_a_doc = st.text_input("Арест: основание (постановление пристава)", value=curr_a.get("basis_doc", "Постановление СПИ по ИП № 50769/25"), key=f"fld_a_doc_{cd.get('id')}")
+        # --- 5. Этаж ---
+        c_fl1, c_fl2 = st.columns([12, 1])
+        with c_fl1:
+            st.markdown(f'''
+            <div class="data-row-flex">
+                <div class="data-label-fixed">Этаж:</div>
+                <div class="data-val-fixed">{obj.get("floor", "—")}</div>
+            </div>
+            ''', unsafe_allow_html=True)
+        with c_fl2:
+            if st.button("✏️", key=f"btn_inline_floor_{cd.get('id')}", help="Изменить этаж"):
+                st.session_state[f"show_ed_floor_{cd.get('id')}"] = not st.session_state.get(f"show_ed_floor_{cd.get('id')}", False)
+                st.rerun()
+        if st.session_state.get(f"show_ed_floor_{cd.get('id')}", False):
+            with st.form(key=f"form_ed_floor_{cd.get('id')}"):
+                new_floor_val = st.text_input("Этаж (нажмите Enter для сохранения):", value=str(obj.get("floor", "")))
+                c_s1, c_s2 = st.columns([1, 3])
+                if c_s1.form_submit_button("Сохранить"):
+                    obj["floor"] = new_floor_val.strip()
+                    save_deals_to_catalog(all_deals)
+                    st.session_state[f"show_ed_floor_{cd.get('id')}"] = False
+                    st.rerun()
 
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("💾 СОХРАНИТЬ ДАННЫЕ ОБЪЕКТА", type="primary", use_container_width=True, key=f"btn_save_obj_{cd.get('id')}"):
-            cd["address"] = inp_address
-            cd["cadastral_num"] = inp_cad_main
-            
-            # Собираем список кадастровых номеров
-            cads_to_save = [{"name": "Кадастровый номер объекта", "number": inp_cad_main}]
-            if inp_cad_land.strip():
-                cads_to_save.append({"name": "Кадастровый номер ЗУ / строения", "number": inp_cad_land.strip()})
+        # --- 6. Назначение / Вид ---
+        c_pur1, c_pur2 = st.columns([12, 1])
+        with c_pur1:
+            st.markdown(f'''
+            <div class="data-row-flex">
+                <div class="data-label-fixed">Назначение / Вид:</div>
+                <div class="data-val-fixed">{obj.get("purpose", "Жилое")} ({obj.get("living_type", "Квартира")})</div>
+            </div>
+            ''', unsafe_allow_html=True)
+        with c_pur2:
+            if st.button("✏️", key=f"btn_inline_pur_{cd.get('id')}", help="Изменить назначение и вид"):
+                st.session_state[f"show_ed_pur_{cd.get('id')}"] = not st.session_state.get(f"show_ed_pur_{cd.get('id')}", False)
+                st.rerun()
+        if st.session_state.get(f"show_ed_pur_{cd.get('id')}", False):
+            with st.form(key=f"form_ed_pur_{cd.get('id')}"):
+                c_p_sub1, c_p_sub2 = st.columns(2)
+                new_p_val = c_p_sub1.text_input("Назначение:", value=obj.get("purpose", "Жилое"))
+                new_l_val = c_p_sub2.text_input("Вид жилого помещения:", value=obj.get("living_type", "Квартира"))
+                if st.form_submit_button("Сохранить"):
+                    obj["purpose"] = new_p_val.strip()
+                    obj["living_type"] = new_l_val.strip()
+                    save_deals_to_catalog(all_deals)
+                    st.session_state[f"show_ed_pur_{cd.get('id')}"] = False
+                    st.rerun()
 
-            new_rights = [rf for rf in rights_form_fields if rf["owner"].strip()]
-            if not new_rights:
-                new_rights = rights_form_fields
+        # --- 7. Наименование ---
+        c_nm1, c_nm2 = st.columns([12, 1])
+        with c_nm1:
+            st.markdown(f'''
+            <div class="data-row-flex">
+                <div class="data-label-fixed">Наименование:</div>
+                <div class="data-val-fixed">{obj.get("name", "Данные отсутствуют")}</div>
+            </div>
+            ''', unsafe_allow_html=True)
+        with c_nm2:
+            if st.button("✏️", key=f"btn_inline_name_{cd.get('id')}", help="Изменить наименование объекта"):
+                st.session_state[f"show_ed_name_{cd.get('id')}"] = not st.session_state.get(f"show_ed_name_{cd.get('id')}", False)
+                st.rerun()
+        if st.session_state.get(f"show_ed_name_{cd.get('id')}", False):
+            with st.form(key=f"form_ed_name_{cd.get('id')}"):
+                new_nm_val = st.text_input("Наименование объекта (нажмите Enter для сохранения):", value=obj.get("name", ""))
+                c_s1, c_s2 = st.columns([1, 3])
+                if c_s1.form_submit_button("Сохранить"):
+                    obj["name"] = new_nm_val.strip()
+                    save_deals_to_catalog(all_deals)
+                    st.session_state[f"show_ed_name_{cd.get('id')}"] = False
+                    st.rerun()
 
-            new_mortgages = []
-            if has_hyp_check:
-                new_mortgages.append({
-                    "reg_record": inp_m_reg,
-                    "beneficiary": inp_m_ben,
-                    "term": "на 240 месяцев",
-                    "basis_doc": "Кредитный договор"
-                })
+        # --- 8. Кадастровая стоимость ---
+        c_cst1, c_cst2 = st.columns([12, 1])
+        with c_cst1:
+            st.markdown(f'''
+            <div class="data-row-flex">
+                <div class="data-label-fixed">Кадастровая стоимость:</div>
+                <div class="data-val-fixed"><b>{obj.get("cadastral_cost", "—")}</b></div>
+            </div>
+            ''', unsafe_allow_html=True)
+        with c_cst2:
+            if st.button("✏️", key=f"btn_inline_cost_{cd.get('id')}", help="Изменить кадастровую стоимость"):
+                st.session_state[f"show_ed_cost_{cd.get('id')}"] = not st.session_state.get(f"show_ed_cost_{cd.get('id')}", False)
+                st.rerun()
+        if st.session_state.get(f"show_ed_cost_{cd.get('id')}", False):
+            with st.form(key=f"form_ed_cost_{cd.get('id')}"):
+                new_cost_val = st.text_input("Кадастровая стоимость, ₽ (нажмите Enter для сохранения):", value=str(obj.get("cadastral_cost", "")))
+                c_s1, c_s2 = st.columns([1, 3])
+                if c_s1.form_submit_button("Сохранить"):
+                    obj["cadastral_cost"] = new_cost_val.strip()
+                    save_deals_to_catalog(all_deals)
+                    st.session_state[f"show_ed_cost_{cd.get('id')}"] = False
+                    st.rerun()
 
-            new_arrests = []
-            if has_arr_check:
-                new_arrests.append({
-                    "reg_record": inp_a_reg,
-                    "beneficiary": inp_a_ben,
-                    "basis_doc": inp_a_doc
-                })
+    with col_obj_2:
+        st.markdown('<div class="sub-section-head">📑 Правоустановка, Ограничения, Ипотеки и Аресты</div>', unsafe_allow_html=True)
+        did = cd.get('id')
 
-            cd["object_card"] = {
-                "object_type": inp_obj_type,
-                "cadastral_num": inp_cad_main,
-                "cadastral_numbers": cads_to_save,
-                "address": inp_address,
-                "area": inp_area,
-                "floor": inp_floor,
-                "purpose": inp_purpose,
-                "name": inp_name,
-                "living_type": inp_living,
-                "cadastral_cost": inp_cad_cost,
-                "rights": new_rights,
-                "mortgages": new_mortgages,
-                "arrests": new_arrests
-            }
+        # 1. ПРАВООБЛАДАТЕЛИ (каждая строка — свой карандаш)
+        rights_list = obj.setdefault("rights", [])
+        for r_idx, r in enumerate(rights_list):
+            if r_idx > 0:
+                st.markdown('<div class="right-holder-sep"></div>', unsafe_allow_html=True)
+
+            def _save_owner(v, r=r):
+                r["owner"] = v[0]
+
+            def _del_owner(r_idx=r_idx):
+                rights_list.pop(r_idx)
+
+            inline_edit_row(
+                f'<div class="right-row"><b>Правообладатель:</b> <span style="font-weight:700; color:#0F172A;">{r.get("owner", "—")}</span></div>',
+                f"r_owner_{did}_{r_idx}",
+                [("Правообладатель (ФИО, дата рождения):", r.get("owner", ""))],
+                _save_owner, on_delete=_del_owner, help_txt="Изменить правообладателя"
+            )
+
+            def _save_share(v, r=r):
+                r["prop_type"], r["share"] = v[0], v[1]
+
+            inline_edit_row(
+                f'<div class="right-row"><b>Вид собственности и доля:</b> {r.get("prop_type", "Собственность")} (доля <b>{r.get("share", "1/1")}</b>)</div>',
+                f"r_share_{did}_{r_idx}",
+                [("Вид собственности:", r.get("prop_type", "Собственность")), ("Доля:", r.get("share", "1/1"))],
+                _save_share, help_txt="Изменить вид собственности и долю"
+            )
+
+            def _save_rec(v, r=r):
+                r["reg_record"] = v[0]
+
+            inline_edit_row(
+                f'<div class="right-row"><b>Номер и дата записи регистрации:</b> <span style="font-weight:600; color:#0F172A;">{r.get("reg_record", "—")}</span></div>',
+                f"r_rec_{did}_{r_idx}",
+                [("Номер и дата записи регистрации:", r.get("reg_record", ""))],
+                _save_rec, help_txt="Изменить запись регистрации"
+            )
+
+            def _save_basis(v, r=r):
+                r["basis_doc"] = v[0]
+
+            inline_edit_row(
+                f'<div class="right-row"><b>Документ-основание:</b> {r.get("basis_doc", "—")}</div>',
+                f"r_basis_{did}_{r_idx}",
+                [("Документ-основание:", r.get("basis_doc", ""))],
+                _save_basis, help_txt="Изменить документ-основание"
+            )
+
+        if not rights_list:
+            st.markdown('<div class="right-row" style="color:#64748B;">Правообладатели не внесены.</div>', unsafe_allow_html=True)
+
+        # 2. ИПОТЕКИ И ЗАЛОГИ
+        mortgages = obj.setdefault("mortgages", [])
+        for m_idx, m in enumerate(mortgages):
+            st.markdown('<div class="legal-alert" style="border-left: 4px solid #475569; background: #F1F5F9; margin-top:8px; margin-bottom:2px;"><b style="color:#334155;">🏦 ИПОТЕКА / ЗАЛОГ: ЗАРЕГИСТРИРОВАНО</b></div>', unsafe_allow_html=True)
+            for fld, lbl in [("reg_record", "Номер и дата записи"), ("beneficiary", "В пользу кого (Банк)"),
+                             ("term", "Срок ограничения"), ("basis_doc", "Документ-основание")]:
+                def _save_m(v, m=m, fld=fld):
+                    m[fld] = v[0]
+
+                def _del_m(m_idx=m_idx):
+                    mortgages.pop(m_idx)
+
+                inline_edit_row(
+                    f'<div class="right-row"><b>{lbl}:</b> {m.get(fld, "—")}</div>',
+                    f"m_{fld}_{did}_{m_idx}",
+                    [(f"{lbl}:", m.get(fld, ""))],
+                    _save_m, on_delete=_del_m if fld == "reg_record" else None, help_txt=f"Изменить: {lbl}"
+                )
+
+        # 3. АРЕСТЫ И ЗАПРЕТЫ
+        arrests = obj.setdefault("arrests", [])
+        for a_idx, a in enumerate(arrests):
+            st.markdown('<div class="legal-alert" style="border-left: 4px solid #DC2626; background: #FEF2F2; margin-top:8px; margin-bottom:2px;"><b style="color:#B91C1C;">🚨 АРЕСТ / ЗАПРЕЩЕНИЕ РЕГИСТРАЦИИ (РОСП ФССП)</b></div>', unsafe_allow_html=True)
+            for fld, lbl in [("reg_record", "Номер и дата записи"), ("beneficiary", "Кем наложен"),
+                             ("basis_doc", "Документ-основание (ИП)")]:
+                def _save_a(v, a=a, fld=fld):
+                    a[fld] = v[0]
+
+                def _del_a(a_idx=a_idx):
+                    arrests.pop(a_idx)
+
+                inline_edit_row(
+                    f'<div class="right-row"><b>{lbl}:</b> {a.get(fld, "—")}</div>',
+                    f"a_{fld}_{did}_{a_idx}",
+                    [(f"{lbl}:", a.get(fld, ""))],
+                    _save_a, on_delete=_del_a if fld == "reg_record" else None, help_txt=f"Изменить: {lbl}"
+                )
+
+        if not mortgages and not arrests:
+            st.markdown("""<div class="legal-alert" style="border-left: 4px solid #16A34A; background: #F0FDF4; margin-top:8px;"><b style="color:#15803D;">✅ СТАТУС ОБРЕМЕНЕНИЙ: НЕ ЗАРЕГИСТРИРОВАНО</b><br>Ограничения прав, ипотеки, аресты и запреты в ЕГРН отсутствуют.</div>""", unsafe_allow_html=True)
+
+        # 4. Кнопки добавления новых записей
+        add1, add2, add3 = st.columns(3)
+        if add1.button("➕ Правообладатель", key=f"add_right_{did}", use_container_width=True):
+            rights_list.append({"owner": "Новый правообладатель", "prop_type": "Общая долевая собственность",
+                                "share": "1/2", "reg_record": "", "basis_doc": ""})
             save_deals_to_catalog(all_deals)
-            st.session_state[edit_obj_key] = False
-            st.success("✅ Данные объекта недвижимости успешно сохранены!")
+            st.session_state[f"show_r_owner_{did}_{len(rights_list) - 1}"] = True
+            st.rerun()
+        if add2.button("➕ Ипотека", key=f"add_mort_{did}", use_container_width=True):
+            mortgages.append({"reg_record": "", "beneficiary": "", "term": "", "basis_doc": ""})
+            save_deals_to_catalog(all_deals)
+            st.session_state[f"show_m_reg_record_{did}_{len(mortgages) - 1}"] = True
+            st.rerun()
+        if add3.button("➕ Арест", key=f"add_arr_{did}", use_container_width=True):
+            arrests.append({"reg_record": "", "beneficiary": "", "basis_doc": ""})
+            save_deals_to_catalog(all_deals)
+            st.session_state[f"show_a_reg_record_{did}_{len(arrests) - 1}"] = True
             st.rerun()
 
     # ---------------------------------------------------------------------
