@@ -289,15 +289,23 @@ st.markdown("""
     .party-header-row {
         display: flex;
         justify-content: space-between;
-        align-items: flex-start;
-        flex-wrap: wrap;
-        gap: 6px;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 8px;
+        margin-bottom: 2px;
     }
     .party-fio-phone-wrap {
         display: flex;
         align-items: center;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         gap: 8px;
+        min-width: 0;
+    }
+    .party-badges-wrap {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
     }
     .party-fio-title {
         font-size: 15px;
@@ -888,6 +896,9 @@ if "opened_deal_id" in st.session_state and st.session_state["opened_deal_id"]:
                     phone_html = render_phone_messengers_html(phone_raw)
                     doc_display = f"<b>{doc_kind}:</b> {s.get('doc_details') or s.get('passport', 'серия 56 12 № 123456, выдан УМВД РФ 10.05.2012')}"
 
+                    share_val = s.get('share', '1/1')
+                    share_text = f"доля {share_val}" if not share_val.lower().startswith("доля") else share_val
+
                     st.markdown(f"""
                     <div class="card-box-clean">
                         <div class="party-header-row">
@@ -895,9 +906,9 @@ if "opened_deal_id" in st.session_state and st.session_state["opened_deal_id"]:
                                 <span class="party-fio-title">{s.get('fio')}</span>
                                 {phone_html}
                             </div>
-                            <div style="display:flex; align-items:center; gap:4px;">
+                            <div class="party-badges-wrap">
                                 <span class="doc-type-badge {badge_cls}">{doc_kind}</span>
-                                <span style="background:#FEE2E2; color:#DC2626; padding:2px 8px; border-radius:12px; font-weight:700; font-size:11px;">доля {s.get('share', '1/1')}</span>
+                                <span style="background:#FEE2E2; color:#DC2626; padding:2px 8px; border-radius:12px; font-weight:700; font-size:11px; white-space:nowrap;">{share_text}</span>
                             </div>
                         </div>
                         <div style="margin-top:6px; font-size:13px; color:#334155;">
@@ -928,6 +939,11 @@ if "opened_deal_id" in st.session_state and st.session_state["opened_deal_id"]:
                     phone_html = render_phone_messengers_html(phone_raw)
                     doc_display = f"<b>{doc_kind}:</b> {b.get('doc_details') or b.get('passport', 'серия 56 16 № 987654, выдан УМВД России 15.08.2015')}"
 
+                    share_val = b.get('share', '1/1')
+                    # Очищаем от лишних пояснений в скобках, оставляем строго размер доли
+                    share_clean = share_val.split("(")[0].strip()
+                    share_text = f"доля {share_clean}" if not share_clean.lower().startswith("доля") else share_clean
+
                     st.markdown(f"""
                     <div class="card-box-clean">
                         <div class="party-header-row">
@@ -935,9 +951,9 @@ if "opened_deal_id" in st.session_state and st.session_state["opened_deal_id"]:
                                 <span class="party-fio-title">{b.get('fio')}</span>
                                 {phone_html}
                             </div>
-                            <div style="display:flex; align-items:center; gap:4px;">
+                            <div class="party-badges-wrap">
                                 <span class="doc-type-badge {badge_cls}">{doc_kind}</span>
-                                <span style="background:#DBEAFE; color:#1D4ED8; padding:2px 8px; border-radius:12px; font-weight:700; font-size:11px;">{b.get('share', '1/1')}</span>
+                                <span style="background:#DBEAFE; color:#1D4ED8; padding:2px 8px; border-radius:12px; font-weight:700; font-size:11px; white-space:nowrap;">{share_text}</span>
                             </div>
                         </div>
                         <div style="margin-top:6px; font-size:13px; color:#334155;">
