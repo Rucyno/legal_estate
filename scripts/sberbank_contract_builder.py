@@ -1,5 +1,6 @@
 import sys
 import io
+from typing import Dict, Any
 
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
@@ -82,6 +83,7 @@ class DKP_Payment_Builder:
     """
     Нейтральный генератор раздела "Цена и порядок расчетов" 
     для ПДКП (кратко) и ОДКП (полно).
+    Поддерживает прямую сборку через методы и автоматическую сборку из JSON (Neutral DKP Payment Terms Schema).
     """
     def __init__(self, total_price: int):
         self.total_price = total_price
@@ -96,6 +98,88 @@ class DKP_Payment_Builder:
     def _fmt(self, amount: int) -> str:
         """Форматирование чисел с пробелом-разделителем тысяч (8 000 000)."""
         return f"{amount:,}".replace(",", " ")
+
+    @classmethod
+    def from_json(cls, payload: Dict[str, Any]) -> "DKP_Payment_Builder":
+        """Создает и наполняет экземпляр DKP_Payment_Builder напрямую из JSON-объекта по схеме."""
+        total_price = payload["total_price"]
+        builder = cls(total_price=total_price)
+        blocks = payload.get("blocks", {})
+
+        # 1. Задаток
+        z = blocks.get("zadatok", {})
+        if z.get("enabled") and z.get("amount", 0) > 0:
+            builder.add_zadatok(
+                amount=z["amount"],
+                date=z.get("date", "__.__.____"),
+                pdkp_number=z.get("pdkp_number", "б/н"),
+                pdkp_date=z.get("pdkp_date", "__.__.____")
+            )
+
+        # 2. Наличные до сделки
+        c = blocks.get("cash_before_deal", {})
+        if c.get("enabled") and c.get("amount", 0) > 0:
+            builder.add_cash_before_deal(amount=c["amount"])
+
+        # 3. СБР
+        s = blocks.get("sbr", {})
+        if s.get("enabled") and s.get("amount", 0) > 0:
+            builder.add_sbr(
+                amount=s["amount"],
+                punkt=s.get("punkt", "1.1"),
+                recipient=s.get("recipient", "_______________"),
+                rs=s.get("rs", "_______________"),
+                bank_name=s.get("bank_name", "_______________"),
+                bik=s.get("bik", "044525225"),
+                ks=s.get("ks", "30101810400000000225"),
+                inn=s.get("inn", "_______________")
+            )
+
+        # 4. Аккредитив
+        a = blocks.get("accreditive", {})
+        if a.get("enabled") and a.get("amount", 0) > 0:
+            builder.add_accreditive(
+                amount=a["amount"],
+                punkt=a.get("punkt", "1.1"),
+                owner_name=a.get("owner_name", "_______________")
+            )
+
+        # 5. Ипотека Сбербанк
+        m = blocks.get("mortgage_sber", {})
+        if m.get("enabled") and m.get("amount", 0) > 0:
+            builder.add_mortgage_sber(
+                amount=m["amount"],
+                credit_date=m.get("contract_date", "__.__.____"),
+                city=m.get("contract_city", "_______________")
+            )
+
+        # 6. Материнский капитал
+        msk = blocks.get("msk", {})
+        if msk.get("enabled") and msk.get("amount", 0) > 0:
+            has_mortgage = msk.get("is_mortgage_related", m.get("enabled", False))
+            builder.add_msk(amount=msk["amount"], has_mortgage=has_mortgage)
+
+        # 7. Аккредитив с трансферацией (Сбербанк)
+        tr = blocks.get("transfer_sber", {})
+        if tr.get("enabled") and tr.get("amount", 0) > 0:
+            builder.add_transfer_sber(
+                amount=tr["amount"],
+                seller_credit_num=tr.get("seller_credit_number", "__"),
+                seller_credit_date=tr.get("seller_credit_date", "__.__.____")
+            )
+
+        # 8. Перезалог чужого банка
+        po = blocks.get("payoff_other_bank", {})
+        if po.get("enabled") and po.get("total_mortgage_amount", 0) > 0:
+            builder.add_payoff_other_bank(
+                amount=po["total_mortgage_amount"],
+                payoff_amount=po.get("payoff_amount", 0),
+                other_bank_name=po.get("other_bank_name", "_______________"),
+                seller_credit_num=po.get("seller_credit_number", "__"),
+                seller_credit_date=po.get("seller_credit_date", "__.__.____")
+            )
+
+        return builder
 
     # ================= БАЗОВЫЕ БЛОКИ =================
     
@@ -275,18 +359,34 @@ class DKP_Payment_Builder:
         return num_to_words_ru(n)
 
 
-# ================= ПРИМЕР ИСПОЛЬЗОВАНИЯ =================
+# ================= ПРИМЕР ИСПОЛЬЗОВАНИЯ С JSON-СХЕМОЙ =================
 if __name__ == "__main__":
-    # Сценарий: Задаток 100к, Наличные (комиссия) 0, СБР 2млн, Ипотека 5млн, МСК 900к
-    builder = DKP_Payment_Builder(total_price=8_000_000)
-    
-    builder.add_zadatok(100_000, "01.11.2026")
-    builder.add_cash_before_deal(0)  # Не добавляется, если 0
-    builder.add_sbr(2_000_000)
-    builder.add_mortgage_sber(5_000_000, "10.11.2026", "Москва")
-    builder.add_msk(900_000, has_mortgage=True)  # has_mortgage=True уберет условие про 3 года
+    sample_json = {
+        "total_price": 8_000_000,
+        "blocks": {
+            "zadatok": {"enabled": True, "amount": 100_000, "date": "01.11.2026"},
+            "cash_before_deal": {"enabled": False, "amount": 0},
+            "sbr": {"enabled": True, "amount": 2_000_000},
+            "accreditive": {"enabled": False, "amount": 0},
+            "mortgage_sber": {
+                "enabled": True,
+                "amount": 5_000_000,
+                "contract_date": "10.11.2026",
+                "contract_city": "Москва"
+            },
+            "msk": {
+                "enabled": True,
+                "amount": 900_000,
+                "is_mortgage_related": True
+            },
+            "transfer_sber": {"enabled": False, "amount": 0},
+            "payoff_other_bank": {"enabled": False, "total_mortgage_amount": 0, "payoff_amount": 0}
+        }
+    }
 
-    print("=== ТЕКСТ ДЛЯ ПДКП ===")
+    builder = DKP_Payment_Builder.from_json(sample_json)
+
+    print("=== ТЕКСТ ДЛЯ ПДКП (из JSON) ===")
     print(builder.generate_pdkp())
-    print("\n=== ТЕКСТ ДЛЯ ОДКП ===")
+    print("\n=== ТЕКСТ ДЛЯ ОДКП (из JSON) ===")
     print(builder.generate_odkp())

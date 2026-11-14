@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Neutral DKP Payment Terms",
+  "description": "Универсальная схема раздела расчетов для ПДКП/ОДКП с поддержкой инструментов ПАО Сбербанк",
+  "type": "object",
+  "required": ["total_price", "blocks"],
+  "properties": {
+    "total_price": { "type": "integer", "minimum": 100000, "description": "Общая цена договора в рублях" },
+    "blocks": {
+      "type": "object",
+      "properties": {
+        "zadatok": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "amount": { "type": "integer", "minimum": 0 },
+            "date": { "type": "string", "format": "date" },
+            "pdkp_number": { "type": "string", "default": "б/н" },
+            "pdkp_date": { "type": "string", "default": "__.__.____" }
+          }
+        },
+        "cash_before_deal": {
+          "type": "object",
+          "description": "Опциональная наличная часть (комиссия, остаток ПВ). Если 0, не включается в ОДКП.",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "amount": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "sbr": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "amount": { "type": "integer", "minimum": 0 },
+            "punkt": { "type": "string", "default": "1.1" },
+            "recipient": { "type": "string", "default": "_______________" },
+            "rs": { "type": "string", "default": "_______________" },
+            "bank_name": { "type": "string", "default": "_______________" },
+            "bik": { "type": "string", "default": "044525225" },
+            "ks": { "type": "string", "default": "30101810400000000225" },
+            "inn": { "type": "string", "default": "_______________" }
+          }
+        },
+        "accreditive": {
+          "type": "object",
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "amount": { "type": "integer", "minimum": 0 },
+            "punkt": { "type": "string", "default": "1.1" },
+            "owner_name": { "type": "string", "default": "_______________" }
+          }
+        },
+        "mortgage_sber": {
+          "type": "object",
+          "properties": { 
+            "enabled": { "type": "boolean" }, 
+            "amount": { "type": "integer", "minimum": 0 },
+            "contract_date": { "type": "string" },
+            "contract_city": { "type": "string" }
+          }
+        },
+        "msk": {
+          "type": "object",
+          "properties": { 
+            "enabled": { "type": "boolean" }, 
+            "amount": { "type": "integer", "minimum": 0 },
+            "is_mortgage_related": { "type": "boolean", "description": "Если true, условие про 3 года не применяется" }
+          }
+        },
+        "transfer_sber": {
+          "type": "object",
+          "description": "Аккредитив с трансферацией (ипотека продавца в Сбербанке)",
+          "properties": { 
+            "enabled": { "type": "boolean" }, 
+            "amount": { "type": "integer", "minimum": 0 },
+            "seller_credit_number": { "type": "string" },
+            "seller_credit_date": { "type": "string", "default": "__.__.____" }
+          }
+        },
+        "payoff_other_bank": {
+          "type": "object",
+          "description": "Перезалог: погашение ипотеки продавца в стороннем банке",
+          "properties": { 
+            "enabled": { "type": "boolean" }, 
+            "total_mortgage_amount": { "type": "integer" },
+            "payoff_amount": { "type": "integer" },
+            "other_bank_name": { "type": "string" },
+            "seller_credit_number": { "type": "string", "default": "__" },
+            "seller_credit_date": { "type": "string", "default": "__.__.____" }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "description": "Бизнес-правило: Сумма всех включенных блоков должна быть равна total_price",
+      "if": { "properties": { "blocks": { "properties": { "zadatok": { "properties": { "enabled": { "const": true } } } } } } },
+      "then": {
+        "description": "Здесь в 1С/CRM должна быть реализована проверка: sum(amount where enabled=true) == total_price"
+      }
+    }
+  ]
+}
