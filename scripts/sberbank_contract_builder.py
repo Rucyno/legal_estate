@@ -1,20 +1,19 @@
 import sys
 import io
 
-# Обеспечиваем корректный UTF-8 вывод в Windows консоли
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 """
-Генератор раздела «Порядок расчётов» ДКП (ПАО Сбербанк / Этажи)
-Реализация контрактного строителя на базе проверенной JSON-схемы и бизнес-правил.
+Генератор раздела «Порядок расчётов» ДКП (ПАО Сбербанк)
+Включает прямые расчеты, ипотеку, аккредитив с трансферацией и перезалог.
 """
 
 from typing import Dict, Any, List
 
 
 class SberbankContractBuilder:
-    """Интеллектуальный конструктор раздела расчётов с валидацией бизнес-правил."""
+    """Сборщик раздела расчетов с валидацией бизнес-правил, трансферации и перезалога."""
 
     def __init__(self, data: Dict[str, Any]):
         self.data = data
@@ -23,34 +22,28 @@ class SberbankContractBuilder:
         self.warnings: List[str] = []
 
     def validate(self) -> bool:
-        """
-        Проверка 7 фундаментальных правил сделки:
-        1. Баланс сумм (Сумма всех включенных блоков == общей цене)
-        2. Минимум один блок включен
-        3. МСК без ипотеки -> контроль возраста ребенка (>= 3 лет)
-        4. МСК + ипотека -> ценз возраста не применяется
-        5. Ипотека Сбера -> обязательные реквизиты кредитного договора
-        6. Аккредитив + СБР несовместимы в одной сделке
-        7. Константы Сбербанка и Домклик (БИК 044525225, ИНН 7736249247)
-        """
         blocks = self.data.get("blocks", {})
         price_total = self.data.get("price", {}).get("total", 0)
 
-        # 1. Проверка активности блоков
         active_blocks = [k for k, v in blocks.items() if v.get("enabled", False)]
         if not active_blocks:
-            self.validation_errors.append("Правило 2: Должен быть включен хотя бы один блок расчетов!")
+            self.validation_errors.append("Должен быть включен хотя бы один блок расчетов!")
 
-        # 6. Несовместимость СБР и Аккредитива
-        if blocks.get("sbr", {}).get("enabled") and blocks.get("accreditive", {}).get("enabled"):
+        # Проверка взаимоисключающих безналичных шлюзов
+        conflict_count = sum([
+            1 if blocks.get("sbr", {}).get("enabled") else 0,
+            1 if blocks.get("accreditive", {}).get("enabled") else 0,
+            1 if blocks.get("accreditive_transferation", {}).get("enabled") else 0
+        ])
+        if conflict_count > 1:
             self.validation_errors.append(
-                "Правило 6: Несовместимость СБР и Аккредитива! Для собственных средств "
-                "используется либо СБР, либо Аккредитив, но не оба одновременно."
+                "Несовместимость шлюзов расчетов! Для одних и тех же средств "
+                "выбирается либо СБР, либо обычный Аккредитив, либо Аккредитив с трансферацией."
             )
 
-        # 1. Баланс сумм
+        # Баланс сумм
         calc_total = 0
-        for b_name in ["zadatok", "own_cash_before_deal", "sbr", "accreditive", "msk", "mortgage"]:
+        for b_name in ["zadatok", "own_cash_before_deal", "sbr", "accreditive", "accreditive_transferation", "msk", "mortgage"]:
             b_conf = blocks.get(b_name, {})
             if b_conf.get("enabled", False):
                 calc_total += b_conf.get("summa", 0)
@@ -58,41 +51,36 @@ class SberbankContractBuilder:
         if calc_total != price_total:
             diff = price_total - calc_total
             self.validation_errors.append(
-                f"Правило 1: Нарушен баланс сумм! Общая цена ({price_total:,} руб.) "
+                f"Нарушен баланс сумм! Общая цена ({price_total:,} руб.) "
                 f"не равна сумме выбранных блоков ({calc_total:,} руб.). Разница: {diff:,} руб."
             )
 
-        # 3 и 4. Проверка условий МСК
+        # Проверка МСК
         is_mortgage = blocks.get("mortgage", {}).get("enabled", False)
         is_msk = blocks.get("msk", {}).get("enabled", False)
         if is_msk:
             if not is_mortgage:
                 self.warnings.append(
-                    "Правило 3: При расчете средствами МСК без ипотеки самому младшему ребенку "
-                    "на момент сделки должно быть более 3 лет (ст. 10 Федерального закона № 256-ФЗ)!"
+                    "При расчете средствами МСК без ипотеки самому младшему ребенку "
+                    "на момент сделки должно быть более 3 лет (ст. 10 Федерального закона № 256-ФЗ)."
                 )
             else:
                 self.warnings.append(
-                    "Правило 4: Используется МСК в рамках ипотечного кредитования — ценз 3-летнего "
-                    "возраста ребенка НЕ применяется (средства направляются на ПВ или погашение кредита)."
+                    "Используется МСК в рамках ипотечного кредитования: ограничение по возрасту 3 лет НЕ применяется."
                 )
 
-        # 5. Ипотека Сбербанка: проверка полей КД
-        if is_mortgage:
-            m_conf = blocks.get("mortgage", {})
-            if not m_conf.get("contract_number"):
-                self.validation_errors.append("Правило 5: Для ипотеки Сбербанка обязателен номер кредитного договора!")
-            if not m_conf.get("contract_date"):
-                self.validation_errors.append("Правило 5: Для ипотеки Сбербанка обязательна дата кредитного договора!")
+        # Проверка перезалога / трансферации
+        is_transf = blocks.get("accreditive_transferation", {}).get("enabled", False)
+        has_seller_encumbrance = self.data.get("seller_encumbrance", {}).get("enabled", False)
+        if is_transf and not has_seller_encumbrance:
+            self.warnings.append("Для аккредитива с трансферацией рекомендуется указать реквизиты ипотеки Продавца.")
 
         return len(self.validation_errors) == 0
 
     def format_money(self, val: int) -> str:
-        """Красивое форматирование денежных сумм."""
         return f"{val:,}".replace(",", " ") + " рублей"
 
     def assemble(self, start_punkt: int = 3) -> str:
-        """Сборка полного текста раздела."""
         if not self.validate():
             err_msg = "\n".join([f"- {e}" for e in self.validation_errors])
             raise ValueError(f"Ошибки валидации условий сделки:\n{err_msg}")
@@ -100,10 +88,23 @@ class SberbankContractBuilder:
         blocks = self.data["blocks"]
         seller = self.data["seller"]
         acc = seller.get("bank_account", {})
-        obj_punkt = self.data["object"].get("punkt", "1.1")
+        obj_punkt = self.data.get("object", {}).get("punkt", "1.1")
         total_price = self.format_money(self.data["price"]["total"])
 
         items = []
+
+        # Обременение Продавца (если есть)
+        seller_enc = self.data.get("seller_encumbrance", {})
+        if seller_enc.get("enabled"):
+            kd_s_num = seller_enc.get("contract_number", "__")
+            kd_s_date = seller_enc.get("contract_date", "__.__.____ г.")
+            rec_num = seller_enc.get("record_number", "_______________")
+            rec_date = seller_enc.get("record_date", "__.__.____ г.")
+            items.append(
+                f"На момент подписания настоящего договора Объект недвижимости находится в залоге у ПАО «Сбербанк» "
+                f"в обеспечение исполнения обязательств Продавца по кредитному договору № {kd_s_num} от {kd_s_date} "
+                f"(запись об ипотеке в ЕГРН № {rec_num} от {rec_date}). Объект продается с письменного согласия Банка."
+            )
 
         # 1. Задаток
         if blocks.get("zadatok", {}).get("enabled"):
@@ -154,12 +155,12 @@ class SberbankContractBuilder:
                 f"на недвижимое имущество и сделок с ним."
             )
 
-        # 4. Аккредитив
+        # 4. Аккредитив стандартный
         if blocks.get("accreditive", {}).get("enabled"):
             b = blocks["accreditive"]
             s = self.format_money(b["summa"])
             term = b.get("term_days", 60)
-            buyer_name = self.data["buyer"].get("name", "_______________")
+            buyer_name = self.data.get("buyer", {}).get("name", "_______________")
             pol = acc.get("recipient", "_______________")
             rs = acc.get("account", "___________________")
             bank = acc.get("bank_name", "___________________")
@@ -185,7 +186,45 @@ class SberbankContractBuilder:
                 f"на недвижимое имущество и сделок с ним."
             )
 
-        # 5. МСК
+        # 5. Аккредитив с трансферацией (перезалог / погашение залога Продавца)
+        if blocks.get("accreditive_transferation", {}).get("enabled"):
+            b = blocks["accreditive_transferation"]
+            s = self.format_money(b["summa"])
+            term = b.get("term_days", 60)
+            kd_s_num = seller_enc.get("contract_number", "__")
+            kd_s_date = seller_enc.get("contract_date", "__.__.____ г.")
+            mortgage_conf = blocks.get("mortgage", {})
+            kd_b_num = mortgage_conf.get("contract_number", "__")
+            kd_b_date = mortgage_conf.get("contract_date", "__.__.____ г.")
+
+            pol = acc.get("recipient", "_______________")
+            rs = acc.get("account", "___________________")
+            bank = acc.get("bank_name", "___________________")
+            bik = acc.get("bik", "044525225")
+            ks = acc.get("corr_account", "30101810400000000225")
+            inn = acc.get("inn", "__________________________")
+            kpp = acc.get("kpp", "____________________")
+
+            items.append(
+                f"часть стоимости Объекта недвижимости в размере {s} оплачивается Покупателем за счет собственных "
+                f"денежных средств с использованием безотзывного покрытого аккредитива, открытого в ПАО «Сбербанк» "
+                f"(Банк-Эмитент и Исполняющий Банк) на следующих условиях:\n"
+                f"– Сумма аккредитива: {s}.\n"
+                f"– Срок действия аккредитива: {term} (Шестьдесят) дней.\n"
+                f"Для исполнения аккредитива Продавец/Покупатель предоставляет в ПАО «Сбербанк»:\n"
+                f"1) Выписку из ЕГРН, где правообладателем указан Покупатель, с записями об ипотеке в силу закона в пользу "
+                f"ПАО «Сбербанк» (в обеспечение обязательств Продавца по кредитному договору № {kd_s_num} от {kd_s_date} "
+                f"и в обеспечение обязательств Покупателя по кредитному договору № {kd_b_num} от {kd_b_date}).\n"
+                f"2) Заявление Продавца на трансферацию аккредитива в пользу Банка на сумму погашения задолженности "
+                f"по кредитному договору № {kd_s_num} от {kd_s_date} на дату перечисления денежных средств со счета покрытия.\n"
+                f"Перечисление денежных средств осуществляется после госрегистрации перехода права и регистрации ипотеки "
+                f"Покупателя, по реквизитам: получатель – {pol}, счет № {rs}, открытый в {bank}, БИК: {bik}, "
+                f"Кор. счет: {ks}, ИНН: {inn}, КПП: {kpp}.\n"
+                f"Продавец обязуется направить часть полученных средств на погашение ипотеки в силу закона и принять "
+                f"меры для снятия обременения в течение 7 дней с момента регистрации перехода права."
+            )
+
+        # 6. МСК
         if blocks.get("msk", {}).get("enabled"):
             b = blocks["msk"]
             s = self.format_money(b["summa"])
@@ -216,7 +255,7 @@ class SberbankContractBuilder:
                 f"получатель – {pol}, р/с {rs}, открытый в {bank}, БИК: {bik}, Кор. счет: {ks}, ИНН: {inn}."
             )
 
-        # 6. Ипотека Сбербанка
+        # 7. Ипотека Покупателя
         if blocks.get("mortgage", {}).get("enabled"):
             b = blocks["mortgage"]
             s = self.format_money(b["summa"])
@@ -240,22 +279,21 @@ class SberbankContractBuilder:
                 f"ул. Вавилова д. 19, (далее – Банк) в соответствии с Кредитным договором № {kd_num} (далее – "
                 f"Кредитный договор), заключенным {kd_date} в г. {kd_city}. Условия предоставления кредита "
                 f"предусмотрены Кредитным договором. Расчеты по договору купли-продажи Объекта недвижимости в сумме "
-                f"кредитных средств производятся с использованием номинального счета Общества с ограниченной "
-                f"ответственностью «Домклик» (ООО «Домклик»), ИНН 7736249247, открытого в Операционном управлении "
-                f"Московского банка ПАО Сбербанк г. Москва, к/счет 30101810400000000225, БИК 044525225. "
-                f"Бенефициаром в отношении денежных средств, размещаемых на номинальном счёте, является Покупатель "
-                f"до момента исполнения условий перечисления денежных средств Продавцу.\n"
+                f"кредитных средств производятся с использованием номинального счета/аккредитива. "
                 f"Перечисление кредитных денежных средств в счет оплаты части стоимости Объекта недвижимости "
-                f"осуществляется ООО «Домклик», ИНН 7736249247 по поручению Покупателя после государственной "
-                f"регистрации перехода права собственности на Объект недвижимости к Заемщику, а также государственной "
-                f"регистрации ипотеки Объекта недвижимости в силу закона в пользу Банка, по следующим реквизитам: "
-                f"получатель – {pol}, счет № {rs}, открытый в {bank}, БИК: {bik}, Кор. счет: {ks}, ИНН: {inn}, КПП: {kpp}. "
-                f"Передача кредитных денежных средств Продавцу в счет оплаты части стоимости Объекта недвижимости "
-                f"осуществляется в течение от 1 (одного) рабочего дня до 5 (пяти) рабочих дней с момента получения "
-                f"ООО «Домклик» информации от органа, осуществляющего государственную регистрацию, о переходе права "
-                f"собственности на Объект недвижимости к Покупателю и регистрации ипотеки Объекта недвижимости "
-                f"в силу закона в пользу Банка в органе, осуществляющем государственную регистрацию прав на "
-                f"недвижимое имущество и сделок с ним."
+                f"осуществляется по поручению Покупателя после государственной регистрации перехода права собственности "
+                f"на Объект недвижимости к Заемщику, а также государственной регистрации ипотеки Объекта недвижимости "
+                f"в силу закона в пользу Банка, по следующим реквизитам: получатель – {pol}, счет № {rs}, "
+                f"открытый в {bank}, БИК: {bik}, Кор. счет: {ks}, ИНН: {inn}, КПП: {kpp}."
+            )
+
+            # Пункт о залоге банка по ст. 77 102-ФЗ
+            items.append(
+                "Квартира, приобретаемая Покупателем по настоящему договору, в соответствии со ст. 77 Федерального "
+                "закона «Об ипотеке (залоге недвижимости)» № 102-ФЗ от 16.07.1998 года, с момента государственной "
+                "регистрации перехода права собственности будет в полном объеме находиться в залоге у Банка. "
+                "Залогодержателем является Банк. Право залога в силу ст. 488 ГК РФ у Продавца не возникает. "
+                "Стороны установили, что Объект не будет считаться находящимся в залоге у Продавца согласно п. 5 ст. 488 ГК РФ."
             )
 
         # Формирование итогового текста
@@ -272,16 +310,21 @@ class SberbankContractBuilder:
         return header + "\n\n".join(sub_items)
 
 
-# Демонстрационный запуск
+# Тестовый запуск на Ситуации 12 (перезалог + трансферация + ипотека покупателя)
 if __name__ == "__main__":
-    demo_payload = {
-        "deal_id": "DKP-2026-11-00142",
-        "bank": "sberbank",
-        "object": {"punkt": "1.1", "address": "г. Москва, ул. Примерная, д. 1, кв. 1"},
-        "price": {"total": 5730000, "currency": "RUB"},
-        "buyer": {"type": "individual", "name": "Иванов Иван Иванович"},
+    test_payload = {
+        "deal_id": "DEAL-SBER-TRANSF-12",
+        "price": {"total": 5500000, "currency": "RUB"},
+        "object": {"punkt": "1.1"},
+        "seller_encumbrance": {
+            "enabled": True,
+            "contract_number": "68669730",
+            "contract_date": "29.09.2023 г.",
+            "record_number": "58:29:1008003:5108-58/059/2023-4",
+            "record_date": "02.10.2023 г."
+        },
+        "buyer": {"name": "Иванов Иван Иванович"},
         "seller": {
-            "type": "individual",
             "name": "Петров Пётр Петрович",
             "bank_account": {
                 "recipient": "Петров Пётр Петрович",
@@ -295,21 +338,11 @@ if __name__ == "__main__":
         },
         "blocks": {
             "zadatok": {"enabled": True, "summa": 100000, "date": "01.11.2026 г."},
-            "own_cash_before_deal": {"enabled": True, "summa": 500000},
-            "sbr": {"enabled": True, "summa": 1500000},
+            "own_cash_before_deal": {"enabled": True, "summa": 400000},
+            "sbr": {"enabled": False, "summa": 0},
             "accreditive": {"enabled": False, "summa": 0},
-            "msk": {
-                "enabled": True,
-                "summa": 630000,
-                "certificate": {
-                    "series": "III-АА",
-                    "number": "123456",
-                    "issued_by": "ГУ - Отделение СФР по г. Москве",
-                    "issued_date": "15.05.2020 г.",
-                    "decision_number": "123",
-                    "holder_name": "Иванова Мария Ивановна"
-                }
-            },
+            "accreditive_transferation": {"enabled": True, "summa": 2000000, "term_days": 60},
+            "msk": {"enabled": False, "summa": 0},
             "mortgage": {
                 "enabled": True,
                 "summa": 3000000,
@@ -320,15 +353,10 @@ if __name__ == "__main__":
         }
     }
 
-    builder = SberbankContractBuilder(demo_payload)
-    print("=== ВАЛИДАЦИЯ ===")
+    builder = SberbankContractBuilder(test_payload)
     if builder.validate():
-        print("[OK] Валидация пройдена успешно!")
-        for w in builder.warnings:
-            print(f"[INFO] {w}")
-        print("\n=== РЕЗУЛЬТАТ СБОРКИ ===")
-        print(builder.assemble(start_punkt=3))
+        print("[OK] Валидация Ситуации 12 пройдена успешно!")
+        print("\n=== СОБРАННЫЙ ТЕКСТ ===")
+        print(builder.assemble(start_punkt=2))
     else:
-        print("[ERROR] Ошибки:")
-        for err in builder.validation_errors:
-            print(f"- {err}")
+        print("[ERROR]:", builder.validation_errors)
