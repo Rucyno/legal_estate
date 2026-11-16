@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FigJam Deal Matrix — React Component Preview | «Этажи»</title>
+  <!-- React 18 & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <!-- Framer Motion -->
+  <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+  <!-- Babel Standalone for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #F8FAFC;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #0F172A;
+      -webkit-font-smoothing: antialiased;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+    const { motion, AnimatePresence } = window.Motion;
+
+    function FigJamDealMatrixApp() {
+      const [activeTab, setActiveTab] = useState('simulator');
+      const [property, setProperty] = useState('apartment');
+      const [seller, setSeller] = useState('adult_1');
+      const [buyer, setBuyer] = useState('spouses');
+      const [encumbrance, setEncumbrance] = useState('free');
+      const [financing, setFinancing] = useState('own_plus_mortgage');
+      const [paymentMethod, setPaymentMethod] = useState('sbr');
+      const [matrixBranch, setMatrixBranch] = useState('free');
+
+      const isFree = encumbrance === 'free';
+      const hasMortgage = financing === 'own_plus_mortgage' || financing === 'combined_all';
+      const hasMatcap = financing === 'own_plus_matcap' || financing === 'combined_all';
+
+      let title = '';
+      let statuteArticle = '';
+      let matcapRule = '';
+      let receiptRule = '';
+      let encumbranceRule = hasMortgage
+        ? 'Ипотека в силу закона в пользу Банка-кредитора (ст. 77 102-ФЗ). Залог Продавца по п. 5 ст. 488 ГК РФ не возникает!'
+        : 'Объект не обременяется ипотекой банка.';
+
+      if (isFree) {
+        if (financing === 'own_funds') {
+          title = 'Собственные средства 100% (Объект чистый)';
+          statuteArticle = paymentMethod === 'cash_full'
+            ? 'п. 5 ст. 488 ГК РФ — без залога (расчет до ОДКП)'
+            : 'ст. 488 ГК РФ — без залога (расчет через аккредитив/СБР после регистрации)';
+        } else if (financing === 'own_plus_matcap') {
+          title = 'Собственные средства + Материнский капитал (Без ипотеки)';
+          statuteArticle = 'ст. 10 256-ФЗ, ст. 488 ГК РФ (залог продавца исключается по соглашению)';
+        } else if (financing === 'own_plus_mortgage') {
+          title = 'Собственные средства + Ипотека банка (Объект чистый)';
+          statuteArticle = 'ст. 77 Федерального закона № 102-ФЗ. Ст. 488 ГК РФ строго НЕ применяется!';
+        } else {
+          title = 'Комбинированная сделка: Собственные + Ипотека + МСК';
+          statuteArticle = 'ст. 77 102-ФЗ, ст. 10 256-ФЗ. Залог продавца по ст. 488 ГК РФ исключен!';
+        }
+      } else {
+        if (financing === 'own_funds') {
+          title = 'Покупка за свои средства (Объект в залоге банка Продавца)';
+          statuteArticle = 'ст. 353 ГК РФ, регламент залогодержателя. Залог продавца по 488 ГК РФ не возникает.';
+        } else if (financing === 'own_plus_mortgage') {
+          title = 'Сделка «Ипотека на Ипотеку» (Обременение Продавца + Кредит Покупателя)';
+          statuteArticle = 'ст. 77 102-ФЗ, ст. 313 ГК РФ, регламент переипотеки.';
+        } else if (financing === 'own_plus_matcap') {
+          title = 'Залоговый объект + Собственные + МСК (Без кредита)';
+          statuteArticle = 'ст. 10 256-ФЗ. Залог банка гасится ТОЛЬКО личными средствами покупателя!';
+        } else {
+          title = 'Залоговый объект + Ипотека + МСК (Многосоставная сделка)';
+          statuteArticle = 'ст. 77 102-ФЗ, ст. 10 256-ФЗ, ст. 313 ГК РФ.';
+        }
+      }
+
+      if (hasMatcap) {
+        matcapRule = hasMortgage
+          ? 'Возраст ребенка НЕ ограничивается 3 годами (ч. 6 ст. 10 256-ФЗ при кредитовании).'
+          : 'КРИТИЧНО: Ребенку на момент ДКП должно быть СТРОГО БОЛЕЕ 3 ЛЕТ!';
+      }
+
+      if (paymentMethod === 'cash_full') {
+        receiptRule = 'Общая расписка на полную сумму с учетом задатка в день ОДКП.';
+      } else if (paymentMethod === 'sbr') {
+        receiptRule = 'В день сделки расписка ТОЛЬКО на задаток. На сумму СБР — после раскрытия счета.';
+      } else if (paymentMethod === 'letter_of_credit') {
+        receiptRule = 'В день сделки — расписка на задаток. На аккредитив — после зачисления средств продавцу.';
+      } else {
+        receiptRule = 'В день сделки — расписка на задаток; на ячейку — при выемке из ячейки.';
+      }
+
+      const risks = [];
+      if (property === 'room') risks.push('Ст. 250 ГК РФ: Обязательны отказы соседей от преимущественного права покупки.');
+      if (property === 'apartment_share') risks.push('Обязательное нотариальное удостоверение отчуждения долей (ст. 42 218-ФЗ).');
+      if (seller === 'minor_under_14' || seller === 'minor_14_to_18') risks.push('Обязательно предварительное согласие Органов опеки и попечительства (ст. 37 ГК РФ).');
+      if (seller === 'spouses') risks.push('Обязательно нотариальное согласие супруга(и) Продавца по ст. 35 СК РФ.');
+      if (!isFree && paymentMethod === 'cash_full') risks.push('КРИТИЧЕСКИЙ РИСК: Передача наличных до сделки на гашение чужого кредита требует целевого займа.');
+
+      return (
+        <div style={{ maxWidth: 1280, margin: '0 auto', padding: '24px' }}>
+          {/* Header */}
+          <div style={{
+            backgroundColor: '#FFFFFF',
+            borderRadius: '14px',
+            padding: '20px 28px',
+            border: '1px solid #E2E8F0',
+            borderTop: '5px solid #DC2626',
+            boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)',
+            marginBottom: '24px',
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '16px'
+          }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                <span style={{
+                  backgroundColor: '#DC2626',
+                  color: '#FFFFFF',
+                  fontWeight: 800,
+                  fontSize: '12px',
+                  padding: '4px 10px',
+                  borderRadius: '6px'
+                }}>
+                  ЭТАЖИ ЮРИСТ
+                </span>
+                <span style={{ fontSize: '13px', color: '#64748B', fontWeight: 500 }}>
+                  FigJam Interactive React Engine
+                </span>
+              </div>
+              <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#0F172A', margin: 0 }}>
+                Интерактивная карта сделок и матрица расчетов
+              </h1>
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {[
+                { id: 'simulator', label: '⚡ Симулятор сделки' },
+                { id: 'matrix', label: '🗺️ Карта расчетов FigJam' },
+                { id: 'contract_blocks', label: '📄 Структура ПДКП' },
+                { id: 'prep_checklist', label: '📋 Чек-лист подготовки' }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  style={{
+                    padding: '9px 16px',
+                    borderRadius: '8px',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    border: 'none',
+                    backgroundColor: activeTab === tab.id ? '#DC2626' : '#F1F5F9',
+                    color: activeTab === tab.id ? '#FFFFFF' : '#475569',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Tab 1: Simulator */}
+          {activeTab === 'simulator' && (
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 420px) 1fr', gap: '24px' }}>
+              <div style={{
+                backgroundColor: '#FFFFFF',
+                borderRadius: '12px',
+                padding: '24px',
+                border: '1px solid #E2E8F0'
+              }}>
+                <h2 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '18px' }}>Параметры сделки</h2>
+                
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Объект недвижимости</label>
+                  <select value={property} onChange={e => setProperty(e.target.value)} style={{ width: '100%', padding: '9px', borderRadius: '6px', border: '1px solid #CBD5E1' }}>
+                    <option value="apartment">Квартира (целиком)</option>
+                    <option value="apartment_share">Доля в квартире (нотариат)</option>
+                    <option value="house_and_land">Дом и земельный участок</option>
+                    <option value="room">Комната (ст. 250 ГК РФ)</option>
+                    <option value="commercial">Коммерческое помещение</option>
+                  </select>
+                </div>
+
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Сторона Продавца</label>
+                  <select value={seller} onChange={e => setSeller(e.target.value)} style={{ width: '100%', padding: '9px', borderRadius: '6px', border: '1px solid #CBD5E1' }}>
+                    <option value="adult_1">1 взрослый собственник</option>
+                    <option value="spouses">2 взрослых (супруги, ст. 35 СК РФ)</option>
+                    <option value="minor_under_14">Собственник до 14 лет (Опека)</option>
+                  </select>
+                </div>
+
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Обременение Продавца</label>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                    <button
+                      onClick={() => setEncumbrance('free')}
+                      style={{
+                        padding: '10px',
+                        borderRadius: '6px',
+                        border: encumbrance === 'free' ? '2px solid #16A34A' : '1px solid #CBD5E1',
+                        backgroundColor: encumbrance === 'free' ? '#F0FDF4' : '#FFFFFF',
+                        color: encumbrance === 'free' ? '#16A34A' : '#475569',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      ✅ Чистый
+                    </button>
+                    <button
+                      onClick={() => setEncumbrance('mortgaged')}
+                      style={{
+                        padding: '10px',
+                        borderRadius: '6px',
+                        border: encumbrance === 'mortgaged' ? '2px solid #DC2626' : '1px solid #CBD5E1',
+                        backgroundColor: encumbrance === 'mortgaged' ? '#FEF2F2' : '#DC2626',
+                        color: encumbrance === 'mortgaged' ? '#FFFFFF' : '#475569',
+                        fontWeight: 600,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      ⚠️ В залоге
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: '14px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Финансирование Покупателя</label>
+                  <select value={financing} onChange={e => setFinancing(e.target.value)} style={{ width: '100%', padding: '9px', borderRadius: '6px', border: '1px solid #CBD5E1' }}>
+                    <option value="own_funds">Собственные 100%</option>
+                    <option value="own_plus_matcap">Собственные + МСК</option>
+                    <option value="own_plus_mortgage">Собственные + Ипотека</option>
+                    <option value="combined_all">Собственные + Ипотека + МСК</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#475569', marginBottom: '6px' }}>Инструмент расчетов</label>
+                  <select value={paymentMethod} onChange={e => setPaymentMethod(e.target.value)} style={{ width: '100%', padding: '9px', borderRadius: '6px', border: '1px solid #CBD5E1' }}>
+                    <option value="sbr">СБР (номинальный счет)</option>
+                    <option value="letter_of_credit">Аккредитив</option>
+                    <option value="cash_full">Наличные</option>
+                    <option value="safe_deposit_box">Банковская ячейка</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Result card */}
+              <div style={{
+                backgroundColor: '#FFFFFF',
+                borderRadius: '12px',
+                padding: '28px',
+                border: '1px solid #E2E8F0',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '18px'
+              }}>
+                <div>
+                  <span style={{
+                    backgroundColor: encumbrance === 'free' ? '#DC2626' : '#B91C1C',
+                    color: '#FFFFFF',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    padding: '3px 8px',
+                    borderRadius: '4px'
+                  }}>
+                    {encumbrance === 'free' ? 'СТВОЛ I: Объект чистый' : 'СТВОЛ II: Залог кредитора'}
+                  </span>
+                  <h2 style={{ fontSize: '20px', fontWeight: 700, margin: '8px 0 4px 0' }}>{title}</h2>
+                  <p style={{ fontSize: '13px', color: '#475569', margin: 0 }}>Основание: {statuteArticle}</p>
+                </div>
+
+                {matcapRule && (
+                  <div style={{ backgroundColor: '#FEF2F2', borderLeft: '4px solid #DC2626', padding: '12px', borderRadius: '6px', fontSize: '13px', fontWeight: 600, color: '#991B1B' }}>
+                    🍼 {matcapRule}
+                  </div>
+                )}
+
+                {risks.length > 0 && (
+                  <div style={{ backgroundColor: '#FFFBEB', borderLeft: '4px solid #D97706', padding: '12px', borderRadius: '6px' }}>
+                    <div style={{ fontSize: '12px', fontWeight: 700, color: '#B45309', marginBottom: '4px' }}>⚠️ ПРЕДУПРЕЖДЕНИЯ:</div>
+                    <ul style={{ margin: 0, paddingLeft: '18px', fontSize: '13px', color: '#92400E' }}>
+                      {risks.map((r, i) => <li key={i}>{r}</li>)}
+                    </ul>
+                  </div>
+                )}
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                  <div style={{ backgroundColor: '#F8FAFC', padding: '14px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                    <div style={{ fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', marginBottom: '4px' }}>Статус залога продавца</div>
+                    <div style={{ fontSize: '13px', fontWeight: 600 }}>{encumbranceRule}</div>
+                  </div>
+                  <div style={{ backgroundColor: '#F8FAFC', padding: '14px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                    <div style={{ fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', marginBottom: '4px' }}>Регламент расписок</div>
+                    <div style={{ fontSize: '13px', fontWeight: 600 }}>{receiptRule}</div>
+                  </div>
+                </div>
+
+                <div style={{ backgroundColor: '#0F172A', color: '#F8FAFC', padding: '16px', borderRadius: '8px', fontSize: '12px' }}>
+                  <div style={{ color: '#EF4444', fontWeight: 700, marginBottom: '6px' }}>РЕКОМЕНДОВАННАЯ ФОРМУЛИРОВКА ДЛЯ ДОГОВОРА:</div>
+                  <em>
+                    {hasMortgage
+                      ? '«В соответствии со ст. 77 Федерального закона "Об ипотеке (залоге недвижимости)" с момента государственной регистрации Объект находится в залоге у Банка. В силу п. 5 ст. 488 ГК РФ право залога у Продавца не возникает.»'
+                      : '«В соответствии с п. 5 ст. 488 Гражданского кодекса РФ право залога у Продавца на Объект недвижимости до момента полной оплаты не возникает по взаимному соглашению Сторон.»'}
+                  </em>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 2: Flowchart Matrix */}
+          {activeTab === 'matrix' && (
+            <div style={{ backgroundColor: '#FFFFFF', borderRadius: '12px', padding: '24px', border: '1px solid #E2E8F0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: 700 }}>Карта расчетов FigJam</h2>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button onClick={() => setMatrixBranch('free')} style={{ padding: '8px 14px', borderRadius: '6px', border: 'none', backgroundColor: matrixBranch === 'free' ? '#DC2626' : '#F1F5F9', color: matrixBranch === 'free' ? '#FFFFFF' : '#475569', fontWeight: 700, cursor: 'pointer' }}>ВЕТВЬ I: Чистый</button>
+                  <button onClick={() => setMatrixBranch('mortgaged')} style={{ padding: '8px 14px', borderRadius: '6px', border: 'none', backgroundColor: matrixBranch === 'mortgaged' ? '#DC2626' : '#F1F5F9', color: matrixBranch === 'mortgaged' ? '#FFFFFF' : '#475569', fontWeight: 700, cursor: 'pointer' }}>ВЕТВЬ II: Залог Продавца</button>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
+                {matrixBranch === 'free' ? (
+                  <>
+                    <div style={{ border: '1px solid #E2E8F0', borderRadius: '10px', padding: '16px', borderTop: '4px solid #16A34A' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 700, color: '#16A34A' }}>1.1. НАЛИЧНЫЕ 100%</div>
+                      <h4 style={{ margin: '6px 0' }}>Полностью наличные</h4>
+                      <p style={{ fontSize: '12px', color: '#475569' }}>Задаток по ПДКП + остаток до ОДКП. Ст. 488 ГК РФ — без залога. Общая расписка на всю сумму в день ОДКП.</p>
+                    </div>
+                    <div style={{ border: '1px solid #E2E8F0', borderRadius: '10px', padding: '16px', borderTop: '4px solid #2563EB' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 700, color: '#2563EB' }}>1.2. СБР / АККРЕДИТИВ</div>
+                      <h4 style={{ margin: '6px 0' }}>Безопасные расчеты</h4>
+                      <p style={{ fontSize: '12px', color: '#475569' }}>Задаток по ПДКП. Остаток через номинальный счет или аккредитив. В день сделки расписка ТОЛЬКО на задаток.</p>
+                    </div>
+                    <div style={{ border: '1px solid #E2E8F0', borderRadius: '10px', padding: '16px', borderTop: '4px solid #DC2626' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 700, color: '#DC2626' }}>1.3. СВОИ + МСК</div>
+                      <h4 style={{ margin: '6px 0' }}>Материнский капитал</h4>
+                      <p style={{ fontSize: '12px', color: '#475569' }}>Ребенку &gt; 3 лет! Срок выплаты СФР до 21 дня. Залог продавца по ст. 488 ГК РФ исключается в договоре.</p>
+                    </div>
+                    <div style={{ border: '1px solid #E2E8F0', borderRadius: '10px', padding: '16px', borderTop: '4px solid #7C3AED' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 700, color: '#7C3AED' }}>1.4. ИПОТЕКА БАНКА</div>
+                      <h4 style={{ margin: '6px 0' }}>Целевой кредит</h4>
+                      <p style={{ fontSize: '12px', color: '#475569' }}>Ипотека в силу закона ст. 77 102-ФЗ в пользу Банка. Статья 488 ГК РФ строго не применяется.</p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div style={{ border: '1px solid #E2E8F0', borderRadius: '10px', padding: '16px', borderTop: '4px solid #D97706' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 700, color: '#D97706' }}>2.1. НАЛИЧНЫЕ ДО СДЕЛКИ</div>
+                      <h4 style={{ margin: '6px 0' }}>Погашение до ОДКП</h4>
+                      <p style={{ fontSize: '12px', color: '#475569' }}>Покупатель дает деньги до сделки на снятие обременения. Требуется целевой заем и доверенность.</p>
+                    </div>
+                    <div style={{ border: '1px solid #E2E8F0', borderRadius: '10px', padding: '16px', borderTop: '4px solid #DC2626' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 700, color: '#DC2626' }}>2.2. ТРАНСФЕРАБЕЛЬНЫЙ АККРЕДИТИВ</div>
+                      <h4 style={{ margin: '6px 0' }}>Авторасщепление сумм</h4>
+                      <p style={{ fontSize: '12px', color: '#475569' }}>Банк автоматически направляет сумму долга на гашение кредита продавца, а дельту — продавцу.</p>
+                    </div>
+                    <div style={{ border: '1px solid #E2E8F0', borderRadius: '10px', padding: '16px', borderTop: '4px solid #2563EB' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 700, color: '#2563EB' }}>2.3. ИПОТЕКА НА ИПОТЕКУ</div>
+                      <h4 style={{ margin: '6px 0' }}>Переипотека</h4>
+                      <p style={{ fontSize: '12px', color: '#475569' }}>Сделка внутри одного банка или межбанковская с погашением первичного залога.</p>
+                    </div>
+                    <div style={{ border: '1px solid #E2E8F0', borderRadius: '10px', padding: '16px', borderTop: '4px solid #059669' }}>
+                      <div style={{ fontSize: '11px', fontWeight: 700, color: '#059669' }}>2.4. ЗАЛОГ + ИПОТЕКА + МСК</div>
+                      <h4 style={{ margin: '6px 0' }}>Многоступенчатая</h4>
+                      <p style={{ fontSize: '12px', color: '#475569' }}>ПВ гасит часть залога продавца, ипотека покупателя закрывает остаток, МСК перечисляется после регистрации.</p>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Tab 3: Contract Blocks */}
+          {activeTab === 'contract_blocks' && (
+            <div style={{ backgroundColor: '#FFFFFF', borderRadius: '12px', padding: '24px', border: '1px solid #E2E8F0' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px' }}>Блочная структура ПДКП (FigJam)</h2>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px' }}>
+                {[
+                  { title: '1. Преамбула', desc: 'г. Пенза, дата подписания, дееспособность сторон.' },
+                  { title: '2. Стороны сделки', desc: 'Продавец и Покупатель, СОПД 152-ФЗ, паспортные данные.' },
+                  { title: '3. Предмет ПДКП', desc: 'Обязательство заключить в будущем Основной ДКП.' },
+                  { title: '4. Объект недвижимости', desc: 'Кадастровый номер, точный адрес, площадь, этаж, правоустановка.' },
+                  { title: '5. Мебель и техника', desc: 'Перечень передаваемого имущества без дополнительных оплат.' },
+                  { title: '6. Финансы и расчеты', desc: 'Задаток, форма расчетов, банковские реквизиты, статус залога.' },
+                  { title: '7. Снятие с рег. учета', desc: 'Сроки выписки зарегистрированных лиц строго до ОДКП.' },
+                  { title: '8. Построчные подписи', desc: 'Подписи на всю ширину 17 см, ФИО полностью и подтверждение задатка.' }
+                ].map((b, i) => (
+                  <div key={i} style={{ padding: '14px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: '#F8FAFC', borderLeft: '4px solid #DC2626' }}>
+                    <h4 style={{ fontSize: '14px', fontWeight: 700, margin: '0 0 4px 0' }}>{b.title}</h4>
+                    <p style={{ fontSize: '12px', color: '#475569', margin: 0 }}>{b.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Tab 4: Checklist */}
+          {activeTab === 'prep_checklist' && (
+            <div style={{ backgroundColor: '#FFFFFF', borderRadius: '12px', padding: '24px', border: '1px solid #E2E8F0' }}>
+              <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px' }}>Чек-лист подготовки к сделке</h2>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+                <div style={{ backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                  <h4 style={{ color: '#DC2626', marginBottom: '10px' }}>📋 Документы Продавца</h4>
+                  <ul style={{ margin: 0, paddingLeft: '16px', fontSize: '13px', color: '#334155', lineHeight: 1.6 }}>
+                    <li>Паспорта всех собственников / свидетельства детей</li>
+                    <li>Правоустанавливающие документы и выписка ЕГРН</li>
+                    <li>Согласие супруга(и) либо брачный договор</li>
+                    <li>Справка о зарегистрированных лицах (домовая книга)</li>
+                    <li>Справка об отсутствии задолженностей ЖКУ</li>
+                  </ul>
+                </div>
+                <div style={{ backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                  <h4 style={{ color: '#2563EB', marginBottom: '10px' }}>📋 Документы Покупателя</h4>
+                  <ul style={{ margin: 0, paddingLeft: '16px', fontSize: '13px', color: '#334155', lineHeight: 1.6 }}>
+                    <li>Паспорта покупателей / СНИЛС / ИНН</li>
+                    <li>Нотариальное согласие супруга (при необходимости)</li>
+                    <li>При ипотеке: кредитный договор, график платежей</li>
+                    <li>При МСК: государственный сертификат и справка СФР</li>
+                  </ul>
+                </div>
+                <div style={{ backgroundColor: '#F8FAFC', padding: '16px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                  <h4 style={{ color: '#059669', marginBottom: '10px' }}>🔍 Юридический чекап</h4>
+                  <ul style={{ margin: 0, paddingLeft: '16px', fontSize: '13px', color: '#334155', lineHeight: 1.6 }}>
+                    <li>Федресурс и КАД: банкротство сторон</li>
+                    <li>База ФССП: проверка долгов и арестов приставов</li>
+                    <li>МВД: действительность паспортов РФ</li>
+                    <li>Росреестр: проверка кадастрового номера и границ</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<FigJamDealMatrixApp />);
+  </script>
+</body>
+</html>

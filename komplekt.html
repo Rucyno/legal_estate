@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>КОМПЛЕКТ — студия документов сделки · Пенза</title>
+<style>
+/* ============================================================
+   КОМПЛЕКТ · студия документов сделки
+   Палитра: чернила / бумага / сургуч / латунь
+   ============================================================ */
+:root{
+  --ink-900:#0a1019; --ink-850:#0d1522; --ink-800:#111b2b; --ink-750:#152134;
+  --ink-700:#1a2942; --ink-600:#22354f; --ink-500:#2d4463;
+  --paper:#f6f1e4; --paper-2:#efe8d8; --paper-3:#e5dcc7;
+  --wax:#e0475c; --wax-deep:#a8202f; --wax-glow:#ff6b7d;
+  --brass:#e8b45c; --brass-deep:#a8792a;
+  --verd:#37c2a8; --verd-deep:#12796a;
+  --lapis:#4d8dfb; --plum:#b47ae8; --amber:#f0a13c;
+  --ok:#3fbf87; --warn:#f0a13c; --danger:#f0576b; --info:#4d8dfb;
+  --t-hi:#f3ecdd; --t-mid:#b9c4d4; --t-low:#7d8 da0; --t-low:#7e8da3; --t-faint:#5b6a80;
+  --line:rgba(232,180,92,.16); --line-2:rgba(232,180,92,.28);
+  --line-soft:rgba(185,196,212,.12);
+  --r-s:8px; --r-m:12px; --r-l:18px; --r-xl:26px;
+  --sans:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --serif:Georgia,"Times New Roman",ui-serif,serif;
+  --mono:"Cascadia Mono",Consolas,"SF Mono",ui-monospace,monospace;
+  --shadow-1:0 2px 8px rgba(0,0,0,.35);
+  --shadow-2:0 14px 40px -12px rgba(0,0,0,.65);
+  --shadow-3:0 40px 90px -30px rgba(0,0,0,.8);
+  --topH:64px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--ink-900); color:var(--t-hi);
+  font-family:var(--sans); font-size:14px; line-height:1.5;
+  -webkit-font-smoothing:antialiased; overflow:hidden;
+}
+/* ---------- фоновые слои ---------- */
+.bg{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
+.bg-aurora{position:absolute; inset:-25%;
+  background:
+    radial-gradient(46% 38% at 14% 8%, rgba(168,32,47,.30), transparent 62%),
+    radial-gradient(40% 44% at 88% 12%, rgba(168,121,42,.24), transparent 64%),
+    radial-gradient(52% 46% at 72% 92%, rgba(18,121,106,.20), transparent 66%),
+    radial-gradient(38% 34% at 26% 84%, rgba(77,141,251,.14), transparent 68%);
+  filter:blur(14px); animation:drift 44s ease-in-out infinite alternate;
+}
+@keyframes drift{
+  0%{transform:translate3d(0,0,0) scale(1)}
+  50%{transform:translate3d(2.5%,-2%,0) scale(1.07)}
+  100%{transform:translate3d(-2%,2.5%,0) scale(1.03)}
+}
+.bg-grid{position:absolute; inset:0; opacity:.5;
+  background-image:linear-gradient(rgba(232,180,92,.045) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(232,180,92,.045) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(80% 70% at 50% 30%,#000,transparent 85%);
+}
+.bg-grain{position:absolute; inset:0; opacity:.16; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='.55'/></svg>");
+}
+.bg-vig{position:absolute; inset:0; background:radial-gradient(120% 90% at 50% 0%,transparent 40%,rgba(5,8,13,.72) 100%)}
+
+/* ---------- скроллбары ---------- */
+*{scrollbar-width:thin; scrollbar-color:var(--brass-deep) transparent}
+::-webkit-scrollbar{width:11px; height:11px}
+::-webkit-scrollbar-track{background:rgba(10,16,25,.6); border-radius:20px}
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,var(--brass-deep),var(--wax-deep));
+  border-radius:20px; border:3px solid var(--ink-900);
+}
+::-webkit-scrollbar-thumb:hover{background:linear-gradient(180deg,var(--brass),var(--wax))}
+::-webkit-scrollbar-corner{background:transparent}
+
+/* ---------- верхняя панель ---------- */
+header#top{
+  position:fixed; top:0; left:0; right:0; height:var(--topH); z-index:60;
+  display:flex; align-items:center; gap:14px; padding:0 16px;
+  background:linear-gradient(180deg,rgba(13,21,34,.96),rgba(13,21,34,.86));
+  backdrop-filter:blur(18px) saturate(140%);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 1px 0 rgba(232,180,92,.07), 0 12px 34px -20px #000;
+}
+.brand{display:flex; align-items:center; gap:11px; flex:0 0 auto}
+.brand svg{width:34px; height:34px; filter:drop-shadow(0 2px 6px rgba(224,71,92,.5))}
+.brand-txt{display:flex; flex-direction:column; line-height:1.05}
+.brand-txt b{font-size:16px; letter-spacing:.16em; font-weight:700;
+  background:linear-gradient(92deg,var(--paper),var(--brass) 70%);
+  -webkit-background-clip:text; background-clip:text; color:transparent}
+.brand-txt span{font-size:9.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--t-faint)}
+.region{
+  display:flex; align-items:center; gap:6px; padding:5px 11px; border-radius:999px;
+  background:linear-gradient(135deg,rgba(168,32,47,.28),rgba(168,121,42,.22));
+  border:1px solid var(--line-2); font-size:11px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--brass); white-space:nowrap;
+}
+.region i{width:6px;height:6px;border-radius:50%;background:var(--verd);box-shadow:0 0 8px var(--verd);font-style:normal}
+.topsearch{flex:1 1 auto; max-width:520px; position:relative; display:flex; align-items:center}
+.topsearch svg{position:absolute; left:12px; width:15px; height:15px; opacity:.5}
+.topsearch input{
+  width:100%; height:38px; padding:0 78px 0 36px; border-radius:11px;
+  background:rgba(10,16,25,.75); border:1px solid var(--line-soft);
+  color:var(--t-hi); font-family:var(--sans); font-size:13px; outline:none; transition:.2s;
+}
+.topsearch input:focus{border-color:var(--brass); box-shadow:0 0 0 3px rgba(232,180,92,.13); background:rgba(10,16,25,.95)}
+.topsearch kbd{position:absolute; right:10px; font-family:var(--mono); font-size:10px; color:var(--t-faint);
+  border:1px solid var(--line-soft); border-radius:5px; padding:2px 6px; background:rgba(255,255,255,.03)}
+.top-actions{display:flex; gap:8px; align-items:center; margin-left:auto}
+
+/* ---------- кнопки ---------- */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  height:36px; padding:0 14px; border-radius:10px; cursor:pointer;
+  font-family:var(--sans); font-size:12.5px; font-weight:600; letter-spacing:.02em;
+  border:1px solid var(--line-soft); background:rgba(255,255,255,.035); color:var(--t-mid);
+  transition:transform .12s cubic-bezier(.2,.9,.3,1.3), background .18s, border-color .18s, color .18s, box-shadow .18s;
+  white-space:nowrap; user-select:none;
+}
+.btn:hover{background:rgba(232,180,92,.1); border-color:var(--line-2); color:var(--t-hi); transform:translateY(-1px)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn svg{width:15px;height:15px;flex:0 0 auto}
+.btn.primary{
+  background:linear-gradient(135deg,var(--wax),var(--wax-deep)); color:#fff;
+  border-color:rgba(255,107,125,.5); box-shadow:0 6px 18px -8px rgba(224,71,92,.9), inset 0 1px 0 rgba(255,255,255,.22);
+}
+.btn.primary:hover{box-shadow:0 10px 26px -8px rgba(224,71,92,1), inset 0 1px 0 rgba(255,255,255,.3); filter:brightness(1.08)}
+.btn.brass{background:linear-gradient(135deg,var(--brass),var(--brass-deep)); color:#231703; border-color:rgba(232,180,92,.6);
+  box-shadow:0 6px 18px -8px rgba(232,180,92,.8), inset 0 1px 0 rgba(255,255,255,.35)}
+.btn.brass:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn.sm{height:29px; padding:0 10px; font-size:11.5px; border-radius:8px}
+.btn.icon{width:36px; padding:0}
+.btn.icon.sm{width:29px}
+.btn.danger:hover{background:rgba(240,87,107,.16); border-color:rgba(240,87,107,.5); color:#ffb3bd}
+.btn[disabled]{opacity:.4; pointer-events:none}
+
+/* ---------- каркас ---------- */
+main{position:fixed; top:var(--topH); left:0; right:0; bottom:0; display:flex; z-index:10}
+#rail{
+  width:322px; flex:0 0 322px; display:flex; flex-direction:column;
+  background:linear-gradient(180deg,rgba(17,27,43,.9),rgba(10,16,25,.92));
+  border-right:1px solid var(--line); backdrop-filter:blur(10px); min-height:0;
+}
+.rail-top{padding:12px 13px 10px; border-bottom:1px solid var(--line-soft); flex:0 0 auto}
+.stats{display:flex; gap:7px; margin-bottom:10px}
+.stat{flex:1; padding:7px 8px; border-radius:10px; background:rgba(255,255,255,.03); border:1px solid var(--line-soft); text-align:center}
+.stat b{display:block; font-size:17px; font-variant-numeric:tabular-nums; line-height:1.1}
+.stat span{font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--t-faint)}
+.stat.ok b{color:var(--ok)} .stat.warn b{color:var(--warn)} .stat.all b{color:var(--brass)}
+.chips{display:flex; flex-wrap:wrap; gap:5px}
+.chip{
+  padding:4px 10px; border-radius:999px; font-size:11px; cursor:pointer; user-select:none;
+  border:1px solid var(--line-soft); background:rgba(255,255,255,.025); color:var(--t-low); transition:.16s;
+  display:inline-flex; align-items:center; gap:5px;
+}
+.chip:hover{border-color:var(--line-2); color:var(--t-hi)}
+.chip.on{background:linear-gradient(135deg,rgba(232,180,92,.24),rgba(168,32,47,.2)); border-color:var(--brass); color:var(--brass)}
+.chip .x{opacity:.6; font-size:13px; line-height:1}
+.rail-lbl{font-size:9.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--t-faint); margin:10px 0 6px; display:flex; justify-content:space-between; align-items:center}
+.rail-lbl button{background:none;border:none;color:var(--brass);cursor:pointer;font-size:10px;font-family:var(--sans);letter-spacing:.06em}
+.sortrow{display:flex; gap:6px; align-items:center; margin-top:9px}
+select.mini{
+  flex:1; height:30px; border-radius:8px; background:rgba(10,16,25,.8); color:var(--t-mid);
+  border:1px solid var(--line-soft); font-family:var(--sans); font-size:11.5px; padding:0 8px; outline:none; cursor:pointer;
+}
+select.mini:focus{border-color:var(--brass)}
+#dealList{flex:1 1 auto; overflow-y:auto; padding:10px 11px 90px; min-height:0}
+
+/* ---------- карточка сделки ---------- */
+.deal{
+  position:relative; padding:11px 12px 11px 13px; margin-bottom:9px; border-radius:14px; cursor:pointer;
+  background:linear-gradient(140deg,rgba(26,41,66,.72),rgba(17,27,43,.6));
+  border:1px solid var(--line-soft); transition:transform .16s cubic-bezier(.2,.9,.3,1.2), border-color .18s, box-shadow .18s;
+  overflow:hidden;
+}
+.deal::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--st-c,var(--t-faint)); opacity:.85}
+.deal:hover{transform:translateX(3px); border-color:var(--line-2); box-shadow:var(--shadow-1)}
+.deal.sel{border-color:var(--brass); background:linear-gradient(140deg,rgba(45,68,99,.85),rgba(26,41,66,.7));
+  box-shadow:0 0 0 1px rgba(232,180,92,.3), 0 10px 26px -14px rgba(232,180,92,.6)}
+.deal-top{display:flex; align-items:flex-start; gap:9px}
+.deal-cb{width:15px;height:15px;flex:0 0 auto;margin-top:2px;accent-color:var(--brass);cursor:pointer}
+.deal-main{flex:1; min-width:0}
+.deal-addr{font-size:12.8px; font-weight:600; color:var(--t-hi); line-height:1.32; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical}
+.deal-sub{font-size:10.5px; color:var(--t-faint); margin-top:3px; display:flex; gap:7px; flex-wrap:wrap; align-items:center}
+.deal-sub b{color:var(--t-low); font-weight:600; font-variant-numeric:tabular-nums}
+.ring{width:34px;height:34px;flex:0 0 auto;position:relative}
+.ring svg{transform:rotate(-90deg)}
+.ring i{position:absolute; inset:0; display:grid; place-items:center; font-size:9.5px; font-style:normal; font-weight:700; font-variant-numeric:tabular-nums; color:var(--t-mid)}
+.deal-bot{display:flex; align-items:center; gap:6px; margin-top:8px; flex-wrap:wrap}
+.pill{font-size:9.5px; padding:2.5px 8px; border-radius:999px; letter-spacing:.05em; text-transform:uppercase; font-weight:600; white-space:nowrap}
+.pill.scheme{background:rgba(77,141,251,.15); color:#9dc0ff; border:1px solid rgba(77,141,251,.3)}
+.pill.status{background:color-mix(in srgb,var(--st-c) 18%,transparent); color:var(--st-c); border:1px solid color-mix(in srgb,var(--st-c) 40%,transparent)}
+.pill.risk{background:rgba(240,87,107,.18); color:#ffb0ba; border:1px solid rgba(240,87,107,.45); animation:pulseR 2.4s ease-in-out infinite}
+@keyframes pulseR{0%,100%{box-shadow:0 0 0 0 rgba(240,87,107,.35)}50%{box-shadow:0 0 0 5px rgba(240,87,107,0)}}
+.pill.msk{background:rgba(180,122,232,.16); color:#d9b6f5; border:1px solid rgba(180,122,232,.34)}
+.pill.enc{background:rgba(240,161,60,.14); color:#f7c98a; border:1px solid rgba(240,161,60,.32)}
+
+#bulkBar{
+  position:absolute; left:11px; right:11px; bottom:11px; z-index:5;
+  padding:9px 11px; border-radius:13px; display:none; align-items:center; gap:8px;
+  background:linear-gradient(135deg,rgba(168,32,47,.95),rgba(13,21,34,.97));
+  border:1px solid var(--wax); box-shadow:var(--shadow-2); backdrop-filter:blur(10px);
+}
+#bulkBar.on{display:flex; animation:slideUp .25s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes slideUp{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+#bulkBar b{font-size:12px; color:#fff; margin-right:auto}
+
+/* ---------- рабочая область ---------- */
+#work{flex:1 1 auto; display:flex; flex-direction:column; min-width:0; min-height:0}
+#workHead{
+  flex:0 0 auto; padding:14px 22px 0; display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap;
+}
+.wh-title{flex:1; min-width:230px}
+.wh-title h1{margin:0; font-size:20px; font-weight:650; letter-spacing:-.01em; line-height:1.25}
+.wh-meta{display:flex; gap:9px; align-items:center; margin-top:6px; flex-wrap:wrap; font-size:11.5px; color:var(--t-faint)}
+.wh-meta code{font-family:var(--mono); font-size:11px; color:var(--brass); background:rgba(232,180,92,.09); padding:2px 7px; border-radius:6px}
+.wh-actions{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+#tabs{
+  flex:0 0 auto; display:flex; gap:3px; padding:12px 22px 0; overflow-x:auto; scrollbar-width:none;
+  border-bottom:1px solid var(--line);
+}
+#tabs::-webkit-scrollbar{height:0}
+.tab{
+  position:relative; padding:9px 15px 11px; border-radius:10px 10px 0 0; cursor:pointer; white-space:nowrap;
+  font-size:12.5px; font-weight:600; color:var(--t-low); border:1px solid transparent; border-bottom:none; transition:.16s;
+  display:flex; align-items:center; gap:7px;
+}
+.tab:hover{color:var(--t-hi); background:rgba(255,255,255,.03)}
+.tab.on{color:var(--brass); background:linear-gradient(180deg,rgba(232,180,92,.12),transparent); border-color:var(--line)}
+.tab.on::after{content:""; position:absolute; left:10px; right:10px; bottom:-1px; height:2px;
+  background:linear-gradient(90deg,var(--wax),var(--brass)); border-radius:2px}
+.tab .badge{min-width:17px; height:17px; padding:0 5px; border-radius:999px; font-size:9.5px; display:grid; place-items:center;
+  background:rgba(240,87,107,.22); color:#ffb0ba; font-weight:700}
+.tab .badge.ok{background:rgba(63,191,135,.18); color:#8fe3bb}
+#panel{flex:1 1 auto; overflow-y:auto; padding:20px 22px 60px; min-height:0}
+
+/* ---------- карточки/секции ---------- */
+.grid{display:grid; gap:14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.card{
+  background:linear-gradient(155deg,rgba(21,33,52,.82),rgba(13,21,34,.7));
+  border:1px solid var(--line-soft); border-radius:var(--r-l); padding:16px 17px;
+  box-shadow:var(--shadow-1); position:relative; overflow:hidden;
+}
+.card::after{content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  background:linear-gradient(155deg,rgba(232,180,92,.05),transparent 42%)}
+.card-h{display:flex; align-items:center; gap:9px; margin-bottom:13px}
+.card-h h3{margin:0; font-size:12px; letter-spacing:.15em; text-transform:uppercase; color:var(--brass); font-weight:700}
+.card-h .dot{width:7px;height:7px;border-radius:2px; background:linear-gradient(135deg,var(--wax),var(--brass)); transform:rotate(45deg)}
+.card-h .sp{margin-left:auto; display:flex; gap:6px; align-items:center}
+.hint{font-size:11px; color:var(--t-faint); line-height:1.5}
+.hint b{color:var(--t-low)}
+
+/* ---------- поля ---------- */
+.field{margin-bottom:12px; position:relative}
+.field:last-child{margin-bottom:0}
+.lbl{display:flex; align-items:center; gap:6px; font-size:10px; letter-spacing:.13em; text-transform:uppercase; color:var(--t-faint); margin-bottom:5px}
+.lbl .info{
+  width:14px;height:14px;border-radius:50%; display:grid; place-items:center; cursor:pointer;
+  border:1px solid var(--line-soft); font-size:9px; color:var(--t-faint); font-style:normal; transition:.15s; flex:0 0 auto;
+}
+.lbl .info:hover{border-color:var(--brass); color:var(--brass); background:rgba(232,180,92,.12)}
+.lbl .req{color:var(--wax); font-size:12px; line-height:1}
+.lbl .fixed{margin-left:auto; font-size:9px; letter-spacing:.06em; color:var(--verd); text-transform:none;
+  border:1px solid rgba(55,194,168,.3); background:rgba(55,194,168,.1); padding:1px 7px; border-radius:999px}
+input.in, select.in, textarea.in{
+  width:100%; height:38px; padding:0 12px; border-radius:10px; outline:none;
+  background:rgba(10,16,25,.7); border:1px solid var(--line-soft); color:var(--t-hi);
+  font-family:var(--sans); font-size:13px; transition:.16s;
+}
+textarea.in{height:auto; min-height:74px; padding:10px 12px; resize:vertical; line-height:1.55}
+input.in:focus, select.in:focus, textarea.in:focus{border-color:var(--brass); background:rgba(10,16,25,.95); box-shadow:0 0 0 3px rgba(232,180,92,.12)}
+input.in[readonly]{background:rgba(55,194,168,.06); border-color:rgba(55,194,168,.24); color:var(--verd); cursor:default}
+input.in.num{font-variant-numeric:tabular-nums; font-family:var(--mono); letter-spacing:.02em}
+input.in.miss{border-color:rgba(240,161,60,.45); background:rgba(240,161,60,.05)}
+select.in{cursor:pointer; appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4.5L6 8.5L10 4.5' stroke='%23e8b45c' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat:no-repeat; background-position:right 11px center; padding-right:30px}
+option{background:var(--ink-800); color:var(--t-hi)}
+.row{display:flex; gap:10px} .row>*{flex:1; min-width:0}
+.switch{display:flex; align-items:center; gap:9px; cursor:pointer; user-select:none; padding:7px 0}
+.switch input{display:none}
+.switch .tr{width:38px; height:21px; border-radius:999px; background:rgba(10,16,25,.9); border:1px solid var(--line-soft); position:relative; transition:.2s; flex:0 0 auto}
+.switch .tr::after{content:""; position:absolute; top:2px; left:2px; width:15px; height:15px; border-radius:50%;
+  background:var(--t-faint); transition:.22s cubic-bezier(.2,.9,.3,1.4)}
+.switch input:checked + .tr{background:linear-gradient(135deg,var(--verd-deep),var(--verd)); border-color:var(--verd)}
+.switch input:checked + .tr::after{left:19px; background:#fff}
+.switch span{font-size:12px; color:var(--t-mid)}
+.switch:hover span{color:var(--t-hi)}
+
+/* ---------- стороны ---------- */
+.party{
+  border:1px solid var(--line-soft); border-radius:14px; padding:13px 14px; margin-bottom:11px;
+  background:linear-gradient(150deg,rgba(26,41,66,.55),rgba(13,21,34,.4)); position:relative;
+}
+.party-h{display:flex; align-items:center; gap:9px; margin-bottom:11px}
+.party-h .av{width:30px;height:30px;border-radius:9px; display:grid; place-items:center; font-size:12px; font-weight:700;
+  background:linear-gradient(135deg,var(--wax-deep),var(--brass-deep)); color:#fff; flex:0 0 auto}
+.party-h b{font-size:13px; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.cat{font-size:9.5px; padding:2px 8px; border-radius:999px; letter-spacing:.06em; text-transform:uppercase; font-weight:600}
+.cat.adult{background:rgba(63,191,135,.15); color:#8fe3bb; border:1px solid rgba(63,191,135,.3)}
+.cat.minor{background:rgba(240,161,60,.15); color:#f7c98a; border:1px solid rgba(240,161,60,.32)}
+.cat.child{background:rgba(180,122,232,.15); color:#d9b6f5; border:1px solid rgba(180,122,232,.32)}
+.cat.proxy{background:rgba(77,141,251,.15); color:#9dc0ff; border:1px solid rgba(77,141,251,.3)}
+
+/* ---------- расчёты ---------- */
+.scheme-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(178px,1fr)); gap:9px}
+.scheme{
+  padding:11px 12px; border-radius:13px; cursor:pointer; border:1px solid var(--line-soft);
+  background:rgba(255,255,255,.025); transition:.16s; position:relative; overflow:hidden;
+}
+.scheme:hover{border-color:var(--line-2); transform:translateY(-2px); background:rgba(232,180,92,.06)}
+.scheme.on{border-color:var(--brass); background:linear-gradient(140deg,rgba(232,180,92,.18),rgba(168,32,47,.14));
+  box-shadow:0 8px 22px -12px rgba(232,180,92,.8)}
+.scheme b{display:block; font-size:12.5px; margin-bottom:3px}
+.scheme span{font-size:10.5px; color:var(--t-faint); line-height:1.4; display:block}
+.scheme .tag{position:absolute; top:8px; right:9px; font-size:8.5px; letter-spacing:.08em; padding:1.5px 6px; border-radius:999px;
+  background:rgba(55,194,168,.16); color:var(--verd); text-transform:uppercase; font-weight:700}
+
+.balance{margin-top:6px}
+.bal-head{display:flex; align-items:baseline; gap:10px; margin-bottom:9px; flex-wrap:wrap}
+.bal-head .big{font-size:26px; font-weight:700; font-variant-numeric:tabular-nums; letter-spacing:-.02em}
+.bal-head .of{font-size:13px; color:var(--t-faint); font-variant-numeric:tabular-nums}
+.bal-head .delta{margin-left:auto; font-size:12px; font-weight:700; padding:4px 11px; border-radius:999px; font-variant-numeric:tabular-nums}
+.delta.ok{background:rgba(63,191,135,.16); color:#8fe3bb; border:1px solid rgba(63,191,135,.35)}
+.delta.bad{background:rgba(240,87,107,.16); color:#ffb0ba; border:1px solid rgba(240,87,107,.4)}
+.bar{height:26px; border-radius:9px; overflow:hidden; display:flex; background:rgba(10,16,25,.8); border:1px solid var(--line-soft)}
+.bar i{display:block; height:100%; transition:width .5s cubic-bezier(.2,.9,.3,1); position:relative;
+  background-image:linear-gradient(135deg,rgba(255,255,255,.16) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.16) 50%,rgba(255,255,255,.16) 75%,transparent 75%);
+  background-size:12px 12px}
+.bar i.empty{background:repeating-linear-gradient(45deg,rgba(240,87,107,.22),rgba(240,87,107,.22) 6px,transparent 6px,transparent 12px); flex:1}
+.legend{display:flex; flex-wrap:wrap; gap:11px; margin-top:10px}
+.legend div{display:flex; align-items:center; gap:6px; font-size:11px; color:var(--t-mid)}
+.legend em{width:10px;height:10px;border-radius:3px; font-style:normal}
+.legend b{font-variant-numeric:tabular-nums; color:var(--t-hi)}
+
+.ftable{width:100%; border-collapse:collapse; font-size:12px; margin-top:4px}
+.ftable th{text-align:left; font-size:9.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--t-faint); padding:0 10px 8px; font-weight:600}
+.ftable td{padding:8px 10px; border-top:1px solid var(--line-soft); vertical-align:middle}
+.ftable tr:hover td{background:rgba(232,180,92,.04)}
+.ftable code{font-family:var(--mono); font-size:11px; color:var(--t-low)}
+.ftable .val{text-align:right; font-family:var(--mono); font-variant-numeric:tabular-nums; color:var(--brass); font-weight:600; white-space:nowrap}
+.ftable .val.ok{color:var(--ok)} .ftable .val.bad{color:var(--danger)}
+.ftable tr.total td{border-top:2px solid var(--line-2); font-weight:700; background:rgba(232,180,92,.06)}
+
+/* ---------- комплект / бумага ---------- */
+.pack{display:flex; gap:16px; align-items:flex-start}
+.pack-left{width:308px; flex:0 0 308px; display:flex; flex-direction:column; gap:13px; position:sticky; top:0}
+.pack-right{flex:1; min-width:0}
+.docitem{
+  display:flex; align-items:center; gap:9px; padding:9px 11px; border-radius:11px; cursor:grab;
+  border:1px solid var(--line-soft); background:rgba(255,255,255,.025); margin-bottom:7px; transition:.15s;
+}
+.docitem:hover{border-color:var(--line-2); background:rgba(232,180,92,.06)}
+.docitem.on{border-color:var(--brass); background:linear-gradient(135deg,rgba(232,180,92,.16),rgba(168,32,47,.1))}
+.docitem.drag{opacity:.35}
+.docitem.over{border-color:var(--verd); box-shadow:0 -2px 0 var(--verd)}
+.docitem .grip{color:var(--t-faint); font-size:13px; letter-spacing:-2px; cursor:grab; flex:0 0 auto}
+.docitem input{accent-color:var(--brass); width:14px; height:14px; flex:0 0 auto; cursor:pointer}
+.docitem .nm{flex:1; min-width:0; font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.docitem .pg{font-size:9.5px; color:var(--t-faint); font-variant-numeric:tabular-nums}
+
+.ctrl{margin-bottom:11px}
+.ctrl-h{display:flex; justify-content:space-between; align-items:center; font-size:10px; letter-spacing:.11em; text-transform:uppercase; color:var(--t-faint); margin-bottom:5px}
+.ctrl-h b{color:var(--brass); font-family:var(--mono); font-size:11px; font-variant-numeric:tabular-nums; letter-spacing:0}
+input[type=range]{
+  -webkit-appearance:none; appearance:none; width:100%; height:20px; background:transparent; cursor:pointer; outline:none;
+}
+input[type=range]::-webkit-slider-runnable-track{height:5px; border-radius:99px;
+  background:linear-gradient(90deg,var(--wax-deep),var(--brass-deep)); border:1px solid var(--line-soft)}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:16px; height:16px; border-radius:50%; margin-top:-6.5px;
+  background:radial-gradient(circle at 35% 30%,#fff,var(--brass) 60%,var(--brass-deep));
+  border:1px solid rgba(0,0,0,.4); box-shadow:0 2px 7px rgba(0,0,0,.6); transition:transform .12s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.18)}
+input[type=range]::-moz-range-track{height:5px; border-radius:99px; background:linear-gradient(90deg,var(--wax-deep),var(--brass-deep))}
+input[type=range]::-moz-range-thumb{width:15px;height:15px;border-radius:50%; border:1px solid rgba(0,0,0,.4);
+  background:radial-gradient(circle at 35% 30%,#fff,var(--brass) 60%,var(--brass-deep)); box-shadow:0 2px 7px rgba(0,0,0,.6)}
+
+.paper-stage{
+  border-radius:var(--r-l); border:1px solid var(--line); overflow:auto; max-height:calc(100vh - 250px);
+  background:
+    radial-gradient(70% 50% at 50% 0%,rgba(168,121,42,.14),transparent 70%),
+    linear-gradient(180deg,#0b1220,#080d16);
+  padding:26px; display:flex; justify-content:center; box-shadow:inset 0 2px 30px rgba(0,0,0,.7);
+}
+.paper-wrap{transform-origin:top center; transition:transform .18s}
+.paper{
+  --pw:794px; width:var(--pw); min-height:1123px; background:var(--pp,#f6f1e4); color:#1a1611;
+  font-family:var(--pf,Georgia,serif); font-size:var(--fs,15px); line-height:var(--lh,1.55);
+  padding:var(--pm,76px); text-align:var(--ta,justify); position:relative;
+  box-shadow:0 30px 70px -20px rgba(0,0,0,.85), 0 0 0 1px rgba(0,0,0,.35);
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='p'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='120' height='120' filter='url(%23p)' opacity='.045'/></svg>");
+}
+.paper h1{font-size:1.16em; text-align:center; margin:0 0 3px; font-weight:700; letter-spacing:.02em; text-transform:uppercase}
+.paper h2{font-size:.94em; text-align:center; margin:0 0 16px; font-weight:400; font-style:italic; color:#4a4238}
+.paper h3{font-size:1em; margin:1.25em 0 .5em; font-weight:700; text-align:left}
+.paper p{margin:0 0 var(--pgap,.5em); text-indent:var(--pi,0)}
+.paper p.ni{text-indent:0}
+.paper .hdr{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px; font-size:.95em}
+.paper .hdr .r{text-align:right}
+.paper .center{text-align:center}
+.paper .sig{width:100%; border-collapse:collapse; margin-top:16px; font-size:.94em}
+.paper .sig td{vertical-align:top; padding:9px 12px 9px 0; border:none; width:50%}
+.paper .sig .line{border-bottom:1px solid #1a1611; height:26px; margin:12px 0 3px}
+.paper .sig small{font-size:.78em; color:#5a5248}
+.paper table.desc{width:100%; border-collapse:collapse; margin:8px 0 12px; font-size:.95em}
+.paper table.desc td{border:1px solid #6b6154; padding:5px 9px; vertical-align:top}
+.paper table.desc td:first-child{width:47%; background:rgba(0,0,0,.035)}
+.paper .wm{position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; overflow:hidden}
+.paper .wm span{font-size:112px; font-weight:800; letter-spacing:.14em; color:rgba(168,32,47,.075);
+  transform:rotate(-32deg); white-space:nowrap; font-family:var(--sans)}
+.paper .stamp{position:absolute; right:var(--pm,76px); bottom:calc(var(--pm,76px) - 22px); width:118px; height:118px; opacity:.2; pointer-events:none}
+.paper .ph{background:rgba(240,161,60,.3); border-bottom:1px dashed #a8792a; padding:0 2px; border-radius:2px}
+.paper.nohl .ph{background:none; border:none; padding:0}
+.paper .foot{position:absolute; left:var(--pm,76px); right:var(--pm,76px); bottom:calc(var(--pm,76px) / 2);
+  display:flex; justify-content:space-between; font-size:.72em; color:#6b6154; border-top:1px solid rgba(0,0,0,.15); padding-top:5px}
+.paper .pb{page-break-after:always; break-after:page; height:0; margin:0; border-top:1px dashed rgba(0,0,0,.18); margin:22px 0}
+.paper-toolbar{display:flex; gap:7px; align-items:center; margin-bottom:11px; flex-wrap:wrap}
+.paper-toolbar .sp{margin-left:auto; font-size:11px; color:var(--t-faint); font-variant-numeric:tabular-nums}
+
+/* ---------- проверка ---------- */
+.vitem{display:flex; gap:11px; padding:11px 13px; border-radius:12px; margin-bottom:8px; align-items:flex-start;
+  border:1px solid var(--line-soft); background:rgba(255,255,255,.02)}
+.vitem .ic{width:22px;height:22px;border-radius:7px; display:grid; place-items:center; flex:0 0 auto; font-size:12px; font-weight:700}
+.vitem.err{border-color:rgba(240,87,107,.35); background:rgba(240,87,107,.07)} .vitem.err .ic{background:rgba(240,87,107,.22); color:#ffb0ba}
+.vitem.warn{border-color:rgba(240,161,60,.3); background:rgba(240,161,60,.06)} .vitem.warn .ic{background:rgba(240,161,60,.2); color:#f7c98a}
+.vitem.ok{border-color:rgba(63,191,135,.25); background:rgba(63,191,135,.05)} .vitem.ok .ic{background:rgba(63,191,135,.18); color:#8fe3bb}
+.vitem.info .ic{background:rgba(77,141,251,.18); color:#9dc0ff}
+.vitem b{display:block; font-size:12.5px; margin-bottom:2px}
+.vitem span{font-size:11.5px; color:var(--t-low); line-height:1.5}
+.vitem .go{margin-left:auto; flex:0 0 auto}
+.chk{display:flex; gap:10px; padding:8px 11px; border-radius:10px; align-items:flex-start; cursor:pointer; transition:.14s; border:1px solid transparent}
+.chk:hover{background:rgba(232,180,92,.05); border-color:var(--line-soft)}
+.chk input{accent-color:var(--verd); width:15px;height:15px;margin-top:2px; flex:0 0 auto; cursor:pointer}
+.chk .t{flex:1; font-size:12px; line-height:1.45}
+.chk .t small{display:block; color:var(--t-faint); font-size:10.5px; margin-top:2px}
+.chk.done .t{color:var(--t-faint); text-decoration:line-through}
+.chk-group{font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--brass); margin:14px 0 6px; font-weight:700}
+.chk-group:first-child{margin-top:0}
+.srcbadge{font-size:9px; padding:1.5px 7px; border-radius:999px; background:rgba(55,194,168,.14); color:var(--verd);
+  border:1px solid rgba(55,194,168,.3); letter-spacing:.05em; text-transform:uppercase; font-weight:700}
+
+/* ---------- шторка ---------- */
+#drawer{
+  position:fixed; top:var(--topH); right:0; bottom:0; width:430px; max-width:92vw; z-index:70;
+  background:linear-gradient(180deg,rgba(17,27,43,.985),rgba(10,16,25,.99));
+  border-left:1px solid var(--line-2); box-shadow:var(--shadow-3); transform:translateX(102%);
+  transition:transform .32s cubic-bezier(.3,.9,.3,1); display:flex; flex-direction:column;
+}
+#drawer.on{transform:translateX(0)}
+.dr-h{padding:15px 18px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; flex:0 0 auto}
+.dr-h h3{margin:0; font-size:13px; letter-spacing:.13em; text-transform:uppercase; color:var(--brass); flex:1}
+.dr-b{flex:1; overflow-y:auto; padding:16px 18px 40px}
+.srcrow{padding:11px 13px; border-radius:12px; border:1px solid var(--line-soft); margin-bottom:9px; background:rgba(255,255,255,.02); transition:.2s}
+.srcrow.hl{border-color:var(--brass); background:rgba(232,180,92,.1); box-shadow:0 0 0 3px rgba(232,180,92,.1)}
+.srcrow b{font-size:12.5px; display:flex; align-items:center; gap:7px; margin-bottom:4px; flex-wrap:wrap}
+.srcrow p{margin:0; font-size:11.5px; color:var(--t-low); line-height:1.55}
+.srcrow .from{margin-top:6px; font-size:10.5px; color:var(--t-faint); display:flex; gap:6px; align-items:center}
+.srcrow .from em{font-style:normal; color:var(--verd)}
+#scrim{position:fixed; inset:0; background:rgba(5,8,13,.6); backdrop-filter:blur(3px); z-index:65; opacity:0; pointer-events:none; transition:.28s}
+#scrim.on{opacity:1; pointer-events:auto}
+
+/* ---------- тосты ---------- */
+#toasts{position:fixed; bottom:20px; left:50%; transform:translateX(-50%); z-index:90; display:flex; flex-direction:column; gap:9px; align-items:center}
+.toast{
+  display:flex; align-items:center; gap:12px; padding:11px 15px; border-radius:13px; min-width:280px;
+  background:linear-gradient(135deg,rgba(26,41,66,.98),rgba(13,21,34,.98));
+  border:1px solid var(--line-2); box-shadow:var(--shadow-2); backdrop-filter:blur(12px);
+  animation:tin .3s cubic-bezier(.2,.9,.3,1.3); font-size:12.5px;
+}
+@keyframes tin{from{transform:translateY(20px) scale(.95); opacity:0}to{transform:none; opacity:1}}
+.toast.out{animation:tout .25s forwards} @keyframes tout{to{transform:translateY(14px); opacity:0}}
+.toast .em{width:8px;height:8px;border-radius:50%; background:var(--verd); box-shadow:0 0 10px var(--verd); flex:0 0 auto}
+.toast.warn .em{background:var(--warn); box-shadow:0 0 10px var(--warn)}
+.toast.err .em{background:var(--danger); box-shadow:0 0 10px var(--danger)}
+
+/* ---------- командная палитра ---------- */
+#cmd{position:fixed; inset:0; z-index:95; display:none; padding-top:12vh; justify-content:center;
+  background:rgba(5,8,13,.7); backdrop-filter:blur(6px)}
+#cmd.on{display:flex; animation:tin .2s}
+.cmd-box{width:min(620px,92vw); max-height:66vh; display:flex; flex-direction:column; border-radius:18px; overflow:hidden;
+  background:linear-gradient(180deg,rgba(21,33,52,.99),rgba(10,16,25,.99)); border:1px solid var(--line-2); box-shadow:var(--shadow-3)}
+.cmd-box input{height:52px; border:none; background:transparent; color:var(--t-hi); font-size:15px; padding:0 18px; outline:none; font-family:var(--sans); border-bottom:1px solid var(--line)}
+.cmd-list{overflow-y:auto; padding:7px}
+.cmd-it{padding:10px 13px; border-radius:10px; cursor:pointer; display:flex; align-items:center; gap:11px; font-size:13px}
+.cmd-it.on{background:linear-gradient(90deg,rgba(232,180,92,.2),rgba(168,32,47,.12)); color:var(--brass)}
+.cmd-it small{margin-left:auto; color:var(--t-faint); font-size:10.5px}
+
+.empty{text-align:center; padding:48px 20px; color:var(--t-faint)}
+.empty svg{width:52px;height:52px;opacity:.3; margin-bottom:14px}
+.empty b{display:block; color:var(--t-low); font-size:14px; margin-bottom:6px}
+.railtoggle{display:none}
+
+@media(max-width:1240px){ .pack-left{width:270px;flex-basis:270px} .g4{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media(max-width:1080px){
+  .g3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pack{flex-direction:column} .pack-left{width:100%; flex-basis:auto; position:static}
+  .paper-stage{max-height:none}
+}
+@media(max-width:860px){
+  :root{--topH:58px}
+  .brand-txt span{display:none} .region{display:none} .topsearch kbd{display:none}
+  .railtoggle{display:inline-flex}
+  #rail{position:fixed; top:var(--topH); bottom:0; left:0; z-index:66; transform:translateX(-102%);
+    transition:transform .3s cubic-bezier(.3,.9,.3,1); box-shadow:var(--shadow-3); width:300px; flex-basis:300px}
+  #rail.on{transform:none}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  #panel{padding:16px 14px 60px} #workHead{padding:12px 14px 0} #tabs{padding:10px 14px 0}
+  .paper-stage{padding:12px}
+  .top-actions .lbltxt{display:none}
+  .btn{padding:0 11px}
+}
+@media print{ body{overflow:visible} header,#rail,#drawer,#toasts,.paper-toolbar,.pack-left,#tabs,#workHead{display:none!important} }
+</style>
+</head>
+<body>
+<div class="bg"><div class="bg-aurora"></div><div class="bg-grid"></div><div class="bg-grain"></div><div class="bg-vig"></div></div>
+
+<header id="top">
+  <button class="btn icon ghost railtoggle" id="railToggle" title="Список сделок">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <div class="brand">
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <defs>
+        <linearGradient id="sg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ff6b7d"/><stop offset=".55" stop-color="#e0475c"/><stop offset="1" stop-color="#a8202f"/>
+        </linearGradient>
+        <path id="sp" d="M50,50 m-33,0 a33,33 0 1,1 66,0 a33,33 0 1,1 -66,0"/>
+      </defs>
+      <circle cx="50" cy="50" r="46" fill="url(#sg)"/>
+      <circle cx="50" cy="50" r="46" fill="none" stroke="#e8b45c" stroke-width="2.5" opacity=".85"/>
+      <circle cx="50" cy="50" r="38" fill="none" stroke="#f6f1e4" stroke-width="1" opacity=".55"/>
+      <text font-family="Segoe UI,sans-serif" font-size="9.4" font-weight="700" fill="#f6f1e4" letter-spacing="2.4" opacity=".92">
+        <textPath href="#sp" startOffset="6%">КОМПЛЕКТ · ПЕНЗА · ДОКУМЕНТЫ СДЕЛКИ</textPath>
+      </text>
+      <path d="M38 34h17l9 9v25a3 3 0 0 1-3 3H38a3 3 0 0 1-3-3V37a3 3 0 0 1 3-3z" fill="#f6f1e4" opacity=".95"/>
+      <path d="M55 34v9h9" fill="none" stroke="#a8202f" stroke-width="1.6"/>
+      <path d="M41 48h18M41 54h18M41 60h11" stroke="#a8202f" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <div class="brand-txt"><b>КОМПЛЕКТ</b><span>студия документов сделки</span></div>
+  </div>
+  <div class="region"><i></i>Пенза</div>
+  <div class="topsearch">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input id="q" placeholder="Поиск: адрес, кадастр, сторона, агент…" autocomplete="off">
+    <kbd>Ctrl K</kbd>
+  </div>
+  <div class="top-actions">
+    <button class="btn ghost" id="srcBtn" title="Источники полей">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg>
+      <span class="lbltxt">Источники</span>
+    </button>
+    <button class="btn primary" id="newBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>
+      <span class="lbltxt">Новая сделка</span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <aside id="rail">
+    <div class="rail-top">
+      <div class="stats">
+        <div class="stat all"><b id="stAll">0</b><span>сделок</span></div>
+        <div class="stat ok"><b id="stReady">0</b><span>готовы</span></div>
+        <div class="stat warn"><b id="stRisk">0</b><span>решение</span></div>
+      </div>
+      <div class="rail-lbl">Виды <button id="saveView">+ сохранить</button></div>
+      <div class="chips" id="views"></div>
+      <div class="rail-lbl">Статус</div>
+      <div class="chips" id="fStatus"></div>
+      <div class="sortrow">
+        <select class="mini" id="sortSel">
+          <option value="upd">Сначала изменённые</option>
+          <option value="price">Цена ↓</option>
+          <option value="priceA">Цена ↑</option>
+          <option value="ready">Готовность ↓</option>
+          <option value="addr">Адрес А→Я</option>
+          <option value="deadline">Срок ОДКП</option>
+        </select>
+        <button class="btn sm icon ghost" id="clearF" title="Сбросить фильтры">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="dealList"></div>
+    <div id="bulkBar">
+      <b id="bulkN">0 выбрано</b>
+      <button class="btn sm" id="bulkReady">Готовы</button>
+      <button class="btn sm" id="bulkExport">JSON</button>
+      <button class="btn sm danger" id="bulkDel">Удалить</button>
+      <button class="btn sm icon ghost" id="bulkX">✕</button>
+    </div>
+  </aside>
+
+  <section id="work">
+    <div id="workHead"></div>
+    <nav id="tabs"></nav>
+    <div id="panel"></div>
+  </section>
+</main>
+
+<div id="scrim"></div>
+<div id="drawer">
+  <div class="dr-h">
+    <h3 id="drTitle">Источники полей</h3>
+    <button class="btn sm icon ghost" id="drX">✕</button>
+  </div>
+  <div class="dr-b" id="drBody"></div>
+</div>
+
+<div id="cmd"><div class="cmd-box">
+  <input id="cmdIn" placeholder="Команда или сделка…" autocomplete="off">
+  <div class="cmd-list" id="cmdList"></div>
+</div></div>
+
+<div id="toasts"></div>
+
+<script>
+"use strict";
+/* ============================================================
+   УТИЛИТЫ
+   ============================================================ */
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const uid=()=>Math.random().toString(36).slice(2,9);
+const esc=s=>String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=n=>new Intl.NumberFormat("ru-RU").format(Math.round(Number(n)||0));
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const MON=["января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря"];
+
+function rub(n){
+  n=Math.round(Number(n)||0);
+  const o=[["","один","два","три","четыре","пять","шесть","семь","восемь","девять"],
+           ["","одна","две","три","четыре","пять","шесть","семь","восемь","девять"]];
+  const teen=["десять","одиннадцать","двенадцать","тринадцать","четырнадцать","пятнадцать","шестнадцать","семнадцать","восемнадцать","девятнадцать"];
+  const tn=["","","двадцать","тридцать","сорок","пятьдесят","шестьдесят","семьдесят","восемьдесят","девяносто"];
+  const hn=["","сто","двести","триста","четыреста","пятьсот","шестьсот","семьсот","восемьсот","девятьсот"];
+  const pl=(x,f)=>{const a=x%10,b=x%100; if(a===1&&b!==11)return f[0]; if(a>=2&&a<=4&&(b<10||b>=20))return f[1]; return f[2];};
+  const tri=(x,f)=>{const r=[],h=Math.floor(x/100),t=Math.floor(x%100/10),u=x%10;
+    if(h)r.push(hn[h]); if(t===1)r.push(teen[u]); else{if(t)r.push(tn[t]); if(u)r.push(o[f?1:0][u]);} return r;};
+  if(n===0)return "ноль рублей 00 копеек";
+  let w=[],rest=n;
+  [[1e9,["миллиард","миллиарда","миллиардов"],0],[1e6,["миллион","миллиона","миллионов"],0],[1e3,["тысяча","тысячи","тысяч"],1]]
+    .forEach(([d,f,fe])=>{const c=Math.floor(rest/d); rest%=d; if(c){w=w.concat(tri(c,fe)); w.push(pl(c,f));}});
+  w.push(pl(n,["рубль","рубля","рублей"]));
+  const s=w.filter(Boolean).join(" ");
+  return s.charAt(0).toUpperCase()+s.slice(1)+" 00 копеек";
+}
+const money=n=>fmt(n)+" ("+rub(n)+")";
+function dRu(iso){ if(!iso)return "«__» __________ 20__ г."; const d=new Date(iso+"T00:00:00");
+  if(isNaN(d))return "«__» __________ 20__ г."; return "«"+String(d.getDate()).padStart(2,"0")+"» "+MON[d.getMonth()]+" "+d.getFullYear()+" г."; }
+function dShort(iso){ if(!iso)return "__.__.____"; const d=new Date(iso+"T00:00:00"); if(isNaN(d))return "__.__.____";
+  return String(d.getDate()).padStart(2,"0")+"."+String(d.getMonth()+1).padStart(2,"0")+"."+d.getFullYear(); }
+function today(){ return new Date().toISOString().slice(0,10); }
+function plusDays(iso,n){ const d=new Date((iso||today())+"T00:00:00"); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+function get(o,p){ return p.split(".").reduce((a,k)=>a==null?a:a[k],o); }
+function set(o,p,v){ const k=p.split("."); let c=o; for(let i=0;i<k.length-1;i++){ if(c[k[i]]==null)c[k[k[i]]={}; c=c[k[i]];} c[k[k.length-1]]=v; }
+const PH=t=>'<span class="ph">'+(t||"__________")+"</span>";
+const val=(v,ph)=>v?esc(v):PH(ph);
+
+/* ============================================================
+   СПРАВОЧНИКИ
+   ============================================================ */
+const STATUS={
+  draft:{n:"Черновик",c:"#7e8da3"}, docs:{n:"Сбор документов",c:"#4d8dfb"},
+  review:{n:"На согласовании",c:"#b47ae8"}, ready:{n:"Готов к сделке",c:"#3fbf87"},
+  risk:{n:"Требует решения",c:"#f0576b"}, done:{n:"Проведён",c:"#e8b45c"}
+};
+const SCHEMES={
+  cash:{n:"Наличные до сделки",d:"Полный расчёт наличными",f:["zadatok","cash"],sber:false,mort:false},
+  sbr:{n:"СБР · Сбербанк",d:"Номинальный счёт ООО «Домклик»",f:["zadatok","cash","sbr"],sber:true,mort:false},
+  akkr:{n:"Аккредитив · Сбербанк",d:"Безотзывный покрытый, 60 дней",f:["zadatok","cash","akkr"],sber:true,mort:false},
+  msk:{n:"Наличные + МСК",d:"Средства СФР после регистрации",f:["zadatok","cash","msk"],sber:false,mort:false},
+  ipoteka:{n:"Ипотека Сбербанк",d:"Кредитные средства через СБР",f:["zadatok","cash","mortgage"],sber:true,mort:true},
+  ipoteka_sbr:{n:"Ипотека + СБР",d:"Свои через СБР, кредит через СБР",f:["zadatok","cash","sbr","mortgage"],sber:true,mort:true},
+  ipoteka_msk:{n:"Ипотека + МСК",d:"МСК как часть первоначального взноса",f:["zadatok","cash","mortgage","msk"],sber:true,mort:true},
+  transfer:{n:"Трансферация · Сбер",d:"Перезалог: ипотека Продавца в Сбере",f:["zadatok","cash","akkr"],sber:true,mort:false,tr:true},
+  otherbank:{n:"Перезалог чужого банка",d:"Погашение ипотеки в стороннем банке",f:["zadatok","cash","sbr","mortgage"],sber:true,mort:true,ob:true}
+};
+const PAYMETA={
+  zadatok:{n:"Задаток",c:"#e0475c"}, cash:{n:"Наличные до сделки",c:"#e8b45c"},
+  sbr:{n:"СБР · Домклик",c:"#37c2a8"}, akkr:{n:"Аккредитив",c:"#4d8dfb"},
+  mortgage:{n:"Ипотека Сбербанк",c:"#b47ae8"}, msk:{n:"Материнский капитал",c:"#f0a13c"}
+};
+const CATS={adult:"18+ · паспорт",minor:"14–18 · паспорт + согласие",child:"до 14 · св-во о рождении",proxy:"по доверенности"};
+const FAMILY={
+  none:"Не в браке / не состоял", married_consent:"В браке · согласие супруга",
+  married_personal:"В браке · личная собственность", prenup:"Брачный договор",
+  divorced:"В разводе", widow:"Вдовец / вдова"
+};
+const ENC={none:"Обременений нет",sber:"Ипотека Продавца · Сбербанк",other:"Ипотека Продавца · другой банк"};
+
+const SOURCES=[
+  {k:"rightBasis",n:"Основание права",fix:true,src:"Актуальная выписка ЕГРН, раздел «Документы-основания»",
+   d:"Реквизиты правоустанавливающих документов берутся непосредственно из свежей выписки ЕГРН — отдельный документ у Продавца не запрашивается. Выписка同時 подтверждает и вид права, и номер записи.",
+   from:"Выписка ЕГРН (не старше 30 дней)"},
+  {k:"recordNo",n:"Номер и дата записи о праве",src:"Актуальная выписка ЕГРН",d:"Раздел «Сведения о зарегистрированных правах».",from:"Выписка ЕГРН"},
+  {k:"kdCity",n:"Город заключения кредитного договора",fix:true,src:"Пенза — константа",
+   d:"Кредитный договор всегда заключается в г. Пенза. Поле зафиксировано и не редактируется.",from:"Константа проекта"},
+  {k:"kdNo",n:"Номер кредитного договора",fix:true,src:"Присваивается банком в день сделки",
+   d:"В проекте договора оставляется прочерк. Номер и дата вносятся непосредственно при подписании, когда банк присвоит реквизиты.",from:"День сделки"},
+  {k:"msk",n:"Материнский капитал",fix:true,src:"Сертификат МСК + справка об остатке средств МСК",
+   d:"Реквизиты сертификата и сумма берутся из справки об остатке. Решение о выдаче сертификата для расчётов не требуется.",from:"Покупатель / Госуслуги"},
+  {k:"party",n:"Стороны сделки",src:"Паспорт РФ; до 14 лет — свидетельство о рождении + свидетельство о регистрации",
+   d:"14–18 лет: паспорт несовершеннолетнего и письменное согласие законных представителей. Представитель: нотариальная доверенность и паспорт представителя.",from:"Стороны"},
+  {k:"family",n:"Семейное положение Продавца",src:"Свидетельство о браке / расторжении / смерти, брачный договор, нотариальное заявление",
+   d:"Определяется до подписания ПДКП и передачи задатка. При совместной собственности необходимо нотариальное согласие супруга.",from:"Продавец / нотариус"},
+  {k:"encumbrance",n:"Обременения объекта",src:"Актуальная выписка ЕГРН",d:"Вид, номер и дата записи, залогодержатель. Запреты ФССП — стоп-фактор до их снятия.",from:"Выписка ЕГРН"},
+  {k:"debt",n:"Остаток долга Продавца",src:"Справка банка о задолженности на дату сделки",d:"Определяет сумму трансферации или транша на погашение.",from:"Банк Продавца"},
+  {k:"account",n:"Реквизиты счёта Продавца",src:"Справка о реквизитах из банка Продавца",d:"Получатель, счёт, банк, БИК, к/с, ИНН, КПП — для всех безналичных блоков.",from:"Продавец"},
+  {k:"registered",n:"Зарегистрированные лица",src:"Справка формы №9 / выписка из домовой книги",d:"Существенное условие по ст. 558 ГК РФ.",from:"Продавец / МФЦ"},
+  {k:"price",n:"Цена и суммы расчётов",src:"Соглашение сторон",d:"Вводится один раз. Суммы прописью, двойной задаток и остаток рассчитываются автоматически — расхождения невозможны.",from:"Карточка сделки"}
+];
+
+const DOCDEFS=[
+  {k:"pdkp",n:"ПДКП + расписка",d:"Предварительный договор со встроенной распиской"},
+  {k:"receipt",n:"Расписка в задатке",d:"Отдельный документ"},
+  {k:"odkp",n:"ОДКП",d:"Основной договор купли-продажи"},
+  {k:"act",n:"Передаточный акт",d:"Приём-передача объекта"},
+  {k:"inventory",n:"Опись имущества",d:"Приложение к договору"},
+  {k:"checklist",n:"Чек-лист сделки",d:"Рабочий документ агента"}
+];
+
+/* ============================================================
+   СОСТОЯНИЕ
+   ============================================================ */
+const KEY="komplekt.v3";
+let S={deals:[],sel:null,tab:"deal",q:"",fStatus:[],sort:"upd",bulk:[],views:[],view:null,
+       typo:{font:"Georgia",size:11.5,lh:1.55,margin:20,indent:12,justify:true,pages:true,foot:true,
+             paper:"cream",zoom:78,gaps:6,hl:true,wm:true,wmText:"ПРОЕКТ"},
+       doc:"pdkp",trash:null};
+
+function blankParty(role){ return {id:uid(),role,fio:"",birth:"",passport:"",issued:"",code:"",addr:"",
+  cat:"adult",share:"",repFio:"",repPass:"",repAddr:"",proxyNo:"",proxyDate:"",proxyNotary:"",
+  cert:"",certIssued:"",regCert:"",snils:""}; }
+
+function newDeal(o={}){
+  return Object.assign({
+    id:uid(),title:"",status:"draft",agent:"А. Ковалёв",created:today(),updated:Date.now(),
+    pdkpDate:today(),deadline:plusDays(today(),30),actDays:7,form:"simple",
+    obj:{cad:"",type:"Квартира",addr:"",area:"",floor:"",rooms:"",purpose:"жилое",
+         right:"Общая совместная собственность",rightBasis:"",recordNo:"",egrnDate:""},
+    enc:{type:"none",bank:"",creditNo:"",creditDate:"",recNo:"",recDate:"",debt:"",term:""},
+    family:{status:"none",spouse:"",consentDate:"",consentNo:"",docNo:"",docDate:""},
+    sellers:[blankParty("seller")],buyers:[blankParty("buyer")],
+    scheme:"sbr",price:0,pay:{zadatok:0,cash:0,sbr:0,akkr:0,mortgage:0,msk:0},
+    kd:{no:"",date:"",city:"Пенза"},
+    mskCert:{series:"",no:"",holder:"",balanceDate:"",childAge:""},
+    flags:{fssp:false,refuse:false,mskShares:false,bankrupt:false,minorOwner:false,renta:false},
+    checked:{},docs:{pdkp:true,receipt:true,odkp:true,act:true,inventory:false,checklist:true},
+    docOrder:["pdkp","receipt","odkp","act","inventory","checklist"],
+    furniture:"",notes:"",history:[{t:Date.now(),a:"Сделка создана"}]
+  },o);
+}
+
+function seed(){
+  const d1=newDeal({
+    title:"Победы 146/82 · перезалог ДОМ.РФ",status:"risk",agent:"М. Ильина",
+    pdkpDate:"2026-10-19",deadline:"2026-11-19",
+    obj:{cad:"58:29:1004012:312",type:"Квартира",addr:"Пензенская область, г. Пенза, пр-т Победы, д. 146, кв. 82",
+      area:"23.4",floor:"17",rooms:"1",purpose:"жилое",right:"Общая совместная собственность",
+      rightBasis:"Договор участия в долевом строительстве № 228/226-А1 от 23.12.2021 г.; разрешение на ввод объекта в эксплуатацию № 58-29-37-2024 от 26.04.2024 г.; акт приёма-передачи б/н от 24.07.2024 г.",
+      recordNo:"58:29:1004012:312-58/067/2025-1",egrnDate:"2025-01-28"},
+    enc:{type:"other",bank:"АО «Банк ДОМ.РФ»",creditNo:"ДР-2022/0117",creditDate:"2022-01-11",
+      recNo:"58:29:1004012:312-58/067/2025-2",recDate:"2025-01-28",debt:"1740000",term:"240"},
+    family:{status:"married_consent",spouse:"Кобр Сергей Андреевич",consentDate:"2026-10-17",consentNo:"58/125-н/58-2026-4-311",docNo:"",docDate:""},
+    sellers:[Object.assign(blankParty("seller"),{fio:"Кобра Мария Игоревна",birth:"1991-09-06",passport:"5611 № 040130",
+      issued:"ОУФМС России по Пензенской области в Октябрьском районе гор. Пензы, 14.10.2011 г.",code:"580-004",
+      addr:"Пензенская область, г. Пенза, пр-кт Строителей, д. 150, кв. 318",snils:"036-006-943 27",share:"1/2"}),
+      Object.assign(blankParty("seller"),{fio:"Кобр Сергей Андреевич",birth:"1989-10-28",passport:"5611 № 038518",
+      issued:"ОУФМС России по Пензенской области в Никольском районе, 25.11.2011 г.",code:"580-019",
+      addr:"Пензенская область, Никольский район, г. Никольск, ул. Пугачевская, д. 51А, кв. 1",share:"1/2"})],
+    buyers:[Object.assign(blankParty("buyer"),{fio:"Смирнов Алексей Петрович",birth:"1976-07-14",passport:"5621 № 629805",
+      issued:"УМВД России по Пензенской области, 16.07.2021 г.",code:"580-001",addr:"Пензенская область, г. Пенза, ул. Ладожская, д. 105, кв. 220"})],
+    scheme:"sbr",price:2400000,pay:{zadatok:100000,cash:0,sbr:2300000,akkr:0,mortgage:0,msk:0},
+    flags:{fssp:true,refuse:false,mskShares:false,bankrupt:false,minorOwner:false,renta:false},
+    furniture:"Кухонный гарнитур, встроенный шкаф-купе в прихожей, сплит-система",
+    notes:"Два запрета ФССП (Никольский РОСП). Продавцы гасят задолженность самостоятельно до ОДКП.",
+    history:[{t:Date.now()-86400000*9,a:"Сделка создана"},{t:Date.now()-86400000*7,a:"ПДКП подписан, задаток передан"},{t:Date.now()-86400000*2,a:"Выявлены запреты ФССП — статус «Требует решения»"}]
+  });
+  const d2=newDeal({
+    title:"Московская 12/45 · наличные",status:"ready",agent:"Д. Сафин",
+    pdkpDate:"2026-11-02",deadline:"2026-11-25",
+    obj:{cad:"58:29:1003005:118",type:"Квартира",addr:"Пензенская область, г. Пенза, ул. Московская, д. 12, кв. 45",
+      area:"54.2",floor:"4",rooms:"2",purpose:"жилое",right:"Индивидуальная собственность",
+      rightBasis:"Договор купли-продажи от 12.03.2018 г.",recordNo:"58:29:1003005:118-58/001/2018-3",egrnDate:"2018-03-12"},
+    enc:{type:"none",bank:"",creditNo:"",creditDate:"",recNo:"",recDate:"",debt:"",term:""},
+    family:{status:"none",spouse:"",consentDate:"",consentNo:"",docNo:"58/74-н/58-2026-1-208",docDate:"2026-11-01"},
+    sellers:[Object.assign(blankParty("seller"),{fio:"Терентьева Ольга Владимировна",birth:"1968-04-22",passport:"5608 № 447120",
+      issued:"Отделом УФМС России по Пензенской области в Ленинском районе г. Пензы, 15.05.2008 г.",code:"580-002",
+      addr:"Пензенская область, г. Пенза, ул. Московская, д. 12, кв. 45",snils:"112-556-908 31"})],
+    buyers:[Object.assign(blankParty("buyer"),{fio:"Гущин Роман Игоревич",birth:"1993-01-30",passport:"5617 № 771204",
+      issued:"УМВД России по Пензенской области, 09.02.2017 г.",code:"580-003",addr:"Пензенская область, г. Пенза, ул. Терновского, д. 74, кв. 19"})],
+    scheme:"cash",price:4150000,pay:{zadatok:150000,cash:4000000,sbr:0,akkr:0,mortgage:0,msk:0},
+    furniture:"Не передаётся",notes:"Полный расчёт наличными до подписания ОДКП.",
+    history:[{t:Date.now()-86400000*12,a:"Сделка создана"},{t:Date.now()-86400000*3,a:"Комплект согласован"}]
+  });
+  const d3=newDeal({
+    title:"Суворова 88/12 · ипотека + МСК",status:"docs",agent:"Е. Родина",
+    pdkpDate:"2026-11-10",deadline:"2026-12-15",
+    obj:{cad:"58:29:1008021:445",type:"Квартира",addr:"Пензенская область, г. Пенза, ул. Суворова, д. 88, кв. 12",
+      area:"62.8",floor:"9",rooms:"3",purpose:"жилое",right:"Индивидуальная собственность",
+      rightBasis:"Договор передачи жилого помещения в собственность (приватизация) № 4412 от 07.09.2009 г.",
+      recordNo:"58:29:1008021:445-58/012/2009-7",egrnDate:"2009-09-07"},
+    enc:{type:"none",bank:"",creditNo:"",creditDate:"",recNo:"",recDate:"",debt:"",term:""},
+    family:{status:"divorced",spouse:"",consentDate:"",consentNo:"",docNo:"II-НК № 447112",docDate:"2015-06-18"},
+    sellers:[Object.assign(blankParty("seller"),{fio:"Панкратов Игорь Семёнович",birth:"1965-11-08",passport:"5605 № 220914",
+      issued:"ОВД Ленинского района г. Пензы, 21.12.2005 г.",code:"580-002",addr:"Пензенская область, г. Пенза, ул. Суворова, д. 88, кв. 12"})],
+    buyers:[Object.assign(blankParty("buyer"),{fio:"Белкина Анна Дмитриевна",birth:"1990-03-17",passport:"5614 № 559031",
+      issued:"УМВД России по Пензенской области, 04.04.2014 г.",code:"580-001",addr:"Пензенская область, г. Пенза, ул. Аустрина, д. 41, кв. 7",share:"1/2"}),
+      Object.assign(blankParty("buyer"),{fio:"Белкин Тимофей Артёмович",birth:"2019-08-02",cat:"child",
+      cert:"II-НК № 618442",certIssued:"Отделом ЗАГС Октябрьского района г. Пензы, 09.08.2019 г.",
+      regCert:"№ 4471 от 14.08.2019 г.",addr:"Пензенская область, г. Пенза, ул. Аустрина, д. 41, кв. 7",
+      repFio:"Белкина Анна Дмитриевна",repPass:"5614 № 559031",repAddr:"г. Пенза, ул. Аустрина, д. 41, кв. 7",share:"1/2"})],
+    scheme:"ipoteka_msk",price:6200000,pay:{zadatok:200000,cash:300000,sbr:0,akkr:0,mortgage:4869000,msk:831000},
+    kd:{no:"",date:"",city:"Пенза"},
+    mskCert:{series:"МК-13",no:"0442118",holder:"Белкина Анна Дмитриевна",balanceDate:"2026-11-05",childAge:"7"},
+    furniture:"Кухонный гарнитур, плита, вытяжка",notes:"МСК в ипотечной сделке — условие о 3 годах не применяется. Доли детям выделяются.",
+    history:[{t:Date.now()-86400000*5,a:"Сделка создана"},{t:Date.now()-86400000*4,a:"Одобрена ипотека Сбербанк"}]
+  });
+  const d4=newDeal({
+    title:"Гагарина 7/3 · трансферация Сбер",status:"review",agent:"А. Ковалёв",
+    pdkpDate:"2026-11-06",deadline:"2026-12-05",
+    obj:{cad:"58:29:1004009:77",type:"Квартира",addr:"Пензенская область, г. Пенза, ул. Гагарина, д. 7, кв. 3",
+      area:"44.1",floor:"2",rooms:"2",purpose:"жилое",right:"Индивидуальная собственность",
+      rightBasis:"Договор купли-продажи с использованием кредитных средств от 19.06.2021 г.",
+      recordNo:"58:29:1004009:77-58/067/2021-2",egrnDate:"2021-06-19"},
+    enc:{type:"sber",bank:"ПАО «Сбербанк»",creditNo:"СБ-2021/44710",creditDate:"2021-06-19",
+      recNo:"58:29:1004009:77-58/067/2021-3",recDate:"2021-06-19",debt:"2180000",term:"240"},
+    family:{status:"married_personal",spouse:"",consentDate:"",consentNo:"",docNo:"Свидетельство о праве на наследство 58/44-н/58-2021",docDate:"2021-05-11"},
+    sellers:[Object.assign(blankParty("seller"),{fio:"Мещеряков Павел Олегович",birth:"1984-02-11",passport:"5612 № 330871",
+      issued:"УМВД России по Пензенской области, 03.03.2012 г.",code:"580-004",addr:"Пензенская область, г. Пенза, ул. Гагарина, д. 7, кв. 3"})],
+    buyers:[Object.assign(blankParty("buyer"),{fio:"Зотова Кристина Вадимовна",birth:"1996-07-25",passport:"5620 № 884112",
+      issued:"УМВД России по Пензенской области, 12.08.2020 г.",code:"580-001",addr:"Пензенская область, г. Пенза, ул. Рахманинова, д. 22, кв. 61"})],
+    scheme:"transfer",price:5400000,pay:{zadatok:150000,cash:0,sbr:0,akkr:5250000,mortgage:0,msk:0},
+    furniture:"Стиральная машина, холодильник",notes:"Аккредитив с трансферацией: сначала гасится кредит Продавца в Сбере, остаток — Продавцу.",
+    history:[{t:Date.now()-86400000*8,a:"Сделка создана"},{t:Date.now()-86400000*1,a:"Согласие Банка на продажу получено"}]
+  });
+  const d5=newDeal({
+    title:"Кижеватова 24/91 · доля, опека",status:"risk",agent:"М. Ильина",
+    pdkpDate:"2026-11-12",deadline:"2026-12-20",form:"notary",
+    obj:{cad:"58:29:1006014:203",type:"Квартира",addr:"Пензенская область, г. Пенза, ул. Кижеватова, д. 24, кв. 91",
+      area:"33.6",floor:"5",rooms:"1",purpose:"жилое",right:"Общая долевая собственность",
+      rightBasis:"Свидетельство о праве на наследство по закону от 14.02.2024 г., реестровый № 58/44-н/58-2024-2-118",
+      recordNo:"58:29:1006014:203-58/067/2024-4",egrnDate:"2024-02-14"},
+    enc:{type:"none",bank:"",creditNo:"",creditDate:"",recNo:"",recDate:"",debt:"",term:""},
+    family:{status:"widow",spouse:"",consentDate:"",consentNo:"",docNo:"II-НК № 559004",docDate:"2023-11-30"},
+    sellers:[Object.assign(blankParty("seller"),{fio:"Яшина Валентина Петровна",birth:"1957-06-03",passport:"5603 № 118442",
+      issued:"ОВД Железнодорожного района г. Пензы, 18.07.2003 г.",code:"580-005",addr:"Пензенская область, г. Пенза, ул. Кижеватова, д. 24, кв. 91",share:"1/2"}),
+      Object.assign(blankParty("seller"),{fio:"Яшин Артём Денисович",birth:"2013-05-19",cat:"child",share:"1/2",
+      cert:"III-НК № 447001",certIssued:"Отделом ЗАГС Железнодорожного района г. Пензы, 24.05.2013 г.",
+      regCert:"№ 2218 от 29.05.2013 г.",addr:"Пензенская область, г. Пенза, ул. Кижеватова, д. 24, кв. 91",
+      repFio:"Яшина Валентина Петровна",repPass:"5603 № 118442",repAddr:"г. Пенза, ул. Кижеватова, д. 24, кв. 91"})],
+    buyers:[Object.assign(blankParty("buyer"),{fio:"Дьяков Никита Сергеевич",birth:"1991-12-04",passport:"5616 № 662118",
+      issued:"УМВД России по Пензенской области, 20.12.2016 г.",code:"580-005",addr:"Пензенская область, г. Пенза, ул. Складская, д. 9, кв. 44"})],
+    scheme:"sbr",price:3100000,pay:{zadatok:100000,cash:0,sbr:3000000,akkr:0,mortgage:0,msk:0},
+    flags:{fssp:false,refuse:false,mskShares:false,bankrupt:false,minorOwner:true,renta:false},
+    notes:"Собственник — малолетний. Нотариальная форма обязательна, разрешение опеки получается после ПДКП.",
+    history:[{t:Date.now()-86400000*3,a:"Сделка создана"},{t:Date.now()-86400000*2,a:"Отмечен несовершеннолетний собственник"}]
+  });
+  const d6=newDeal({
+    title:"Аустрина 155/8 · черновик",status:"draft",agent:"Д. Сафин",
+    obj:{cad:"58:29:1010033:88",type:"Квартира",addr:"Пензенская область, г. Пенза, ул. Аустрина, д. 155, кв. 8",
+      area:"71.3",floor:"12",rooms:"3",purpose:"жилое",right:"",rightBasis:"",recordNo:"",egrnDate:""},
+    scheme:"ipoteka",price:7800000,pay:{zadatok:0,cash:0,sbr:0,akkr:0,mortgage:0,msk:0},
+    notes:"Первичный осмотр проведён, документы запрошены.",
+    history:[{t:Date.now()-3600000*5,a:"Сделка создана"}]
+  });
+  return [d1,d2,d3,d4,d5,d6];
+}
+
+function load(){
+  try{ const raw=localStorage.getItem(KEY);
+    if(raw){ const p=JSON.parse(raw); S.deals=p.deals||seed(); S.views=p.views||defViews(); S.typo=Object.assign(S.typo,p.typo||{}); }
+    else { S.deals=seed(); S.views=defViews(); }
+  }catch(e){ S.deals=seed(); S.views=defViews(); }
+  if(!S.deals.length)S.deals=seed();
+  S.sel=S.deals[0].id;
+}
+function defViews(){ return [
+  {id:"v1",n:"Все",q:"",st:[],sort:"upd"},
+  {id:"v2",n:"Требуют решения",q:"",st:["risk"],sort:"upd"},
+  {id:"v3",n:"Ипотека Сбер",q:"ипотека",st:[],sort:"price"},
+  {id:"v4",n:"Готовы",q:"",st:["ready"],sort:"deadline"}
+];}
+function save(){ try{ localStorage.setItem(KEY,JSON.stringify({deals:S.deals,views:S.views,typo:S.typo})); }catch(e){} }
+const D=()=>S.deals.find(d=>d.id===S.sel);
+function log(d,a){ d.history=d.history||[]; d.history.unshift({t:Date.now(),a}); if(d.history.length>40)d.history.length=40; }
+function touch(d,a){ d.updated=Date.now(); if(a)log(d,a); save(); }
+
+/* ============================================================
+   РАСЧЁТЫ / ВАЛИДАЦИЯ
+   ============================================================ */
+function active(d){ return SCHEMES[d.scheme].f; }
+function sumPay(d){ return active(d).reduce((s,k)=>s+(Number(d.pay[k])||0),0); }
+function delta(d){ return (Number(d.price)||0)-sumPay(d); }
+function balanceOK(d){ return Number(d.price)>0 && delta(d)===0; }
+function hasMort(d){ return SCHEMES[d.scheme].mort || d.scheme==="otherbank"; }
+
+function checks(d){
+  const c=[];
+  const add=(lv,t,s,tab)=>c.push({lv,t,s,tab});
+  if(!d.obj.cad)add("err","Не указан кадастровый номер","Из актуальной выписки ЕГРН.","obj");
+  if(!d.obj.addr)add("err","Не указан адрес объекта","Пункт 1.1 договора.","obj");
+  if(!d.obj.rightBasis)add("err","Не заполнено основание права","Берётся из выписки ЕГРН, раздел «Документы-основания».","obj");
+  if(!d.obj.recordNo)add("warn","Нет номера записи о праве","Выписка ЕГРН, раздел «Сведения о зарегистрированных правах».","obj");
+  const sOK=d.sellers.length&&d.sellers.every(p=>p.fio&&(p.cat==="child"?p.cert:p.passport));
+  const bOK=d.buyers.length&&d.buyers.every(p=>p.fio&&(p.cat==="child"?p.cert:p.passport));
+  if(!sOK)add("err","Не заполнены данные Продавцов","ФИО и документ, удостоверяющий личность, для каждой стороны.","parties");
+  if(!bOK)add("err","Не заполнены данные Покупателей","ФИО и документ, удостоверяющий личность, для каждой стороны.","parties");
+  d.sellers.concat(d.buyers).forEach(p=>{
+    if(p.cat==="minor"&&(!p.repFio||!p.repPass))add("err","Нет согласия законного представителя","Сторона 14–18 лет: "+(p.fio||"без имени")+".","parties");
+    if(p.cat==="child"&&(!p.regCert||!p.repFio))add("err","Нет данных представителя / св-ва о регистрации","Малолетний: "+(p.fio||"без имени")+".","parties");
+    if(p.cat==="proxy"&&(!p.proxyNo||!p.repFio))add("err","Не заполнена доверенность","Представитель стороны "+(p.fio||"без имени")+".","parties");
+  });
+  if(d.family.status==="married_consent"&&(!d.family.consentNo||!d.family.consentDate))
+    add("err","Нет нотариального согласия супруга","Совместная собственность. Без согласия ПДКП не подписывается.","parties");
+  if(d.family.status==="none"&&!d.family.docNo)
+    add("warn","Нет заявления об отсутствии брака","Нотариальное заявление фиксирует заверение.","parties");
+  if(!Number(d.price))add("err","Не указана цена договора","Раздел 3.","pay");
+  else if(!balanceOK(d))add("err","Баланс расчётов не сходится","Разница "+fmt(Math.abs(delta(d)))+" ₽. Сумма блоков должна равняться цене.","pay");
+  if(!Number(d.pay.zadatok))add("warn","Задаток не задан","ПДКП заключается с условием обеспечения задатком.","pay");
+  if(d.deadline&&d.pdkpDate&&d.deadline<=d.pdkpDate)add("err","Срок ОДКП не позже даты ПДКП","Проверьте п. 2.1.","deal");
+  if(hasMort(d)&&!d.kd.no)add("info","Номер КД присваивается в день сделки","В проекте оставлен прочерк — это нормально. Город зафиксирован: Пенза.","pay");
+  if(active(d).includes("msk")){
+    if(!d.mskCert.series||!d.mskCert.no)add("err","Нет реквизитов сертификата МСК","Сертификат + справка об остатке средств.","pay");
+    if(!d.mskCert.balanceDate)add("warn","Нет даты справки об остатке МСК","Сумма должна подтверждаться справкой.","pay");
+    if(!hasMort(d)&&Number(d.mskCert.childAge)<3)add("err","МСК без ипотеки: ребёнку менее 3 лет","Перечисление СФР невозможно до достижения 3 лет.","pay");
+    if(hasMort(d))add("ok","МСК в ипотечной сделке","Условие о достижении ребёнком 3 лет не применяется.","pay");
+  }
+  if(d.enc.type!=="none"){
+    if(!d.enc.creditNo)add("err","Нет номера кредита Продавца","Нужен для блока обременения и погашения.","obj");
+    if(!d.enc.recNo)add("warn","Нет записи об ипотеке в ЕГРН","Номер и дата записи.","obj");
+    if(!d.enc.debt)add("err","Нет суммы задолженности","Справка банка на дату сделки.","obj");
+    if(d.scheme==="otherbank"&&Number(d.enc.debt)>Number(d.pay.mortgage)+Number(d.pay.sbr))
+      add("warn","Долг превышает транш на погашение","Разницу Продавец вносит самостоятельно — зафиксируйте источник.","pay");
+    if(d.enc.type==="sber"&&d.scheme!=="transfer")add("warn","Ипотека в Сбере, но схема не «Трансферация»","Проверьте выбранный способ расчёта.","pay");
+  }
+  if(d.flags.fssp)add("err","СТОП · Запреты ФССП на регистрацию","Сделка невозможна до погашения задолженности и снятия запретов.","check");
+  if(d.flags.refuse)add("err","СТОП · Отказники от приватизации","Бессрочное право пользования. Требуется отдельное юридическое решение.","check");
+  if(d.flags.mskShares)add("err","СТОП · МСК использован, доли не выделены","Сделка оспорима. Сначала выделение долей и опека.","check");
+  if(d.flags.bankrupt)add("err","СТОП · Признаки банкротства Продавца","Риск оспаривания в течение трёх лет.","check");
+  if(d.flags.renta)add("err","СТОП · Рента / пожизненное содержание","Обременение в пользу третьего лица.","check");
+  if(d.flags.minorOwner)add("warn","Несовершеннолетний собственник","Нотариальная форма обязательна; разрешение опеки — после ПДКП.","check");
+  if(d.flags.minorOwner&&d.form!=="notary")add("err","Форма должна быть нотариальной","Участие несовершеннолетнего собственника.","deal");
+  if(!c.some(x=>x.lv==="err"))add("ok","Комплект можно выпускать","Критических замечаний нет. Проект готов к согласованию.","docs");
+  return c;
+}
+function readiness(d){
+  const req=[d.obj.cad,d.obj.addr,d.obj.area,d.obj.rightBasis,d.obj.recordNo,
+    d.sellers.length&&d.sellers.every(p=>p.fio&&(p.cat==="child"?p.cert:p.passport)),
+    d.buyers.length&&d.buyers.every(p=>p.fio&&(p.cat==="child"?p.cert:p.passport)),
+    Number(d.price)>0,balanceOK(d),Number(d.pay.zadatok)>0,d.pdkpDate,d.deadline,d.family.status!=="none"||d.family.docNo];
+  if(hasMort(d))req.push(Number(d.pay.mortgage)>0);
+  if(active(d).includes("msk"))req.push(d.mskCert.series&&d.mskCert.no);
+  if(d.enc.type!=="none")req.push(d.enc.creditNo,d.enc.debt);
+  let p=req.filter(Boolean).length/req.length;
+  const errs=checks(d).filter(c=>c.lv==="err").length;
+  p=Math.max(0,p-Math.min(.45,errs*.09));
+  return Math.round(p*100);
+}
+
+/* ============================================================
+   ГЕНЕРАТОРЫ ДОКУМЕНТОВ
+   ============================================================ */
+function partyLine(p,idx,arr,role){
+  const nm=p.fio?esc(p.fio):PH("ФИО полностью");
+  const bd=p.birth?dShort(p.birth):PH("ДД.ММ.ГГГГ");
+  const plural=arr.length>1;
+  let s="";
+  if(p.cat==="child"){
+    s="гр. "+nm+", "+bd+" года рождения, свидетельство о рождении "+val(p.cert,"серия, №")+
+      ", выдано "+val(p.certIssued,"кем и когда")+", зарегистрированн"+(plural?"ые":"ый")+" по адресу: "+val(p.addr)+
+      " (свидетельство о регистрации по месту жительства "+val(p.regCert,"№, дата")+")"+
+      ", в лице законного представителя "+val(p.repFio,"ФИО представителя")+" (паспорт "+val(p.repPass,"серия, №")+", адрес: "+val(p.repAddr)+")";
+  } else {
+    s="гр. "+nm+", "+bd+" года рождения, паспорт гражданина РФ "+val(p.passport,"серия, №")+
+      ", выдан: "+val(p.issued,"кем и когда")+", код подразделения: "+val(p.code,"XXX-XXX")+
+      ", зарегистрированн"+(plural?"ые":"ый")+" по адресу: "+val(p.addr);
+    if(p.snils)s+=", СНИЛС "+esc(p.snils);
+    if(p.cat==="minor")s+=", действующ"+(plural?"ие":"ий")+" с письменного согласия законного представителя — "+
+      val(p.repFio,"ФИО")+" (паспорт "+val(p.repPass,"серия, №")+", адрес: "+val(p.repAddr)+")";
+    if(p.cat==="proxy")s+=", в лице представителя "+val(p.repFio,"ФИО представителя")+" (паспорт "+val(p.repPass,"серия, №")+
+      "), действующего на основании нотариальной доверенности от "+(p.proxyDate?dShort(p.proxyDate):PH("дата"))+
+      ", реестровый № "+val(p.proxyNo)+", удостоверенной нотариусом "+val(p.proxyNotary);
+  }
+  if(p.share)s+=", доля в праве — "+esc(p.share);
+  return s;
+}
+function sideBlock(d,role){
+  const arr=role==="seller"?d.sellers:d.buyers, plural=arr.length>1;
+  const name=role==="seller"?(plural?"Продавцы":"Продавец"):(plural?"Покупатели":"Покупатель");
+  return arr.map((p,i)=>partyLine(p,i,arr,role)).join(", и ") +
+    ", именуем"+(plural?"ые":"ый")+" в дальнейшем «"+name+"»";
+}
+const S_=d=>d.sellers.length>1?"Продавцы":"Продавец";
+const B_=d=>d.buyers.length>1?"Покупатели":"Покупатель";
+const SV=d=>d.sellers.length>1?["обязуются","передают","гарантируют","обязаны"]:["обязуется","передаёт","гарантирует","обязан"];
+function objDesc(d){
+  const o=d.obj;
+  return (o.type||"Объект").toLowerCase()+", назначение: "+(o.purpose||"жилое")+
+    (o.rooms?", количество комнат: "+esc(o.rooms):"")+", общей площадью "+val(o.area,"__")+
+    " кв. м, расположенн"+(o.type==="Квартира"?"ая":"ый")+" на "+val(o.floor,"__")+" этаже по адресу: "+val(o.addr,"адрес объекта")+
+    ", кадастровый номер: "+val(o.cad,"XX:XX:XXXXXXX:XXXX");
+}
+function payLinesPDKP(d){
+  const out=[],rest=(Number(d.price)||0)-(Number(d.pay.zadatok)||0),f=active(d);
+  if(f.includes("cash")&&Number(d.pay.cash))out.push(money(d.pay.cash)+" — за счёт собственных наличных денежных средств в день подписания Основного договора.");
+  if(f.includes("sbr")&&Number(d.pay.sbr))out.push(money(d.pay.sbr)+" — с использованием сервиса безопасных расчётов (номинального счёта ООО «Домклик», ИНН 7736249247) после государственной регистрации перехода права собственности к "+B_(d)+".");
+  if(f.includes("akkr")&&Number(d.pay.akkr)){
+    if(d.scheme==="transfer")out.push(money(d.pay.akkr)+" — посредством безотзывного покрытого аккредитива с трансферацией в ПАО «Сбербанк» сроком 60 дней: сумма, необходимая для погашения задолженности "+S_(d)+" по кредитному договору № "+(d.enc.creditNo||"__")+", перечисляется в пользу Банка, остаток — на счёт "+S_(d)+".");
+    else out.push(money(d.pay.akkr)+" — посредством безотзывного покрытого аккредитива в ПАО «Сбербанк» сроком 60 дней с раскрытием после государственной регистрации перехода права собственности.");
+  }
+  if(f.includes("mortgage")&&Number(d.pay.mortgage))out.push(money(d.pay.mortgage)+" — за счёт целевых кредитных средств ПАО «Сбербанк» по кредитному договору, заключаемому в г. Пенза (номер присваивается в день сделки). Перечисление — после государственной регистрации перехода права и ипотеки в силу закона в пользу Банка.");
+  if(f.includes("msk")&&Number(d.pay.msk))out.push(money(d.pay.msk)+" — за счёт средств материнского (семейного) капитала путём перечисления Отделением СФР на счёт "+S_(d)+" после государственной регистрации перехода права собственности.");
+  if(!out.length)out.push(money(rest)+" — порядок расчёта уточняется сторонами до заключения Основного договора.");
+  return out;
+}
+function payLinesODKP(d){
+  const f=active(d),o=[];
+  if(Number(d.pay.zadatok))o.push("часть стоимости Объекта недвижимости в размере "+money(d.pay.zadatok)+" оплачена "+dShort(d.pdkpDate)+" в качестве задатка за счёт собственных наличных денежных средств по Предварительному договору купли-продажи от "+dShort(d.pdkpDate)+".");
+  if(f.includes("cash")&&Number(d.pay.cash))o.push("часть стоимости Объекта недвижимости в размере "+money(d.pay.cash)+" оплачена за счёт собственных наличных денежных средств до заключения настоящего договора.");
+  if(f.includes("sbr")&&Number(d.pay.sbr))o.push("часть стоимости Объекта недвижимости в размере "+money(d.pay.sbr)+" оплачивается с использованием номинального счёта Общества с ограниченной ответственностью «Домклик» (ООО «Домклик»), ИНН 7736249247, открытого в Операционном управлении Московского банка ПАО Сбербанк г. Москва, к/счёт 30101810400000000225, БИК 044525225. Бенефициаром в отношении денежных средств, размещаемых на номинальном счёте, является "+B_(d)+" до момента исполнения условий перечисления денежных средств "+S_(d)+". Перечисление осуществляется ООО «Домклик» по поручению "+B_(d)+" после государственной регистрации перехода права собственности на Объект недвижимости, в течение от 1 (одного) до 5 (пяти) рабочих дней с момента получения информации от органа регистрации, по реквизитам: получатель — "+val(d.sellers[0]&&d.sellers[0].fio)+", счёт № "+PH("____________________")+", банк "+PH("____________")+", БИК "+PH("_________")+", к/с "+PH("____________________")+".");
+  if(f.includes("akkr")&&Number(d.pay.akkr)){
+    if(d.scheme==="transfer"){
+      o.push("часть стоимости Объекта недвижимости в размере "+money(d.pay.akkr)+" оплачивается "+B_(d)+" за счёт собственных денежных средств с использованием безотзывного покрытого аккредитива с трансферацией, открытого в ПАО «Сбербанк» (Банк-Эмитент и Исполняющий Банк — ПАО «Сбербанк») до подписания настоящего Договора на следующих условиях: сумма аккредитива — "+fmt(d.pay.akkr)+" руб.; срок действия — 60 (шестьдесят) дней.");
+      o.push("Для исполнения аккредитива предоставляется выписка из ЕГРН на Объект недвижимости, указанный в п. 1.1 настоящего Договора, где в качестве правообладателя указан(ы): "+val(d.buyers.map(b=>b.fio).filter(Boolean).join(", "),"Покупатель(и)")+", с записью об ипотеке в силу закона в пользу ПАО «Сбербанк» в обеспечение обязательств "+S_(d)+" по кредитному договору № "+val(d.enc.creditNo)+" от "+dShort(d.enc.creditDate)+" (запись № "+val(d.enc.recNo)+" от "+dShort(d.enc.recDate)+"), а также заявление "+S_(d)+" на трансферацию аккредитива в пользу Банка на сумму погашения задолженности на дату перечисления средств со счёта покрытия.");
+      o.push("Перечисление денежных средств осуществляется после государственной регистрации перехода права собственности к "+B_(d)+": сумма, необходимая для полного погашения задолженности "+S_(d)+", перечисляется со счёта покрытия в пользу ПАО «Сбербанк», оставшаяся часть — "+S_(d)+" по реквизитам: счёт № "+PH("____________")+", открытый на имя "+val(d.sellers[0]&&d.sellers[0].fio)+", БИК "+PH("_________")+", к/с "+PH("____________________")+". "+S_(d)+" "+SV(d)[3]+" принять все необходимые меры для снятия обременения в течение 7 (семи) дней с момента государственной регистрации перехода права собственности.");
+    } else {
+      o.push("часть стоимости Объекта недвижимости в размере "+money(d.pay.akkr)+" оплачивается "+B_(d)+" за счёт собственных денежных средств с использованием безотзывного покрытого аккредитива, открытого в Операционном управлении Московского банка ПАО Сбербанк г. Москва, к/счёт 30101810400000000225, БИК 044525225, до подписания настоящего Договора на следующих условиях: сумма аккредитива — "+fmt(d.pay.akkr)+" руб.; срок действия — 60 (шестьдесят) дней; условие раскрытия — предоставление в ПАО Сбербанк выписки из ЕГРН на Объект недвижимости, указанный в п. 1.1, где в качестве правообладателя указан(ы): "+val(d.buyers.map(b=>b.fio).filter(Boolean).join(", "),"Покупатель(и), иные лица при наличии")+". Перечисление осуществляется после государственной регистрации перехода права собственности, в течение от 1 (одного) до 5 (пяти) рабочих дней с момента получения Банком подтверждающих документов.");
+    }
+  }
+  if(f.includes("mortgage")&&Number(d.pay.mortgage)){
+    o.push("часть стоимости Объекта недвижимости в размере "+money(d.pay.mortgage)+" оплачивается за счёт целевых кредитных денежных средств, предоставляемых "+B_(d)+" (далее — Заёмщик) Публичным акционерным обществом «Сбербанк» (ПАО «Сбербанк»), ИНН 7707083893, ОГРН 1027700132195, БИК 044525225, корреспондентский счёт 30101810400000000225, местонахождение: 117997, г. Москва, ул. Вавилова, д. 19 (далее — Банк), в соответствии с Кредитным договором № "+(d.kd.no?esc(d.kd.no):PH("присваивается в день сделки"))+" от "+(d.kd.date?dShort(d.kd.date):PH("__.__.____"))+", заключённым в г. Пенза. Условия предоставления кредита предусмотрены Кредитным договором.");
+    if(d.scheme==="otherbank"){
+      o.push("Указанные кредитные средства перечисляются в день заключения настоящего договора на счёт "+S_(d)+" № "+PH("____________")+", открытый на имя "+val(d.sellers[0]&&d.sellers[0].fio)+", БИК "+PH("_________")+", к/с "+PH("____________________")+". Из указанной суммы денежные средства в размере "+money(d.enc.debt)+" направляются на погашение задолженности "+S_(d)+" по кредитному договору № "+val(d.enc.creditNo)+" от "+dShort(d.enc.creditDate)+", заключённому с "+val(d.enc.bank,"наименование банка")+". "+S_(d)+" "+SV(d)[1]+" направить данные средства на погашение задолженности в полном объёме в день заключения настоящего договора и обеспечить снятие обременения — ипотеки в силу закона (запись № "+val(d.enc.recNo)+" от "+dShort(d.enc.recDate)+") — до государственной регистрации перехода права собственности. В случае недостаточности средств "+S_(d)+" "+SV(d)[3]+" оплатить разницу самостоятельно.");
+    } else {
+      o.push("Расчёты в сумме кредитных средств производятся с использованием номинального счёта ООО «Домклик», ИНН 7736249247, открытого в Операционном управлении Московского банка ПАО Сбербанк г. Москва, к/счёт 30101810400000000225, БИК 044525225. Бенефициаром является "+B_(d)+" до момента исполнения условий перечисления. Перечисление осуществляется ООО «Домклик» по поручению "+B_(d)+" после государственной регистрации перехода права собственности к Заёмщику и государственной регистрации ипотеки Объекта недвижимости в силу закона в пользу Банка, в течение от 1 (одного) до 5 (пяти) рабочих дней с момента получения информации от органа регистрации.");
+    }
+  }
+  if(f.includes("msk")&&Number(d.pay.msk)){
+    o.push("часть стоимости Объекта недвижимости в размере "+money(d.pay.msk)+" будет оплачена не ранее государственной регистрации перехода права собственности за счёт средств Федерального бюджета в соответствии с Федеральным законом от 29.12.2006 № 256-ФЗ на основании Государственного сертификата на материнский (семейный) капитал серия "+val(d.mskCert.series,"__")+" № "+val(d.mskCert.no,"______")+", на имя "+val(d.mskCert.holder,"ФИО")+" (остаток средств подтверждён справкой от "+dShort(d.mskCert.balanceDate)+"), путём перечисления Территориальным органом СФР в сроки, установленные законодательством РФ, на лицевой счёт "+S_(d)+": получатель — "+val(d.sellers[0]&&d.sellers[0].fio)+", счёт № "+PH("____________________")+", банк "+PH("____________")+", БИК "+PH("_________")+", к/с "+PH("____________________")+".");
+    if(hasMort(d))o.push("Стороны подтверждают, что средства материнского (семейного) капитала направляются в рамках ипотечного кредитования, в связи с чем условие о достижении ребёнком возраста трёх лет не применяется.");
+  }
+  return o;
+}
+function encBlock(d){
+  if(d.enc.type==="none")return "На момент подписания настоящего договора в ЕГРН ограничения (обременения) прав на Объект не зарегистрированы.";
+  const b=d.enc.type==="sber"?"ПАО «Сбербанк» (ИНН 7707083893, ОГРН 1027700132195)":val(d.enc.bank,"наименование банка");
+  return "На момент подписания настоящего договора в Едином государственном реестре недвижимости зарегистрировано обременение: ипотека в силу закона, запись регистрации № "+val(d.enc.recNo)+" от "+dShort(d.enc.recDate)+
+    (d.enc.term?", срок: с "+dShort(d.enc.creditDate)+" на "+esc(d.enc.term)+" месяцев":"")+
+    ", залогодержатель — "+b+". "+(d.enc.type==="sber"
+      ? "Объект отчуждается с письменного согласия Банка. Погашение задолженности и снятие обременения производятся в порядке, предусмотренном разделом 3 настоящего договора."
+      : "Указанное обременение подлежит снятию до государственной регистрации перехода права собственности к "+B_(d)+" в порядке, предусмотренном разделом 3 настоящего договора.");
+}
+function sigTable(d){
+  const s=d.sellers.map(p=>"<p class='ni'><b>"+esc(p.fio||"____________________")+"</b><br><small>паспорт "+esc(p.passport||p.cert||"__________")+"<br>"+esc(p.addr||"____________________")+"</small></p><div class='line'></div><small>подпись, ФИО полностью от руки</small>").join("<br>");
+  const b=d.buyers.map(p=>"<p class='ni'><b>"+esc(p.fio||"____________________")+"</b><br><small>"+(p.cat==="child"?"св-во о рождении ":"паспорт ")+esc(p.cert||p.passport||"__________")+"<br>"+esc(p.addr||"____________________")+"</small></p><div class='line'></div><small>подпись, ФИО полностью от руки</small>").join("<br>");
+  return "<table class='sig'><tr><td><b>"+S_(d).toUpperCase()+":</b><br><br>"+s+"<br><br>Дата: "+dShort(d.pdkpDate)+"</td><td><b>"+B_(d).toUpperCase()+":</b><br><br>"+b+"<br><br>Дата: "+dShort(d.pdkpDate)+"</td></tr></table>";
+}
+const HEAD=d=>"<div class='hdr'><div>г. Пенза, Пензенская область</div><div class='r'>"+dRu(d.pdkpDate)+"</div></div>";
+
+function docPDKP(d){
+  const sv=SV(d),rest=(Number(d.price)||0)-(Number(d.pay.zadatok)||0);
+  let h="<h1>Предварительный договор купли-продажи "+(d.obj.type==="Квартира"?"квартиры":"объекта недвижимости")+"</h1>"+
+  "<h2>с условием обеспечения обязательства задатком</h2>"+HEAD(d)+
+  "<p>Мы, нижеподписавшиеся: "+sideBlock(d,"seller")+", с одной стороны, и "+sideBlock(d,"buyer")+
+  ", с другой стороны, а при совместном упоминании именуемые «Стороны», находясь в здравом уме и твёрдой памяти, действуя добровольно, заключили настоящий Предварительный договор (далее — «Договор») о нижеследующем:</p>"+
+  "<h3>1. Предмет предварительного договора</h3>"+
+  "<p>1.1. Стороны обязуются заключить в будущем договор купли-продажи объекта недвижимого имущества (далее — «Основной договор») на согласованных в настоящем Договоре условиях.</p>"+
+  "<p>1.2. По Основному договору "+S_(d)+" "+sv[1]+" в собственность, а "+B_(d)+" обязуется принять и оплатить следующее недвижимое имущество: "+objDesc(d)+" (далее — «Объект»).</p>"+
+  "<p>1.3. Объект принадлежит "+S_(d)+" на праве "+val(d.obj.right,"вид права")+" на основании сведений Единого государственного реестра недвижимости: "+val(d.obj.rightBasis,"документы-основания из выписки ЕГРН")+", о чём в ЕГРН "+(d.obj.egrnDate?dShort(d.obj.egrnDate):PH("дата"))+" сделана запись о государственной регистрации права № "+val(d.obj.recordNo)+".</p>"+
+  "<h3>2. Сроки и порядок заключения Основного договора</h3>"+
+  "<p>2.1. Стороны обязуются заключить Основной договор в срок до "+dRu(d.deadline)+" включительно. Основной договор может быть заключён в любой день до наступления указанного срока по согласованию Сторон.</p>"+
+  "<p>2.2. Основной договор совершается в "+(d.form==="notary"?"нотариальной форме":"простой письменной форме")+" в соответствии с действующим законодательством Российской Федерации.</p>"+
+  "<p>2.3. Расходы, связанные с государственной регистрацией перехода права собственности, несёт "+B_(d)+". Расходы по предпродажной подготовке документов и снятию ограничений (обременений) "+sv[1].replace("обязуются","несут").replace("обязуется","несёт")+" "+S_(d)+".</p>"+
+  "<p>2.4. Стороны обязуются подать документы на государственную регистрацию в течение 5 (пяти) рабочих дней с даты подписания Основного договора.</p>"+
+  "<h3>3. Цена Объекта и порядок расчётов. Обеспечение задатком</h3>"+
+  "<p>3.1. Цена Объекта по соглашению Сторон составляет "+money(d.price)+". Цена является окончательной, фиксированной и изменению не подлежит.</p>"+
+  "<p>3.2. Расчёт между Сторонами производится в следующем порядке:</p>"+
+  "<p>3.2.1. В день подписания настоящего Договора "+B_(d)+" "+(d.buyers.length>1?"передают":"передаёт")+" "+S_(d)+" в качестве задатка денежные средства в размере "+money(d.pay.zadatok)+" за счёт собственных средств. В подтверждение получения суммы задатка "+S_(d)+" "+(d.sellers.length>1?"выдают":"выдаёт")+" "+B_(d)+" расписку, являющуюся неотъемлемой частью настоящего Договора.</p>"+
+  "<p>3.2.2. Оставшаяся часть стоимости Объекта в размере "+money(rest)+" оплачивается в следующем порядке:</p>"+
+  payLinesPDKP(d).map(t=>"<p class='ni'>— "+t+"</p>").join("")+
+  "<h3>4. Сведения об обременениях и порядок их снятия</h3>"+
+  "<p>4.1. "+encBlock(d)+"</p>"+
+  (d.flags.fssp?"<p>4.2. "+S_(d)+" "+sv[2]+" и "+sv[1]+" предпринять исчерпывающие меры по снятию запретов на совершение регистрационных действий, наложенных постановлениями судебного пристава-исполнителя, исключительно своими силами и за счёт собственных денежных средств, и обеспечить погашение соответствующих записей в ЕГРН в срок до заключения Основного договора.</p>":"")+
+  (d.enc.type!=="none"?"<p>4.3. "+S_(d)+" "+sv[1]+" погасить кредитные обязательства перед "+(d.enc.type==="sber"?"ПАО «Сбербанк»":val(d.enc.bank))+" и обеспечить прекращение залога Объекта в порядке и сроки, установленные разделом 3 настоящего Договора. Остаток задолженности по состоянию на дату сделки составляет "+money(d.enc.debt)+".</p>":"")+
+  "<h3>5. Обеспечение исполнения обязательств и ответственность Сторон</h3>"+
+  "<p>5.1. Исполнение обязательств по настоящему Договору обеспечивается задатком в соответствии со статьями 380, 381 Гражданского кодекса РФ:</p>"+
+  "<p class='ni'>— в случае неисполнения обязательств по заключению Основного договора по вине "+S_(d)+" (в том числе неустранения запретов на регистрационные действия) "+S_(d)+" "+sv[3]+" возвратить "+B_(d)+" сумму задатка в двойном размере — "+money(Number(d.pay.zadatok)*2)+" — в течение 5 (пяти) рабочих дней с момента истечения срока заключения Основного договора;</p>"+
+  "<p class='ni'>— в случае неисполнения обязательств по заключению Основного договора по вине "+B_(d)+" переданная сумма задатка в размере "+money(d.pay.zadatok)+" остаётся у "+S_(d)+".</p>"+
+  "<p>5.2. В соответствии со статьями 429, 445 ГК РФ в случае уклонения одной из Сторон от заключения Основного договора добросовестная Сторона вправе обратиться в суд с требованием о понуждении заключить Основной договор и о возмещении причинённых убытков.</p>"+
+  "<p>5.3. Если до истечения срока, указанного в п. 2.1, обременения не будут сняты по независящим от воли "+S_(d)+" причинам (задержка вынесения постановлений, технический сбой документооборота, регламентные сроки Росреестра) при условии надлежащего исполнения "+S_(d)+" финансовых обязательств, настоящий Договор подлежит расторжению без применения штрафных санкций, а сумма задатка возвращается в однократном размере — "+money(d.pay.zadatok)+" — в течение 3 (трёх) рабочих дней.</p>"+
+  "<h3>6. Заверения об обстоятельствах (ст. 431.2 ГК РФ)</h3>"+
+  "<p>6.1. "+S_(d)+" "+sv[2]+", что в Объекте зарегистрированные лица отсутствуют, лиц, сохраняющих право пользования Объектом после смены собственника (ст. 292, 558 ГК РФ), не имеется. В случае обнаружения таких лиц "+S_(d)+" уплачивают Покупателю неустойку в размере 100 000 рублей за каждого и обязуются снять его с регистрационного учёта за свой счёт.</p>"+
+  "<p>6.2. "+S_(d)+" "+sv[2]+", что на приобретение Объекта не использовались средства материнского (семейного) капитала, субсидий либо государственных сертификатов; обязательств по наделению несовершеннолетних детей долями не имеется.</p>"+
+  "<p>6.3. Семейное положение: "+esc(FAMILY[d.family.status])+
+    (d.family.status==="married_consent"?". Нотариально удостоверенное согласие супруга(и) "+val(d.family.spouse)+" на отчуждение получено "+dShort(d.family.consentDate)+", реестровый № "+val(d.family.consentNo)+".":"")+
+    (d.family.status==="none"?". Нотариальное заявление об отсутствии брака от "+dShort(d.family.docNo?d.family.docDate:"")+" № "+val(d.family.docNo)+".":"")+
+    (d.family.status==="married_personal"?". Объект является личной собственностью, согласие супруга(и) не требуется (ст. 36 СК РФ).":"")+
+    (d.family.status==="divorced"?". Раздел совместно нажитого имущества произведён, претензии бывшего супруга(и) отсутствуют.":"")+
+    (d.family.status==="widow"?". Наследственные права оформлены в полном объёме, иных наследников, имеющих права на Объект, не имеется.":"")+
+    (d.family.status==="prenup"?". Режим собственности определён брачным договором № "+val(d.family.docNo)+" от "+dShort(d.family.docDate)+".":"")+"</p>"+
+  "<p>6.4. "+S_(d)+" "+sv[2]+", что не имеют долгов и неисполненных обязательств, которые могут повлечь банкротство (127-ФЗ), в отношении них не возбуждены дела о банкротстве и они не имеют намерений обращаться с заявлением о банкротстве.</p>"+
+  "<p>6.5. Стороны подтверждают, что не имеют гражданства недружественных иностранных государств, вида на жительство в них, не подпадают под действие Указов Президента РФ № 79, 81, 254, 618, не включены в реестр иностранных агентов (255-ФЗ), расчёты не ведутся через счета типа «О».</p>"+
+  "<p>6.6. Стороны подтверждают полную дееспособность, отсутствие опеки, попечительства и патронажа, добровольность заключения Договора и отсутствие признаков кабальности сделки. Заключение Договора не связано с введением Сторон в заблуждение относительно участия в каких-либо специальных операциях правоохранительных органов или Банка России.</p>"+
+  "<h3>7. Заключительные положения</h3>"+
+  "<p>7.1. Настоящий Договор вступает в силу с момента его подписания Сторонами и действует до полного исполнения Сторонами своих обязательств.</p>"+
+  "<p>7.2. С момента подписания Сторонами Основного договора настоящий Предварительный договор прекращает своё действие; отношения Сторон регулируются Основным договором.</p>"+
+  "<p>7.3. Настоящий Договор составлен и подписан в "+(d.sellers.length+d.buyers.length)+" подлинных экземплярах, имеющих одинаковую юридическую силу, по одному для каждой из Сторон.</p>"+
+  "<h3>8. Адреса, реквизиты и подписи Сторон</h3>"+sigTable(d)+
+  "<div class='pb'></div>"+
+  "<h1>Расписка</h1><h2>в получении задатка по Предварительному договору от "+dShort(d.pdkpDate)+"</h2>"+HEAD(d)+
+  "<p>Мы, нижеподписавшиеся: "+d.sellers.map(p=>esc(p.fio||"____________________")+" ("+(p.cat==="child"?"св-во о рождении ":"паспорт ")+esc(p.cert||p.passport||"__________")+")").join(", ")+
+  ", настоящей распиской подтверждаем, что получили от "+d.buyers.map(p=>esc(p.fio||"____________________")+" ("+(p.cat==="child"?"св-во о рождении ":"паспорт ")+esc(p.cert||p.passport||"__________")+")").join(", ")+
+  " денежные средства в размере "+money(d.pay.zadatok)+" в качестве задатка по Предварительному договору купли-продажи от "+dShort(d.pdkpDate)+
+  " в отношении Объекта: "+val(d.obj.addr)+", кадастровый номер "+val(d.obj.cad)+".</p>"+
+  "<p>Денежные средства получены полностью наличными при подписании Предварительного договора. Материальных и финансовых претензий по передаче суммы задатка не имеем.</p>"+
+  "<p>Оставшаяся часть стоимости Объекта в размере "+money(rest)+" подлежит уплате в порядке и сроки, установленные разделом 3 Предварительного договора, в срок до "+dRu(d.deadline)+".</p>"+
+  sigTable(d);
+  return h;
+}
+function docReceipt(d){
+  const rest=(Number(d.price)||0)-(Number(d.pay.zadatok)||0);
+  return "<h1>Расписка</h1><h2>в получении задатка</h2>"+HEAD(d)+
+  "<p>Мы, нижеподписавшиеся: "+sideBlock(d,"seller")+", настоящей распиской подтверждаем, что получили от "+sideBlock(d,"buyer")+
+  " денежные средства в размере <b>"+money(d.pay.zadatok)+"</b> в качестве обеспечения исполнения обязательств (задатка) по заключению Основного договора купли-продажи Объекта: "+objDesc(d)+", в соответствии с Предварительным договором от "+dShort(d.pdkpDate)+".</p>"+
+  "<p>Денежные средства получены полностью наличными денежными средствами при подписании Предварительного договора. Претензий по сумме и порядку передачи не имеем.</p>"+
+  "<p>Оставшаяся часть стоимости Объекта в размере "+money(rest)+" подлежит уплате в срок до "+dRu(d.deadline)+".</p>"+
+  sigTable(d);
+}
+function docODKP(d){
+  const o=d.obj;
+  return "<h1>Договор купли-продажи недвижимости</h1>"+HEAD(d)+
+  "<p>Мы, "+sideBlock(d,"seller")+", с одной стороны, и "+sideBlock(d,"buyer")+", с другой стороны, именуемые в дальнейшем совместно «Стороны», заключили договор о следующем:</p>"+
+  "<h3>1. Предмет договора</h3>"+
+  "<p>1.1. По настоящему договору "+S_(d)+" продаёт, а "+B_(d)+" приобретает в собственность объект недвижимого имущества, имеющий следующие характеристики согласно актуальным данным Единого государственного реестра недвижимости:</p>"+
+  "<table class='desc'><tr><td>Кадастровый номер объекта недвижимости</td><td>"+val(o.cad)+"</td></tr>"+
+  "<tr><td>Вид объекта недвижимости</td><td>"+val(o.type)+"</td></tr>"+
+  "<tr><td>Адрес (местоположение)</td><td>"+val(o.addr)+"</td></tr>"+
+  "<tr><td>Назначение</td><td>"+val(o.purpose)+"</td></tr>"+
+  "<tr><td>Площадь, кв. м</td><td>"+val(o.area)+"</td></tr>"+
+  "<tr><td>Этаж</td><td>"+val(o.floor)+"</td></tr>"+
+  "<tr><td>Сведения о праве</td><td>"+val(o.right)+"; запись № "+val(o.recordNo)+" от "+dShort(o.egrnDate)+"</td></tr>"+
+  "<tr><td>Документы-основания (по сведениям ЕГРН)</td><td>"+val(o.rightBasis)+"</td></tr></table>"+
+  "<p>1.2. Далее указанный объект именуется по договору — «Объект недвижимости», «Объект».</p>"+
+  "<p>1.3. "+encBlock(d)+"</p>"+
+  "<h3>2. Государственная регистрация перехода права собственности</h3>"+
+  "<p>2.1. Переход права собственности к "+B_(d)+" подлежит государственной регистрации Территориальным органом Росреестра в Едином государственном реестре недвижимости на основании настоящего договора. Стороны не связывают момент возникновения права с выполнением условий о передаче недвижимости, установленных разделом 4. Государственная регистрация производится без предоставления передаточного акта; передаточный акт составляется независимо от момента регистрации.</p>"+
+  "<p>2.2. Право "+B_(d)+" считается возникшим с момента его государственной регистрации в ЕГРН.</p>"+
+  "<p>2.3. Стороны обязуются совершить все необходимые действия по государственной регистрации перехода права собственности. Расходы по государственной регистрации несёт "+B_(d)+" согласно статье 333.33 Налогового кодекса РФ.</p>"+
+  "<h3>3. Цена договора и порядок расчётов</h3>"+
+  "<p>3.1. Цена продаваемого недвижимого имущества составляет "+money(d.price)+".</p>"+
+  "<p>3.2. "+B_(d)+" обязан уплатить "+S_(d)+" цену в следующем порядке:</p>"+
+  payLinesODKP(d).map(t=>"<p class='ni'>— "+t+"</p>").join("")+
+  (hasMort(d)?"<p>3.3. Объект, приобретаемый "+B_(d)+", в соответствии со ст. 77 Федерального закона «Об ипотеке (залоге недвижимости)» № 102-ФЗ от 16.07.1998 г. с момента государственной регистрации перехода права собственности будет в полном объёме находиться в залоге у Банка. Залогодержателем является Банк. Право залога в силу ст. 488 ГК РФ у "+S_(d)+" не возникает.</p>"+
+   "<p>3.4. "+B_(d)+" обязуется в течение всего периода действия ипотеки без предварительного письменного согласия Банка: не отчуждать Объект и не осуществлять его последующую ипотеку; не сдавать Объект в аренду/наём, не передавать в безвозмездное пользование либо иным образом не обременять правами третьих лиц; не проводить переустройство и перепланировку Объекта.</p>":"")+
+  (d.scheme==="transfer"?"<p>3.3. Стороны установили, что Объект недвижимости не будет считаться находящимся в залоге у "+S_(d)+" согласно п. 5 ст. 488 Гражданского кодекса Российской Федерации.</p>":"")+
+  "<p>3.5. В случае уклонения от уплаты цены "+B_(d)+" обязан возместить "+S_(d)+" все причинённые убытки, упущенную выгоду в порядке и размерах, определяемых по решению суда.</p>"+
+  "<p>3.6. Цена договора является окончательной и изменению не подлежит.</p>"+
+  "<h3>4. Передача недвижимости</h3>"+
+  "<p>4.1. "+S_(d)+" обязан передать "+B_(d)+" недвижимое имущество"+(d.furniture?" вместе с: "+esc(d.furniture):" свободным от движимого имущества")+", без задолженности за коммунальные услуги, в том числе по уплате взноса на капитальный ремонт, электроэнергии, ТБО, о которых "+B_(d)+" не был уведомлён заранее.</p>"+
+  "<p>4.2. В случае выявления задолженности, возникшей до момента передачи, обязательство по её уплате возлагается на "+S_(d)+", который обязуется погасить её в срок не более 3 (трёх) календарных дней с момента предоставления подтверждающих документов.</p>"+
+  "<p>4.3. Передача недвижимости и принятие её "+B_(d)+" осуществляются по подписываемому Сторонами передаточному акту в течение "+(d.actDays||7)+" календарных дней с момента государственной регистрации перехода права собственности. "+S_(d)+" оплачивает коммунальные услуги за фактическое время проживания.</p>"+
+  "<p>4.4. Риск случайной гибели или случайного повреждения Объекта после его передачи несёт "+B_(d)+".</p>"+
+  "<p>4.5. "+B_(d)+" ознакомился со всеми правоустанавливающими документами, претензий не имеет.</p>"+
+  "<p>4.6. "+B_(d)+" до подписания договора осмотрел Объект, удовлетворён его качеством и согласен приобрести его в том состоянии, в котором он находится на дату заключения договора.</p>"+
+  "<p>4.7. "+S_(d)+" заверяет, что переустройство и перепланировка Объекта не производились либо произведены и узаконены в установленном порядке.</p>"+
+  "<h3>5. Форс-мажор</h3>"+
+  "<p>5.1. Стороны освобождаются от ответственности за невыполнение обязательств, если оно вызвано обстоятельствами непреодолимой силы, наступившими после подписания договора.</p>"+
+  "<p>5.2. Сторона, для которой создалась невозможность исполнения, обязана известить другую Сторону в письменной форме не позднее пяти рабочих дней с момента наступления таких обстоятельств.</p>"+
+  "<h3>6. Изменение и расторжение договора</h3>"+
+  "<p>6.1. Изменение и расторжение договора возможны по соглашению Сторон только до момента государственной регистрации перехода права собственности.</p>"+
+  "<p>6.2. Соглашение об изменении или расторжении совершается в письменной форме.</p>"+
+  "<p>6.3. По требованию одной из Сторон договор может быть изменён или расторгнут по решению суда в случаях, установленных законодательством.</p>"+
+  "<p>6.4. При расторжении по соглашению Сторон "+S_(d)+" обязан возвратить "+B_(d)+" уплаченные денежные средства в течение одного рабочего дня; Стороны в тот же срок подписывают акт о возврате Объекта и денежных средств.</p>"+
+  "<h3>7. Особые условия</h3>"+
+  "<p>7.1. "+S_(d)+" гарантирует, что до заключения договора Объект никому не отчуждён, не заложен"+(d.enc.type!=="none"?" (кроме ипотеки в силу закона, запись № "+val(d.enc.recNo)+" от "+dShort(d.enc.recDate)+", залогодержатель — "+(d.enc.type==="sber"?"ПАО «Сбербанк»":val(d.enc.bank))+")":"")+", в споре не состоит, иными правами третьих лиц не обременён.</p>"+
+  "<p>7.2. "+S_(d)+" сообщает, что на момент заключения договора в Объекте никто не зарегистрирован. Лиц, сохраняющих в соответствии с п. 1 ст. 558 ГК РФ права пользования после приобретения Объекта, не имеется. При недостоверности заверений "+S_(d)+" возмещает все расходы, связанные с выселением и снятием с регистрационного учёта.</p>"+
+  "<p>7.3. "+S_(d)+" подтверждает, что жилое помещение не приобреталось с использованием средств материнского (семейного) капитала и не подлежит оформлению в общую собственность родителей и детей с определением долей.</p>"+
+  "<p>7.4. Недвижимое имущество не является памятником истории и культуры.</p>"+
+  "<p>7.5. Стороны подтверждают, что способны понимать значение своих действий и руководить ими, не ограничены в дееспособности, не заблуждаются, не испытывают влияния обмана, насилия, угрозы или стечения тяжёлых обстоятельств. Договор не является мнимой, притворной или кабальной сделкой.</p>"+
+  "<p>7.6. У Сторон отсутствуют обстоятельства, препятствующие заключению настоящей сделки.</p>"+
+  "<p>7.7. Стороны соблюдают законодательство о противодействии коррупции и легализации доходов, полученных преступным путём.</p>"+
+  "<p>7.8. "+S_(d)+" гарантирует отсутствие долгов и обязательств, которые могут повлечь банкротство в течение ближайших трёх лет, и отсутствие намерения обратиться с заявлением о банкротстве.</p>"+
+  "<p>7.8.1. "+S_(d)+" гарантирует, что не является иностранным агентом в понимании Федерального закона от 14.07.2022 № 255-ФЗ и не обязан использовать специальный рублёвый счёт.</p>"+
+  "<p>7.8.2. "+S_(d)+" заверяет, что заключение договора не связано с введением в заблуждение относительно участия в специальных операциях правоохранительных органов РФ, Банка России или иных государственных служб; договор заключается с реальным намерением получить денежные средства за продаваемый Объект.</p>"+
+  "<p>7.9. Сторона, давшая недостоверные заверения об обстоятельствах, обязана возместить другой Стороне все причинённые убытки.</p>"+
+  "<p>7.10. Споры разрешаются по взаимному согласию, при недостижении соглашения — судом по месту нахождения недвижимости.</p>"+
+  "<p>7.11. Настоящий договор содержит весь объём соглашений между Сторонами в отношении предмета договора, отменяет и делает недействительными все другие обязательства или представления, которые могли быть приняты или сделаны Сторонами, будь то в устной или письменной форме, до заключения настоящего договора.</p>"+
+  "<p>7.12. Договор вступает в силу и является заключённым с момента "+(d.form==="notary"?"нотариального удостоверения":"подписания его Сторонами")+" и действует до момента исполнения всех обязательств.</p>"+
+  "<p>7.13. Настоящий договор составлен в "+(d.sellers.length+d.buyers.length+1)+" экземплярах, имеющих равную юридическую силу, по одному для каждой Стороны и один — для органа регистрации прав.</p>"+
+  "<h3>8. Подписи Сторон</h3>"+sigTable(d)+
+  "<p class='center' style='margin-top:14px'><small>Конец текста документа. Неоговорённые сторонами приписки и исправления не допускаются.</small></p>";
+}
+function docAct(d){
+  return "<h1>Передаточный акт</h1><h2>к договору купли-продажи недвижимости от "+dShort(d.pdkpDate)+"</h2>"+
+  "<div class='hdr'><div>г. Пенза, Пензенская область</div><div class='r'>"+dRu(plusDays(d.deadline,Number(d.actDays)||7))+"</div></div>"+
+  "<p>"+sideBlock(d,"seller")+", с одной стороны, и "+sideBlock(d,"buyer")+", с другой стороны, составили настоящий акт о нижеследующем:</p>"+
+  "<p>1. "+S_(d)+" передал, а "+B_(d)+" принял Объект недвижимости: "+objDesc(d)+".</p>"+
+  "<p>2. Право собственности "+B_(d)+" зарегистрировано в ЕГРН "+PH("дата регистрации")+", запись № "+PH("номер записи")+".</p>"+
+  "<p>3. Вместе с Объектом передано следующее имущество: "+(d.furniture?esc(d.furniture):"имущество не передаётся")+".</p>"+
+  "<p>4. Задолженность по коммунальным платежам, взносам на капитальный ремонт, электроэнергии и ТБО на дату передачи отсутствует. Показания приборов учёта: электроэнергия — "+PH("______")+", ХВС — "+PH("______")+", ГВС — "+PH("______")+".</p>"+
+  "<p>5. Ключи от Объекта переданы в количестве "+PH("__")+" комплектов.</p>"+
+  "<p>6. "+B_(d)+" осмотрел Объект, претензий к техническому, планировочному и качественному состоянию не имеет. Обязательства Сторон по договору исполнены надлежащим образом и в полном объёме.</p>"+
+  "<p>7. Настоящий акт составлен в "+(d.sellers.length+d.buyers.length)+" экземплярах, имеющих равную юридическую силу.</p>"+
+  sigTable(d);
+}
+function docInventory(d){
+  const items=(d.furniture||"").split(",").map(s=>s.trim()).filter(Boolean);
+  return "<h1>Опись имущества</h1><h2>приложение к договору купли-продажи от "+dShort(d.pdkpDate)+"</h2>"+HEAD(d)+
+  "<p>Стороны согласовали перечень движимого имущества, передаваемого "+B_(d)+" вместе с Объектом по адресу: "+val(d.obj.addr)+".</p>"+
+  (items.length?"<table class='desc'><tr><td><b>Наименование</b></td><td><b>Состояние / примечание</b></td></tr>"+
+    items.map(i=>"<tr><td>"+esc(i)+"</td><td>удовлетворительное, б/у</td></tr>").join("")+"</table>"
+    :"<p class='ni'>Имущество не передаётся. Объект передаётся свободным от движимого имущества.</p>")+
+  "<p>Иное движимое имущество "+S_(d)+" вправе вывезти до даты подписания передаточного акта. Претензий по составу и состоянию передаваемого имущества "+B_(d)+" не имеет.</p>"+
+  sigTable(d);
+}
+function checklist(d){
+  const g=[],f=active(d);
+  g.push(["Этап 1 · до подписания ПДКП",[
+    ["Паспорт "+S_(d)+" (разворот + регистрация)","Продавец · преамбула"],
+    ["Паспорт "+B_(d)+" (разворот + регистрация)","Покупатель · преамбула"],
+    ["Актуальная выписка ЕГРН (не старше 30 дней)","Объект, обременения, документы-основания, запись о праве"],
+    ["СНИЛС / ИНН сторон","Росреестр, банк, СФР"],
+    ["Документ о семейном положении","Свидетельство о браке / расторжении / смерти либо заявление"],
+    ...(d.family.status==="married_consent"?[["Нотариальное согласие супруга на отчуждение","Без него ПДКП не подписывается"]]:[]),
+    ...(d.sellers.concat(d.buyers).some(p=>p.cat==="child")?[["Свидетельство о рождении + свидетельство о регистрации (ф.8)","Для малолетней стороны"],["Паспорт законного представителя","Подписывает от имени ребёнка"]]:[]),
+    ...(d.sellers.concat(d.buyers).some(p=>p.cat==="minor")?[["Письменное согласие законных представителей","Сторона 14–18 лет"]]:[]),
+    ...(d.sellers.concat(d.buyers).some(p=>p.cat==="proxy")?[["Нотариальная доверенность + паспорт представителя","Проверить в реестре ФНП на отзыв"]]:[])
+  ]]);
+  g.push(["Переход к этапу 2",[
+    ...(d.flags.minorOwner?[["Разрешение органов опеки","Получается ПОСЛЕ ПДКП, до ОДКП обязательно"]]:[]),
+    ...(d.flags.fssp?[["Постановления об отмене запретов ФССП","Снять до заключения ОДКП"]]:[]),
+    ["Справка о зарегистрированных лицах (ф.9)","п. 7.2 ОДКП"],
+    ["Справка об отсутствии задолженности ЖКХ и капремонт","п. 4.1–4.2 ОДКП"],
+    ["Реквизиты счёта "+S_(d),"Все безналичные блоки"]
+  ]]);
+  const sc=[];
+  if(hasMort(d))sc.push(["Кредитный договор "+B_(d)+" — номер присваивается в день сделки","Город заключения: Пенза (константа)"]);
+  if(f.includes("msk"))sc.push(["Сертификат МСК + справка об остатке средств","Реквизиты и сумма для блока МСК"]);
+  if(f.includes("msk"))sc.push(["Свидетельства о рождении детей, СНИЛС","Для СФР и контроля условия 3 лет"]);
+  if(d.enc.type==="sber")sc.push(["Кредитный договор "+S_(d)+" в Сбербанке","Номер, дата для блока обременения"],["Справка о задолженности на дату сделки","Сумма трансферации"],["Согласие Банка на продажу заложенного объекта","п. 1.3 / 3.4"]);
+  if(d.enc.type==="other")sc.push(["Кредитный договор "+S_(d)+" в стороннем банке","Номер, дата, наименование, ОГРН"],["Справка о задолженности и реквизиты для погашения","Транш на погашение"],["Закладная (если выпущена)","Снятие обременения"]);
+  if(sc.length)g.push(["Способ расчёта · "+SCHEMES[d.scheme].n,sc]);
+  g.push(["Напомнить клиенту (не наши документы",[
+    ...(f.includes("sbr")?[["Заявление на подключение СБР","Покупатель оформляет в банке / Домклик"]]:[]),
+    ...(f.includes("akkr")?[["Заявление на аккредитив и покрытие","Покупатель оформляет в банке"]]:[]),
+    ...(d.scheme==="transfer"?[["Заявление на трансферацию","Продавец оформляет в банке в день сделки"]]:[]),
+    ...(f.includes("msk")?[["Заявление в СФР на распоряжение средствами","Покупатель через Госуслуги"]]:[]),
+    ...(hasMort(d)?[["Оценка, страхование, согласия по ипотеке","Покупатель и Банк"]]:[])
+  ]]);
+  return g.map(([title,items])=>[title,items.length?items:[["Дополнительных документов не требуется","—"]]]);
+}
+function docChecklist(d){
+  const g=checklist(d);
+  return "<h1>Чек-лист сделки</h1><h2>"+esc(d.obj.addr||"адрес не указан")+" · "+esc(SCHEMES[d.scheme].n)+"</h2>"+HEAD(d)+
+  "<p class='ni'><b>Цена:</b> "+money(d.price)+"<br><b>Задаток:</b> "+money(d.pay.zadatok)+
+  "<br><b>Срок ОДКП:</b> "+dRu(d.deadline)+"<br><b>Готовность:</b> "+readiness(d)+"%</p>"+
+  g.map(([t,items])=>"<h3>"+esc(t)+"</h3>"+items.map(([n,w])=>"<p class='ni'>☐ &nbsp;<b>"+esc(n)+"</b><br><small style='color:#5a5248'>"+esc(w)+"</small></p>").join("")).join("")+
+  "<h3>Источники ключевых полей</h3>"+
+  SOURCES.filter(s=>s.fix).map(s=>"<p class='ni'><b>"+esc(s.n)+"</b> — "+esc(s.src)+"</p>").join("");
+}
+const GEN={pdkp:docPDKP,receipt:docReceipt,odkp:docODKP,act:docAct,inventory:docInventory,checklist:docChecklist};
+function docHTML(d,k){ try{ return GEN[k](d); }catch(e){ return "<p>Ошибка формирования документа.</p>"; } }
+
+/* ============================================================
+   РЕНДЕР · СПИСОК
+   ============================================================ */
+function filtered(){
+  let a=S.deals.slice();
+  const q=S.q.trim().toLowerCase();
+  if(q)a=a.filter(d=>[d.title,d.obj.addr,d.obj.cad,d.agent,SCHEMES[d.scheme].n,
+    ...d.sellers.map(p=>p.fio),...d.buyers.map(p=>p.fio)].join(" ").toLowerCase().includes(q));
+  if(S.fStatus.length)a=a.filter(d=>S.fStatus.includes(d.status));
+  const s=S.sort;
+  a.sort((x,y)=> s==="price"?y.price-x.price : s==="priceA"?x.price-y.price :
+    s==="ready"?readiness(y)-readiness(x) : s==="addr"?(x.obj.addr||"").localeCompare(y.obj.addr||"","ru") :
+    s==="deadline"?(x.deadline||"9999").localeCompare(y.deadline||"9999") : y.updated-x.updated);
+  return a;
+}
+function ringSVG(p){
+  const r=14,c=2*Math.PI*r,col=p>=85?"#3fbf87":p>=55?"#e8b45c":"#f0576b";
+  return "<div class='ring'><svg width='34' height='34'><circle cx='17' cy='17' r='"+r+"' fill='none' stroke='rgba(255,255,255,.08)' stroke-width='3'/>"+
+  "<circle cx='17' cy='17' r='"+r+"' fill='none' stroke='"+col+"' stroke-width='3' stroke-linecap='round' stroke-dasharray='"+c+"' stroke-dashoffset='"+(c*(1-p/100))+"' style='transition:stroke-dashoffset .6s'/></svg><i>"+p+"</i></div>";
+}
+function renderRail(){
+  const list=filtered();
+  $("#stAll").textContent=S.deals.length;
+  $("#stReady").textContent=S.deals.filter(d=>d.status==="ready").length;
+  $("#stRisk").textContent=S.deals.filter(d=>d.status==="risk"||checks(d).some(c=>c.lv==="err")).length;
+  $("#views").innerHTML=S.views.map(v=>"<div class='chip"+(S.view===v.id?" on":"")+"' data-view='"+v.id+"'>"+esc(v.n)+
+    (S.views.length>1?"<span class='x' data-delview='"+v.id+"'>×</span>":"")+"</div>").join("");
+  $("#fStatus").innerHTML=Object.entries(STATUS).map(([k,v])=>
+    "<div class='chip"+(S.fStatus.includes(k)?" on":"")+"' data-st='"+k+"'><i style='width:6px;height:6px;border-radius:50%;background:"+v.c+"'></i>"+v.n+"</div>").join("");
+  $("#dealList").innerHTML=list.length?list.map(d=>{
+    const st=STATUS[d.status],p=readiness(d),errs=checks(d).filter(c=>c.lv==="err").length;
+    return "<div class='deal"+(d.id===S.sel?" sel":"")+"' data-id='"+d.id+"' style='--st-c:"+st.c+"'>"+
+    "<div class='deal-top'><input type='checkbox' class='deal-cb' data-bulk='"+d.id+"'"+(S.bulk.includes(d.id)?" checked":"")+">"+
+    "<div class='deal-main'><div class='deal-addr'>"+esc(d.obj.addr||d.title||"Новая сделка")+"</div>"+
+    "<div class='deal-sub'><b>"+fmt(d.price)+" ₽</b> · "+esc(d.obj.area||"—")+" м² · "+esc(d.agent)+"</div></div>"+ringSVG(p)+"</div>"+
+    "<div class='deal-bot'><span class='pill status' style='--st-c:"+st.c+"'>"+st.n+"</span>"+
+    "<span class='pill scheme'>"+esc(SCHEMES[d.scheme].n)+"</span>"+
+    (active(d).includes("msk")?"<span class='pill msk'>МСК</span>":"")+
+    (d.enc.type!=="none"?"<span class='pill enc'>Обременение</span>":"")+
+    (errs?"<span class='pill risk'>"+errs+" замеч.</span>":"")+"</div></div>";
+  }).join(""):"<div class='empty'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5'><path d='M3 7h18v13H3zM8 7V4h8v3'/></svg><b>Ничего не найдено</b>Измените запрос или сбросьте фильтры</div>";
+  const bb=$("#bulkBar"); bb.classList.toggle("on",S.bulk.length>0); $("#bulkN").textContent=S.bulk.length+" выбрано";
+}
+
+/* ============================================================
+   РЕНДЕР · РАБОЧАЯ ОБЛАСТЬ
+   ============================================================ */
+const TABS=[["deal","Сделка"],["parties","Стороны"],["obj","Объект"],["pay","Расчёты"],["docs","Комплект"],["check","Проверка"]];
+function renderHead(){
+  const d=D(); if(!d){$("#workHead").innerHTML="";$("#tabs").innerHTML="";return;}
+  const st=STATUS[d.status],p=readiness(d);
+  $("#workHead").innerHTML=
+  "<div class='wh-title'><h1>"+esc(d.obj.addr||d.title||"Новая сделка")+"</h1>"+
+  "<div class='wh-meta'><code>"+esc(d.obj.cad||"кадастр не указан")+"</code><span>"+esc(d.obj.area||"—")+" м²</span>"+
+  "<span>·</span><span>Срок ОДКП: "+dShort(d.deadline)+"</span><span>·</span><span>"+esc(d.agent)+"</span>"+
+  "<span>·</span><span style='color:"+st.c+"'>"+st.n+"</span></div></div>"+
+  "<div class='wh-actions'>"+ringSVG(p)+
+  "<select class='in' data-path='status' data-re='1' style='width:180px;height:36px'>"+
+    Object.entries(STATUS).map(([k,v])=>"<option value='"+k+"'"+(d.status===k?" selected":"")+">"+v.n+"</option>").join("")+"</select>"+
+  "<button class='btn' data-act='dup'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><rect x='9' y='9' width='12' height='12' rx='2'/><path d='M5 15V5a2 2 0 0 1 2-2h10'/></svg>Копия</button>"+
+  "<button class='btn brass' data-act='exportAll'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M12 3v12M7 10l5 5 5-5M4 21h16'/></svg>Комплект</button>"+
+  "<button class='btn icon danger' data-act='del' title='Удалить сделку'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14'/></svg></button></div>";
+  const errs=checks(d).filter(c=>c.lv==="err").length;
+  $("#tabs").innerHTML=TABS.map(([k,n])=>{
+    let b="";
+    if(k==="check")b=errs?"<span class='badge'>"+errs+"</span>":"<span class='badge ok'>✓</span>";
+    if(k==="pay"&&!balanceOK(d))b="<span class='badge'>!</span>";
+    return "<div class='tab"+(S.tab===k?" on":"")+"' data-tab='"+k+"'>"+n+b+"</div>";
+  }).join("");
+}
+function F(label,path,v,opt={}){
+  const d=D(),src=opt.src;
+  const type=opt.type||"text";
+  const miss=opt.req&&!v?" miss":"";
+  let inp;
+  if(opt.options)inp="<select class='in' data-path='"+path+"'"+(opt.re?" data-re='1'":"")+">"+
+    Object.entries(opt.options).map(([k,n])=>"<option value='"+k+"'"+(String(v)===k?" selected":"")+">"+esc(n)+"</option>").join("")+"</select>";
+  else if(type==="textarea")inp="<textarea class='in"+miss+"' data-path='"+path+"' placeholder='"+esc(opt.ph||"")+"'>"+esc(v)+"</textarea>";
+  else inp="<input class='in"+(type==="number"?" num":"")+miss+"' type='"+(type==="number"?"text":type)+"' data-path='"+path+"' value='"+esc(v==null?"":v)+"'"+
+    (opt.ro?" readonly":"")+(opt.ph?" placeholder='"+esc(opt.ph)+"'":"")+(opt.num?" data-num='1'":"")+">";
+  return "<div class='field'><div class='lbl'>"+esc(label)+(opt.req?"<span class='req'>*</span>":"")+
+    (src?"<i class='info' data-src='"+src+"'>i</i>":"")+(opt.fixed?"<span class='fixed'>"+esc(opt.fixed)+"</span>":"")+"</div>"+inp+"</div>";
+}
+function card(title,body,extra){
+  return "<div class='card'><div class='card-h'><span class='dot'></span><h3>"+esc(title)+"</h3>"+(extra?"<div class='sp'>"+extra+"</div>":"")+"</div>"+body+"</div>";
+}
+function panelDeal(){
+  const d=D();
+  return "<div class='grid g2'>"+
+  card("Параметры сделки",
+    F("Название сделки","title",d.title,{ph:"Краткое имя для списка"})+
+    F("Ответственный агент","agent",d.agent)+
+    "<div class='row'>"+F("Дата ПДКП","pdkpDate",d.pdkpDate,{type:"date",req:1})+
+      F("Срок заключения ОДКП","deadline",d.deadline,{type:"date",req:1})+"</div>"+
+    "<div class='row'>"+F("Форма договора","form",d.form,{options:{simple:"Простая письменная",notary:"Нотариальная"},re:1})+
+      F("Передача объекта, дней","actDays",d.actDays,{num:1,type:"number"})+"</div>"+
+    F("Мебель и оборудование","furniture",d.furniture,{ph:"Через запятую или «не передаётся»"})+
+    F("Заметки по сделке","notes",d.notes,{type:"textarea",ph:"Особенности, договорённости, риски"}))+
+  card("Хронология",
+    "<div style='max-height:340px;overflow:auto'>"+(d.history||[]).map(h=>
+      "<div style='display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--line-soft)'>"+
+      "<div style='width:7px;height:7px;border-radius:50%;background:var(--brass);margin-top:6px;flex:0 0 auto'></div>"+
+      "<div><div style='font-size:12.5px'>"+esc(h.a)+"</div><div style='font-size:10.5px;color:var(--t-faint)'>"+
+      new Date(h.t).toLocaleString("ru-RU")+"</div></div></div>").join("")+"</div>")+
+  "</div>";
+}
+function partyCard(p,role,i){
+  const isC=p.cat==="child";
+  return "<div class='party'><div class='party-h'><div class='av'>"+esc((p.fio||"?").trim().charAt(0).toUpperCase())+"</div>"+
+  "<b>"+esc(p.fio||(role==="seller"?"Продавец":"Покупатель")+" "+(i+1))+"</b>"+
+  "<span class='cat "+p.cat+"'>"+CATS[p.cat]+"</span>"+
+  "<button class='btn sm icon ghost danger' data-act='rmParty' data-role='"+role+"' data-i='"+i+"'>✕</button></div>"+
+  "<div class='row'>"+F("ФИО полностью",role+"."+i+".fio",p.fio,{req:1,src:"party"})+
+    F("Дата рождения",role+"."+i+".birth",p.birth,{type:"date"})+"</div>"+
+  "<div class='row'>"+F("Категория стороны",role+"."+i+".cat",p.cat,{options:CATS,re:1,src:"party"})+
+    F("Доля в праве",role+"."+i+".share",p.share,{ph:"напр. 1/2"})+"</div>"+
+  (isC?
+    "<div class='row'>"+F("Свидетельство о рождении",role+"."+i+".cert",p.cert,{req:1,src:"party",ph:"серия, №"})+
+      F("Кем и когда выдано",role+"."+i+".certIssued",p.certIssued)+"</div>"+
+    F("Свидетельство о регистрации (ф.8)",role+"."+i+".regCert",p.regCert,{req:1,src:"party",ph:"№ и дата"})
+    :
+    "<div class='row'>"+F("Паспорт серия и номер",role+"."+i+".passport",p.passport,{req:1,src:"party",ph:"XXXX № XXXXXX"})+
+      F("Код подразделения",role+"."+i+".code",p.code,{ph:"XXX-XXX"})+"</div>"+
+    F("Кем и когда выдан",role+"."+i+".issued",p.issued,{src:"party"})+
+    F("СНИЛС",role+"."+i+".snils",p.snils,{ph:"XXX-XXX-XXX XX"}))+
+  F("Адрес регистрации",role+"."+i+".addr",p.addr,{req:1,src:"party"})+
+  (p.cat==="minor"||p.cat==="child"||p.cat==="proxy"?
+    "<div style='margin-top:10px;padding-top:10px;border-top:1px dashed var(--line-soft)'>"+
+    "<div class='row'>"+F(p.cat==="proxy"?"ФИО представителя":"ФИО законного представителя",role+"."+i+".repFio",p.repFio,{req:1,src:"party"})+
+      F("Паспорт представителя",role+"."+i+".repPass",p.repPass,{req:1,src:"party"})+"</div>"+
+    F("Адрес представителя",role+"."+i+".repAddr",p.repAddr)+
+    (p.cat==="proxy"?"<div class='row'>"+F("Реестровый № доверенности",role+"."+i+".proxyNo",p.proxyNo,{req:1,src:"party"})+
+      F("Дата доверенности",role+"."+i+".proxyDate",p.proxyDate,{type:"date"})+"</div>"+
+      F("Нотариус",role+"."+i+".proxyNotary",p.proxyNotary):"")+"</div>":"")+
+  "</div>";
+}
+function panelParties(){
+  const d=D();
+  const famExtra=d.family.status==="married_consent"?
+    "<div class='row'>"+F("ФИО супруга(и)","family.spouse",d.family.spouse,{req:1,src:"family"})+
+      F("Дата согласия","family.consentDate",d.family.consentDate,{type:"date",req:1})+"</div>"+
+      F("Реестровый номер согласия","family.consentNo",d.family.consentNo,{req:1,src:"family",ph:"58/125-н/58-2026-…"}):
+    d.family.status==="none"?F("Реквизиты нотариального заявления об отсутствии брака","family.docNo",d.family.docNo,{src:"family"})+
+      F("Дата заявления","family.docDate",d.family.docDate,{type:"date"}):
+    d.family.status==="prenup"?F("Реквизиты брачного договора","family.docNo",d.family.docNo,{src:"family"})+
+      F("Дата брачного договора","family.docDate",d.family.docDate,{type:"date"}):
+    d.family.status==="divorced"?F("Свидетельство о расторжении брака","family.docNo",d.family.docNo,{src:"family"})+
+      F("Дата расторжения","family.docDate",d.family.docDate,{type:"date"}):
+    d.family.status==="widow"?F("Свидетельство о смерти / о наследстве","family.docNo",d.family.docNo,{src:"family"})+
+      F("Дата документа","family.docDate",d.family.docDate,{type:"date"}):
+    F("Основание личной собственности","family.docNo",d.family.docNo,{src:"family",ph:"дарение / наследство / до брака"});
+  return "<div class='grid g2'>"+
+  "<div>"+card("Продавцы",d.sellers.map((p,i)=>partyCard(p,"sellers",i)).join(""),
+    "<button class='btn sm' data-act='addParty' data-role='sellers'>+ добавить</button>")+
+  card("Семейное положение Продавца",
+    F("Статус","family.status",d.family.status,{options:FAMILY,re:1,src:"family"})+famExtra+
+    "<div class='hint' style='margin-top:8px'>Определяется <b>до подписания ПДКП</b> и передачи задатка. При совместной собственности нотариальное согласие супруга обязательно.</div>")+"</div>"+
+  "<div>"+card("Покупатели",d.buyers.map((p,i)=>partyCard(p,"buyers",i)).join(""),
+    "<button class='btn sm' data-act='addParty' data-role='buyers'>+ добавить</button>")+"</div></div>";
+}
+function panelObj(){
+  const d=D();
+  return "<div class='grid g2'>"+
+  card("Объект · сведения ЕГРН",
+    F("Кадастровый номер","obj.cad",d.obj.cad,{req:1,src:"recordNo",ph:"58:29:XXXXXXX:XXX"})+
+    F("Адрес (местоположение)","obj.addr",d.obj.addr,{req:1,src:"recordNo"})+
+    "<div class='row'>"+F("Вид объекта","obj.type",d.obj.type,{options:{"Квартира":"Квартира","Комната":"Комната","Жилой дом":"Жилой дом","Земельный участок":"Земельный участок"}})+
+      F("Назначение","obj.purpose",d.obj.purpose)+"</div>"+
+    "<div class='row'>"+F("Площадь, м²","obj.area",d.obj.area,{req:1,num:1})+
+      F("Этаж","obj.floor",d.obj.floor)+F("Комнат","obj.rooms",d.obj.rooms)+"</div>"+
+    F("Вид права","obj.right",d.obj.right,{options:{"Индивидуальная собственность":"Индивидуальная собственность","Общая совместная собственность":"Общая совместная собственность","Общая долевая собственность":"Общая долевая собственность"},re:1})+
+    F("Документы-основания","obj.rightBasis",d.obj.rightBasis,{type:"textarea",req:1,src:"rightBasis",ph:"Из выписки ЕГРН, раздел «Документы-основания»"})+
+    "<div class='row'>"+F("Номер записи о праве","obj.recordNo",d.obj.recordNo,{req:1,src:"recordNo"})+
+      F("Дата записи","obj.egrnDate",d.obj.egrnDate,{type:"date"})+"</div>")+
+  card("Обременения",
+    F("Состояние объекта","enc.type",d.enc.type,{options:ENC,re:1,src:"encumbrance"})+
+    (d.enc.type!=="none"?
+      F("Залогодержатель","enc.bank",d.enc.bank,{req:1,ph:d.enc.type==="sber"?"ПАО «Сбербанк»":"наименование банка"})+
+      "<div class='row'>"+F("Кредитный договор №","enc.creditNo",d.enc.creditNo,{req:1,src:"debt"})+
+        F("Дата кредита","enc.creditDate",d.enc.creditDate,{type:"date"})+"</div>"+
+      "<div class='row'>"+F("Запись об ипотеке №","enc.recNo",d.enc.recNo,{src:"encumbrance"})+
+        F("Дата записи","enc.recDate",d.enc.recDate,{type:"date"})+"</div>"+
+      "<div class='row'>"+F("Остаток долга, ₽","enc.debt",d.enc.debt,{num:1,type:"number",req:1,src:"debt"})+
+        F("Срок ипотеки, мес.","enc.term",d.enc.term,{num:1})+"</div>"+
+      "<div class='hint' style='margin-top:8px'>"+(d.enc.type==="sber"
+        ? "Ипотека в Сбербанке — обременение снимается <b>после</b> регистрации, через трансферацию аккредитива."
+        : "Сторонний банк — обременение снимается <b>до</b> регистрации перехода права; транш идёт напрямую Продавцу.")+"</div>"
+      :"<div class='hint'>Объект свободен от обременений. Проверьте актуальную выписку ЕГРН перед сделкой.</div>"))+
+  "</div>";
+}
+function panelPay(){
+  const d=D(),f=active(d),dl=delta(d),ok=balanceOK(d);
+  const segs=f.filter(k=>Number(d.pay[k])>0).map(k=>{
+    const w=(Number(d.pay[k])/Math.max(1,Number(d.price)))*100;
+    return "<i style='width:"+clamp(w,0,100)+"%;background-color:"+PAYMETA[k].c+"' title='"+PAYMETA[k].n+"'></i>";
+  }).join("")+(dl>0?"<i class='empty'></i>":"");
+  const legend=f.map(k=>"<div><em style='background:"+PAYMETA[k].c+"'></em>"+PAYMETA[k].n+" <b>"+fmt(d.pay[k])+" ₽</b></div>").join("");
+  const rows=f.map(k=>{
+    const share=Number(d.price)?((Number(d.pay[k])/Number(d.price))*100).toFixed(1):"0.0";
+    return "<tr><td><em style='display:inline-block;width:9px;height:9px;border-radius:3px;background:"+PAYMETA[k].c+";margin-right:7px'></em>"+PAYMETA[k].n+"</td>"+
+    "<td><code>pay."+k+"</code></td><td class='val'>"+fmt(d.pay[k])+" ₽</td><td class='val'>"+share+" %</td></tr>";
+  }).join("");
+  const payFields=f.map(k=>F(PAYMETA[k].n+", ₽","pay."+k,d.pay[k],{num:1,type:"number",src:k==="msk"?"msk":"price"})).join("");
+  const extra=[];
+  if(hasMort(d))extra.push(card("Кредитный договор · Сбербанк",
+    "<div class='row'>"+F("Номер КД","kd.no",d.kd.no,{src:"kdNo",ph:"присваивается в день сделки"})+
+      F("Дата КД","kd.date",d.kd.date,{type:"date",src:"kdNo"})+"</div>"+
+    F("Город заключения","kd.city",d.kd.city,{ro:1,fixed:"константа",src:"kdCity"})+
+    "<div class='hint'>Номер и дата вносятся в день сделки, когда банк присвоит реквизиты. В проекте остаётся прочерк — это ожидаемое состояние, а не ошибка.</div>"));
+  if(f.includes("msk"))extra.push(card("Материнский капитал",
+    "<div class='row'>"+F("Серия сертификата","mskCert.series",d.mskCert.series,{req:1,src:"msk"})+
+      F("Номер сертификата","mskCert.no",d.mskCert.no,{req:1,src:"msk"})+"</div>"+
+    F("На имя выдан","mskCert.holder",d.mskCert.holder,{src:"msk"})+
+    "<div class='row'>"+F("Дата справки об остатке","mskCert.balanceDate",d.mskCert.balanceDate,{type:"date",src:"msk"})+
+      F("Возраст младшего ребёнка","mskCert.childAge",d.mskCert.childAge,{num:1})+"</div>"+
+    "<div class='hint'>Источник: <b>сертификат МСК + справка об остатке средств</b>. Решение о выдаче сертификата для расчётов не требуется."+
+    (hasMort(d)?" <b style='color:var(--verd)'>Ипотечная сделка — условие о 3 годах не применяется.</b>":" Без ипотеки младшему ребёнку должно быть 3 года или более.")+"</div>"));
+  return "<div class='grid'>"+
+  card("Способ расчёта","<div class='scheme-grid'>"+Object.entries(SCHEMES).map(([k,v])=>
+    "<div class='scheme"+(d.scheme===k?" on":"")+"' data-scheme='"+k+"'>"+(v.sber?"<span class='tag'>Сбер</span>":"")+
+    "<b>"+v.n+"</b><span>"+v.d+"</span></div>").join("")+"</div>")+
+  "<div class='grid g2'>"+
+  card("Суммы",F("Цена договора, ₽","price",d.price,{num:1,type:"number",req:1,src:"price"})+payFields+
+    "<div style='display:flex;gap:8px;margin-top:12px;flex-wrap:wrap'>"+
+    "<button class='btn sm brass' data-act='autofill'>Автоподбор остатка</button>"+
+    "<button class='btn sm ghost' data-act='clearPay'>Обнулить</button></div>")+
+  card("Баланс","<div class='balance'><div class='bal-head'><span class='big'>"+fmt(sumPay(d))+" ₽</span>"+
+    "<span class='of'>из "+fmt(d.price)+" ₽</span><span class='delta "+(ok?"ok":"bad")+"'>"+
+    (ok?"сходится":(dl>0?"не хватает "+fmt(dl)+" ₽":"превышение "+fmt(-dl)+" ₽"))+"</span></div>"+
+    "<div class='bar'>"+segs+"</div><div class='legend'>"+legend+"</div>"+
+    "<div class='hint' style='margin-top:12px'>Суммы прописью, двойной задаток и остаток пересчитываются автоматически — расхождение цифр и прописи в документах невозможно.</div></div>")+
+  "</div>"+
+  (extra.length?"<div class='grid g2'>"+extra.join("")+"</div>":"")+
+  card("Формулы сделки","<table class='ftable'><thead><tr><th>Показатель</th><th>Формула</th><th style='text-align:right'>Значение</th><th style='text-align:right'>Доля</th></tr></thead><tbody>"+
+    rows+
+    "<tr class='total'><td>Итого расчётов</td><td><code>Σ активных блоков</code></td><td class='val "+(ok?"ok":"bad")+"'>"+fmt(sumPay(d))+" ₽</td><td class='val'>"+(Number(d.price)?((sumPay(d)/Number(d.price))*100).toFixed(1):"0.0")+" %</td></tr>"+
+    "<tr><td>Остаток после задатка</td><td><code>price − zadatok</code></td><td class='val'>"+fmt(Number(d.price)-Number(d.pay.zadatok))+" ₽</td><td class='val'>—</td></tr>"+
+    "<tr><td>Двойной задаток (ст. 381 ГК)</td><td><code>zadatok × 2</code></td><td class='val'>"+fmt(Number(d.pay.zadatok)*2)+" ₽</td><td class='val'>—</td></tr>"+
+    "<tr><td>Контроль баланса</td><td><code>price − Σ = 0</code></td><td class='val "+(ok?"ok":"bad")+"'>"+(ok?"0 ₽":fmt(dl)+" ₽")+"</td><td class='val'>"+(ok?"OK":"ERR")+"</td></tr>"+
+    (d.enc.type!=="none"?"<tr><td>Остаток Продавцу после погашения</td><td><code>Σ инструментов − долг</code></td><td class='val'>"+fmt(sumPay(d)-Number(d.pay.zadatok)-Number(d.pay.cash)-Number(d.enc.debt))+" ₽</td><td class='val'>—</td></tr>":"")+
+    "</tbody></table>"+
+    "<div class='hint' style='margin-top:10px'>Цена прописью: <b>"+rub(d.price)+"</b></div>")+
+  "</div>";
+}
+function panelDocs(){
+  const d=D(),t=S.typo;
+  const items=d.docOrder.filter(k=>DOCDEFS.some(x=>x.k===k)).map(k=>{
+    const def=DOCDEFS.find(x=>x.k===k);
+    return "<div class='docitem"+(S.doc===k?" on":"")+"' draggable='true' data-doc='"+k+"'>"+
+    "<span class='grip'>⋮⋮</span><input type='checkbox' data-docen='"+k+"'"+(d.docs[k]?" checked":"")+">"+
+    "<span class='nm'>"+def.n+"</span></div>";
+  }).join("");
+  const C=(l,id,v,mn,mx,st,unit)=>"<div class='ctrl'><div class='ctrl-h'>"+l+"<b data-out='"+id+"'>"+v+(unit||"")+"</b></div>"+
+    "<input type='range' data-typo='"+id+"' min='"+mn+"' max='"+mx+"' step='"+st+"' value='"+v+"'></div>";
+  const T=(l,id,on)=>"<label class='switch'><input type='checkbox' data-tyt='"+id+"'"+(on?" checked":"")+"'><span class='tr'></span><span>"+l+"</span></label>";
+  return "<div class='pack'><div class='pack-left'>"+
+  card("Состав комплекта","<div id='docList'>"+items+"</div>"+
+    "<div class='hint' style='margin-top:8px'>Перетащите, чтобы изменить порядок в выгрузке.</div>")+
+  card("Оформление",
+    "<div class='field'><div class='lbl'>Гарнитура</div><select class='in' data-typf='font'>"+
+      [["Georgia","Georgia (антиква)"],["Times New Roman","Times New Roman"],["Palatino Linotype","Palatino"],["Book Antiqua","Book Antiqua"],["Segoe UI","Segoe UI (гротеск)"]]
+      .map(([v,n])=>"<option value='"+v+"'"+(t.font===v?" selected":"")+">"+n+"</option>").join("")+"</select></div>"+
+    C("Кегль","size",t.size,9,15,.5," pt")+
+    C("Интерлиньяж","lh",t.lh,1,2.2,.05,"")+
+    C("Поля страницы","margin",t.margin,10,32,1," мм")+
+    C("Абзацный отступ","indent",t.indent,0,24,1," мм")+
+    C("Интервал абзацев","gaps",t.gaps,0,16,1," pt")+
+    C("Масштаб","zoom",t.zoom,45,130,1," %")+
+    "<div class='field'><div class='lbl'>Тон бумаги</div><select class='in' data-typf='paper'>"+
+      [["cream","Кремовая"],["white","Белая"],["gray","Серая"]].map(([v,n])=>"<option value='"+v+"'"+(t.paper===v?" selected":"")+">"+n+"</option>").join("")+"</select></div>"+
+    "<div class='field'><div class='lbl'>Водяной знак</div><select class='in' data-typf='wmText'>"+
+      ["ПРОЕКТ","НА СОГЛАСОВАНИЕ","ЧЕРНОВИК","ОБРАЗЕЦ"].map(v=>"<option"+(t.wmText===v?" selected":"")+">"+v+"</option>").join("")+"</select></div>"+
+    T("Выключка по формату","justify",t.justify)+T("Водяной знак","wm",t.wm)+
+    T("Подсветить пропуски","hl",t.hl)+T("Колонтитул","foot",t.foot)+T("Номер страницы","pages",t.pages)+
+    "<div style='display:flex;gap:7px;margin-top:11px;flex-wrap:wrap'>"+
+    "<button class='btn sm' data-act='typoReset'>Сброс</button>"+
+    "<button class='btn sm' data-act='typoRand'>Вариант</button></div>")+
+  "</div><div class='pack-right'>"+
+  "<div class='paper-toolbar'>"+
+    "<button class='btn sm brass' data-act='dl'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'><path d='M12 3v12M7 10l5 5 5-5M4 21h16'/></svg>Скачать .doc</button>"+
+    "<button class='btn sm' data-act='print'>Печать</button>"+
+    "<button class='btn sm' data-act='copy'>Копировать текст</button>"+
+    "<button class='btn sm ghost' data-act='json'>JSON сделки</button>"+
+    "<span class='sp' id='pgInfo'></span></div>"+
+  "<div class='paper-stage'><div class='paper-wrap' id='pw'><div class='paper' id='paper'></div></div></div>"+
+  "</div></div>";
+}
+function panelCheck(){
+  const d=D(),cs=checks(d),g=checklist(d);
+  const flags=[["fssp","Запреты ФССП на регистрацию"],["refuse","Отказники от приватизации"],
+    ["mskShares","МСК использован, доли не выделены"],["bankrupt","Признаки банкротства Продавца"],
+    ["minorOwner","Несовершеннолетний собственник"],["renta","Рента / пожизненное содержание"]];
+  return "<div class='grid g2'><div>"+
+  card("Замечания ("+cs.filter(c=>c.lv==="err").length+" критических)",
+    cs.map(c=>"<div class='vitem "+c.lv+"'><div class='ic'>"+(c.lv==="err"?"!":c.lv==="warn"?"?":c.lv==="ok"?"✓":"i")+"</div>"+
+    "<div style='flex:1'><b>"+esc(c.t)+"</b><span>"+esc(c.s)+"</span></div>"+
+    (c.tab?"<button class='btn sm ghost go' data-tab='"+c.tab+"'>перейти</button>":"")+"</div>").join(""))+
+  card("Флаги риска",flags.map(([k,n])=>
+    "<label class='switch'><input type='checkbox' data-flag='"+k+"'"+(d.flags[k]?" checked":"")+"'><span class='tr'></span><span>"+n+"</span></label>").join("")+
+    "<div class='hint' style='margin-top:8px'>Отмеченный флаг блокирует выпуск комплекта до решения юриста.</div>")+
+  "</div><div>"+card("Чек-лист документов",
+    g.map(([t,items])=>"<div class='chk-group'>"+esc(t)+"</div>"+items.map(([n,w])=>{
+      const key=t+"|"+n,on=!!d.checked[key];
+      return "<label class='chk"+(on?" done":"")+"'><input type='checkbox' data-chk='"+esc(key)+"'"+(on?" checked":"")+"><span class='t'>"+esc(n)+"<small>"+esc(w)+"</small></span></label>";
+    }).join("")).join("")+
+    "<div style='display:flex;gap:8px;margin-top:14px'><button class='btn sm' data-act='chkAll'>Отметить всё</button>"+
+    "<button class='btn sm ghost' data-act='chkNone'>Снять всё</button></div>")+"</div></div>";
+}
+function renderPanel(){
+  const d=D(); if(!d){$("#panel").innerHTML="<div class='empty'><b>Выберите сделку</b>или создайте новую</div>";return;}
+  const map={deal:panelDeal,parties:panelParties,obj:panelObj,pay:panelPay,docs:panelDocs,check:panelCheck};
+  $("#panel").innerHTML=map[S.tab]();
+  if(S.tab==="docs"){ renderPaper(); initDnD(); }
+}
+function render(){ renderRail(); renderHead(); renderPanel(); }
+
+/* ---------- бумага ---------- */
+function paperStyle(){
+  const t=S.typo,mm=3.7795,pt=1.3333;
+  const bg={cream:"#f6f1e4",white:"#fdfdfb",gray:"#eceae5"}[t.paper];
+  const p=$("#paper"); if(!p)return;
+  p.style.setProperty("--pf",'"'+t.font+'",Georgia,serif');
+  p.style.setProperty("--fs",(t.size*pt)+"px");
+  p.style.setProperty("--lh",t.lh);
+  p.style.setProperty("--pm",(t.margin*mm)+"px");
+  p.style.setProperty("--pi",(t.indent*mm)+"px");
+  p.style.setProperty("--pgap",(t.gaps*pt)+"px");
+  p.style.setProperty("--ta",t.justify?"justify":"left");
+  p.style.setProperty("--pp",bg);
+  p.classList.toggle("nohl",!t.hl);
+  const w=$("#pw"); if(w)w.style.transform="scale("+(t.zoom/100)+")";
+}
+function renderPaper(){
+  const d=D(),p=$("#paper"); if(!p)return;
+  const t=S.typo;
+  const seal="<svg class='stamp' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='none' stroke='#a8202f' stroke-width='2.5'/><circle cx='50' cy='50' r='38' fill='none' stroke='#a8202f' stroke-width='1'/><text x='50' y='44' text-anchor='middle' font-family='Segoe UI' font-size='11' font-weight='700' fill='#a8202f'>КОМПЛЕКТ</text><text x='50' y='60' text-anchor='middle' font-family='Segoe UI' font-size='9' fill='#a8202f'>ПЕНЗА</text></svg>";
+  p.innerHTML=(t.wm?"<div class='wm'><span>"+esc(t.wmText)+"</span></div>":"")+
+    docHTML(d,S.doc)+seal+
+    (t.foot?"<div class='foot'><span>"+esc(DOCDEFS.find(x=>x.k===S.doc).n)+" · "+esc(d.obj.cad||"")+"</span><span>"+(t.pages?"стр. 1":"")+"</span></div>":"");
+  paperStyle();
+  const info=$("#pgInfo"); if(info)info.textContent=DOCDEFS.find(x=>x.k===S.doc).n+" · "+fmt(p.textContent.length)+" знаков";
+}
+function refreshDerived(){
+  const d=D(); if(!d)return;
+  renderRail(); renderHead();
+  if(S.tab==="pay"){
+    const f=active(d),dl=delta(d),ok=balanceOK(d);
+    const big=$(".bal-head .big"); if(big)big.textContent=fmt(sumPay(d))+" ₽";
+    const del=$(".bal-head .delta"); if(del){del.className="delta "+(ok?"ok":"bad");
+      del.textContent=ok?"сходится":(dl>0?"не хватает "+fmt(dl)+" ₽":"превышение "+fmt(-dl)+" ₽");}
+    const bar=$(".bar"); if(bar)bar.innerHTML=f.filter(k=>Number(d.pay[k])>0).map(k=>
+      "<i style='width:"+clamp((Number(d.pay[k])/Math.max(1,Number(d.price)))*100,0,100)+"%;background-color:"+PAYMETA[k].c+"'></i>").join("")+(dl>0?"<i class='empty'></i>":"");
+    const lg=$(".legend"); if(lg)lg.innerHTML=f.map(k=>"<div><em style='background:"+PAYMETA[k].c+"'></em>"+PAYMETA[k].n+" <b>"+fmt(d.pay[k])+" ₽</b></div>").join("");
+    const ft=$(".ftable"); if(ft){ const tmp=document.createElement("div"); tmp.innerHTML=panelPay();
+      const nf=tmp.querySelector(".ftable"); if(nf)ft.innerHTML=nf.innerHTML;
+      const hint=tmp.querySelector(".card:last-child .hint"); const oh=$(".card:last-child .hint"); if(hint&&oh)oh.innerHTML=hint.innerHTML; }
+  }
+  if(S.tab==="docs")renderPaper();
+  if(S.tab==="check"){ const tmp=document.createElement("div"); tmp.innerHTML=panelCheck();
+    const a=$("#panel .card"),b=tmp.querySelector(".card"); if(a&&b)a.innerHTML=b.innerHTML; }
+}
+
+/* ============================================================
+   ЭКСПОРТ
+   ============================================================ */
+function wordCSS(){
+  const t=S.typo;
+  return "@page{size:A4;margin:"+t.margin+"mm} body{font-family:'"+t.font+"',Georgia,serif;font-size:"+t.size+"pt;line-height:"+t.lh+
+  ";color:#000;text-align:"+(t.justify?"justify":"left")+"} p{margin:0 0 "+t.gaps+"pt;text-indent:"+t.indent+"mm} p.ni{text-indent:0}"+
+  " h1{font-size:"+(t.size+2)+"pt;text-align:center;text-transform:uppercase;margin:0 0 4pt} h2{font-size:"+t.size+"pt;text-align:center;font-style:italic;font-weight:400;margin:0 0 14pt}"+
+  " h3{font-size:"+t.size+"pt;margin:12pt 0 5pt;text-align:left} .hdr{width:100%;margin-bottom:14pt} .hdr div{display:inline-block}"+
+  " .hdr .r{float:right} table.desc{width:100%;border-collapse:collapse;margin:6pt 0 10pt} table.desc td{border:1px solid #555;padding:4pt 7pt;vertical-align:top}"+
+  " table.desc td:first-child{width:47%} table.sig{width:100%;border-collapse:collapse;margin-top:14pt} table.sig td{width:50%;vertical-align:top;padding:6pt 10pt 6pt 0}"+
+  " .line{border-bottom:1px solid #000;height:22pt;margin:10pt 0 3pt} small{font-size:"+(t.size-2)+"pt} .center{text-align:center}"+
+  " .pb{page-break-after:always} .ph{background:none} .wm,.stamp,.foot{display:none}";
+}
+function buildWord(d,keys){
+  const body=keys.map(k=>docHTML(d,k)).join("<div class='pb'></div>");
+  return "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>"+
+  "<head><meta charset='utf-8'><title>Комплект документов</title><style>"+wordCSS()+"</style></head><body>"+body+"</body></html>";
+}
+function download(name,content,mime){
+  const b=new Blob(["\ufeff"+content],{type:mime||"application/msword;charset=utf-8"});
+  const u=URL.createObjectURL(b),a=document.createElement("a");
+  a.href=u; a.download=name; document.body.appendChild(a); a.click();
+  setTimeout(()=>{URL.revokeObjectURL(u);a.remove();},400);
+}
+function fname(d,suffix){
+  const base=(d.obj.addr||"сделка").replace(/[^\wа-яА-ЯёЁ]+/g,"_").replace(/^_|_$/g,"").slice(-46);
+  return suffix+"_"+base+".doc";
+}
+function printDoc(d,keys){
+  const f=document.createElement("iframe");
+  f.style.cssText="position:fixed;right:0;bottom:0;width:0;height:0;border:0";
+  document.body.appendChild(f);
+  const doc=f.contentWindow.document;
+  doc.open(); doc.write(buildWord(d,keys)); doc.close();
+  setTimeout(()=>{ try{ f.contentWindow.focus(); f.contentWindow.print(); }catch(e){}
+    setTimeout(()=>f.remove(),1200); },350);
+}
+
+/* ============================================================
+   ТОСТЫ / UNDO
+   ============================================================ */
+function toast(msg,kind,undo){
+  const el=document.createElement("div");
+  el.className="toast"+(kind?" "+kind:"");
+  el.innerHTML="<span class='em'></span><span style='flex:1'>"+esc(msg)+"</span>";
+  if(undo){ const b=document.createElement("button"); b.className="btn sm brass"; b.textContent="Вернуть";
+    b.onclick=()=>{undo(); kill();}; el.appendChild(b); }
+  $("#toasts").appendChild(el);
+  const kill=()=>{ el.classList.add("out"); setTimeout(()=>el.remove(),260); };
+  setTimeout(kill,undo?8000:3200);
+}
+
+/* ============================================================
+   ДЕЙСТВИЯ
+   ============================================================ */
+function selectDeal(id){ S.sel=id; S.bulk=S.bulk; render(); $("#panel").scrollTop=0; }
+function addDeal(){
+  const d=newDeal({title:"Новая сделка"});
+  S.deals.unshift(d); S.sel=d.id; S.tab="deal"; save(); render();
+  toast("Сделка создана"); setTimeout(()=>{const i=$("#panel input[data-path='obj.addr']"); if(i)i.focus();},60);
+}
+function delDeals(ids){
+  const removed=S.deals.filter(d=>ids.includes(d.id));
+  const idx=removed.map(d=>S.deals.indexOf(d));
+  S.deals=S.deals.filter(d=>!ids.includes(d.id));
+  if(!S.deals.length)S.deals=[newDeal({title:"Новая сделка"})];
+  if(ids.includes(S.sel))S.sel=S.deals[0].id;
+  S.bulk=[]; save(); render();
+  toast(removed.length===1?"Сделка удалена":"Удалено сделок: "+removed.length,"warn",()=>{
+    removed.forEach((d,i)=>S.deals.splice(Math.min(idx[i],S.deals.length),0,d));
+    S.sel=removed[0].id; save(); render(); toast("Восстановлено");
+  });
+}
+function dupDeal(){
+  const d=D(),c=JSON.parse(JSON.stringify(d));
+  c.id=uid(); c.title=(d.title||"Сделка")+" · копия"; c.updated=Date.now();
+  c.sellers.forEach(p=>p.id=uid()); c.buyers.forEach(p=>p.id=uid());
+  c.history=[{t:Date.now(),a:"Создана копия сделки"}]; c.checked={};
+  S.deals.unshift(c); S.sel=c.id; save(); render(); toast("Копия создана");
+}
+function autofill(){
+  const d=D(),f=active(d);
+  const main=f.includes("akkr")?"akkr":f.includes("sbr")?"sbr":f.includes("mortgage")?"mortgage":f.includes("cash")?"cash":f[f.length-1];
+  const others=f.filter(k=>k!==main).reduce((s,k)=>s+(Number(d.pay[k])||0),0);
+  d.pay[main]=Math.max(0,Number(d.price)-others);
+  touch(d,"Автоподбор остатка: "+PAYMETA[main].n+" = "+fmt(d.pay[main])+" ₽");
+  renderPanel(); refreshDerived(); toast("Остаток направлен в «"+PAYMETA[main].n+"»");
+}
+function openDrawer(mode,key){
+  $("#drTitle").textContent=mode==="src"?"Источники полей":"История сделки";
+  if(mode==="src"){
+    $("#drBody").innerHTML="<div class='hint' style='margin-bottom:14px'>Откуда берутся значения. Отмеченные позиции уточнены по практике.</div>"+
+      SOURCES.map(s=>"<div class='srcrow"+(key===s.k?" hl":"")+"' id='src-"+s.k+"'><b>"+esc(s.n)+
+      (s.fix?" <span class='srcbadge'>уточнено</span>":"")+"</b><p>"+esc(s.d)+"</p>"+
+      "<div class='from'>Источник: <em>"+esc(s.src)+"</em></div></div>").join("");
+  } else {
+    const d=D();
+    $("#drBody").innerHTML=(d.history||[]).map(h=>"<div class='srcrow'><b>"+esc(h.a)+"</b><p>"+new Date(h.t).toLocaleString("ru-RU")+"</p></div>").join("");
+  }
+  $("#drawer").classList.add("on"); $("#scrim").classList.add("on");
+  if(key)setTimeout(()=>{const e=$("#src-"+key); if(e)e.scrollIntoView({behavior:"smooth",block:"center"});},120);
+}
+function closeDrawer(){ $("#drawer").classList.remove("on"); $("#scrim").classList.remove("on"); }
+
+/* ---------- drag & drop ---------- */
+let dragK=null;
+function initDnD(){
+  const list=$("#docList"); if(!list)return;
+  $$(".docitem",list).forEach(el=>{
+    el.addEventListener("dragstart",e=>{dragK=el.dataset.doc; el.classList.add("drag"); e.dataTransfer.effectAllowed="move";});
+    el.addEventListener("dragend",()=>{dragK=null; el.classList.remove("drag"); $$(".docitem",list).forEach(x=>x.classList.remove("over"));});
+    el.addEventListener("dragover",e=>{e.preventDefault(); if(dragK&&el.dataset.doc!==dragK)el.classList.add("over");});
+    el.addEventListener("dragleave",()=>el.classList.remove("over"));
+    el.addEventListener("drop",e=>{
+      e.preventDefault(); el.classList.remove("over");
+      const d=D(),to=el.dataset.doc; if(!dragK||dragK===to)return;
+      const a=d.docOrder.slice(); a.splice(a.indexOf(dragK),1); a.splice(a.indexOf(to),0,dragK);
+      d.docOrder=a; touch(d,"Изменён порядок документов"); renderPanel(); toast("Порядок обновлён");
+    });
+  });
+}
+
+/* ============================================================
+   СОБЫТИЯ
+   ============================================================ */
+document.addEventListener("input",e=>{
+  const t=e.target;
+  if(t.id==="q"){ S.q=t.value; S.view=null; renderRail(); return; }
+  if(t.dataset.typo){ S.typo[t.dataset.typo]=parseFloat(t.value);
+    const o=$("[data-out='"+t.dataset.typo+"']");
+    if(o)o.textContent=t.value+({size:" pt",margin:" мм",indent:" мм",gaps:" pt",zoom:" %"}[t.dataset.typo]||"");
+    paperStyle(); save(); return; }
+  if(t.dataset.path){
+    const d=D(); if(!d)return;
+    let v=t.value;
+    if(t.dataset.num)v=v.replace(/[^\d]/g,"")===""?0:parseInt(v.replace(/[^\d]/g,""),10);
+    set(d,t.dataset.path,v); d.updated=Date.now(); save();
+    if(t.dataset.num&&t.value!==""){ const c=t.selectionStart; t.value=v; try{t.setSelectionRange(c,c);}catch(x){} }
+    refreshDerived(); return;
+  }
+});
+document.addEventListener("change",e=>{
+  const t=e.target,d=D();
+  if(t.id==="sortSel"){ S.sort=t.value; S.view=null; renderRail(); return; }
+  if(t.dataset.typf){ S.typo[t.dataset.typf]=t.value; if(t.dataset.typf==="font"||t.dataset.typf==="paper")renderPaper(); else paperStyle(); save(); return; }
+  if(t.dataset.tyt){ S.typo[t.dataset.tyt]=t.checked; renderPaper(); save(); return; }
+  if(t.dataset.bulk){ const id=t.dataset.bulk;
+    if(t.checked){ if(!S.bulk.includes(id))S.bulk.push(id); } else S.bulk=S.bulk.filter(x=>x!==id);
+    renderRail(); return; }
+  if(t.dataset.docen&&d){ d.docs[t.dataset.docen]=t.checked; touch(d); return; }
+  if(t.dataset.flag&&d){ d.flags[t.dataset.flag]=t.checked;
+    if(t.dataset.flag==="minorOwner"&&t.checked)d.form="notary";
+    touch(d,(t.checked?"Отмечен":"Снят")+" флаг риска"); renderPanel(); refreshDerived(); return; }
+  if(t.dataset.chk&&d){ d.checked[t.dataset.chk]=t.checked; t.closest(".chk").classList.toggle("done",t.checked); save(); return; }
+  if(t.dataset.path&&t.dataset.re&&d){
+    let v=t.value; set(d,t.dataset.path,v);
+    if(t.dataset.path==="scheme"){ active(d).forEach(k=>{ if(d.pay[k]==null)d.pay[k]=0; });
+      Object.keys(d.pay).forEach(k=>{ if(!active(d).includes(k))d.pay[k]=0; });
+      if(SCHEMES[v].tr)d.enc.type="sber"; if(SCHEMES[v].ob&&d.enc.type==="none")d.enc.type="other";
+      log(d,"Способ расчёта: "+SCHEMES[v].n); }
+    if(t.dataset.path==="enc.type"&&v==="sber")d.enc.bank="ПАО «Сбербанк»";
+    if(t.dataset.path==="form")log(d,"Форма договора: "+(v==="notary"?"нотариальная":"простая письменная"));
+    touch(d); renderPanel(); refreshDerived(); return;
+  }
+});
+document.addEventListener("click",e=>{
+  const t=e.target,d=D();
+  const V=t.closest("[data-view]"); const DV=t.closest("[data-delview]");
+  if(DV){ e.stopPropagation(); S.views=S.views.filter(v=>v.id!==DV.dataset.delview); if(S.view===DV.dataset.delview)S.view=null; save(); renderRail(); return; }
+  if(V){ const v=S.views.find(x=>x.id===V.dataset.view); S.view=v.id; S.q=v.q; S.fStatus=v.st.slice(); S.sort=v.sort;
+    $("#q").value=v.q; $("#sortSel").value=v.sort; renderRail(); return; }
+  const ST=t.closest("[data-st]");
+  if(ST){ const k=ST.dataset.st; S.fStatus=S.fStatus.includes(k)?S.fStatus.filter(x=>x!==k):[...S.fStatus,k]; S.view=null; renderRail(); return; }
+  const SC=t.closest("[data-scheme]");
+  if(SC&&d){ d.scheme=SC.dataset.scheme;
+    Object.keys(d.pay).forEach(k=>{ if(!active(d).includes(k))d.pay[k]=0; });
+    if(SCHEMES[d.scheme].tr)d.enc.type="sber";
+    if(SCHEMES[d.scheme].ob&&d.enc.type==="none")d.enc.type="other";
+    touch(d,"Способ расчёта: "+SCHEMES[d.scheme].n); renderPanel(); refreshDerived(); return; }
+  const TB=t.closest("[data-tab]");
+  if(TB){ S.tab=TB.dataset.tab; renderHead(); renderPanel(); $("#panel").scrollTop=0; return; }
+  const DI=t.closest(".docitem");
+  if(DI&&!t.matches("input")&&!t.closest(".grip")){ S.doc=DI.dataset.doc;
+    $$(".docitem").forEach(x=>x.classList.toggle("on",x.dataset.doc===S.doc)); renderPaper(); return; }
+  const DL=t.closest(".deal");
+  if(DL&&!t.matches("input")){ selectDeal(DL.dataset.id); if(window.innerWidth<=860)$("#rail").classList.remove("on"); return; }
+  const INFO=t.closest("[data-src]");
+  if(INFO){ openDrawer("src",INFO.dataset.src); return; }
+  const A=t.closest("[data-act]"); if(!A)return;
+  const act=A.dataset.act;
+  if(act==="addParty"){ const r=A.dataset.role; d[r].push(blankParty(r==="sellers"?"seller":"buyer")); touch(d,"Добавлена сторона"); renderPanel(); refreshDerived(); }
+  if(act==="rmParty"){ const r=A.dataset.role,i=+A.dataset.i; if(d[r].length<=1){toast("Должна остаться хотя бы одна сторона","warn");return;}
+    const p=d[r][i]; d[r].splice(i,1); touch(d,"Удалена сторона: "+(p.fio||"без имени")); renderPanel(); refreshDerived();
+    toast("Сторона удалена","warn",()=>{d[r].splice(i,0,p);touch(d);renderPanel();refreshDerived();}); }
+  if(act==="autofill")autofill();
+  if(act==="clearPay"){ Object.keys(d.pay).forEach(k=>d.pay[k]=0); touch(d,"Суммы обнулены"); renderPanel(); refreshDerived(); }
+  if(act==="dup")dupDeal();
+  if(act==="del")delDeals([d.id]);
+  if(act==="exportAll"){ const keys=d.docOrder.filter(k=>d.docs[k]);
+    if(!keys.length){toast("Не выбрано ни одного документа","warn");return;}
+    download(fname(d,"Комплект"),buildWord(d,keys)); toast("Комплект выгружен: "+keys.length+" док."); log(d,"Выгружен комплект ("+keys.length+")"); save(); }
+  if(act==="dl"){ download(fname(d,DOCDEFS.find(x=>x.k===S.doc).n),buildWord(d,[S.doc])); toast("Документ скачан"); }
+  if(act==="print")printDoc(d,[S.doc]);
+  if(act==="copy"){ const tmp=document.createElement("div"); tmp.innerHTML=docHTML(d,S.doc);
+    const txt=tmp.innerText.replace(/\n{3,}/g,"\n\n");
+    navigator.clipboard&&navigator.clipboard.writeText(txt).then(()=>toast("Текст скопирован"),()=>toast("Не удалось скопировать","err")); }
+  if(act==="json"){ download(fname(d,"Сделка").replace(".doc",".json"),JSON.stringify(d,null,2),"application/json;charset=utf-8"); toast("JSON сделки выгружен"); }
+  if(act==="typoReset"){ S.typo={font:"Georgia",size:11.5,lh:1.55,margin:20,indent:12,justify:true,pages:true,foot:true,paper:"cream",zoom:78,gaps:6,hl:true,wm:true,wmText:"ПРОЕКТ"}; save(); renderPanel(); toast("Оформление сброшено"); }
+  if(act==="typoRand"){ const fonts=["Georgia","Times New Roman","Palatino Linotype","Book Antiqua"];
+    S.typo.font=fonts[Math.floor(Math.random()*fonts.length)];
+    S.typo.size=+(10+Math.random()*3).toFixed(1); S.typo.lh=+(1.3+Math.random()*.6).toFixed(2);
+    S.typo.margin=Math.round(15+Math.random()*14); S.typo.indent=Math.round(6+Math.random()*14);
+    S.typo.gaps=Math.round(Math.random()*10); S.typo.paper=["cream","white","gray"][Math.floor(Math.random()*3)];
+    save(); renderPanel(); toast("Вариант оформления применён"); }
+  if(act==="chkAll"){ checklist(d).forEach(([g,items])=>items.forEach(([n])=>d.checked[g+"|"+n]=true)); save(); renderPanel(); }
+  if(act==="chkNone"){ d.checked={}; save(); renderPanel(); }
+});
+$("#newBtn").onclick=addDeal;
+$("#srcBtn").onclick=()=>openDrawer("src");
+$("#drX").onclick=closeDrawer;
+$("#scrim").onclick=()=>{closeDrawer();$("#rail").classList.remove("on");};
+$("#railToggle").onclick=()=>{$("#rail").classList.toggle("on");$("#scrim").classList.toggle("on",$("#rail").classList.contains("on"));};
+$("#clearF").onclick=()=>{S.q="";S.fStatus=[];S.view=null;$("#q").value="";renderRail();};
+$("#saveView").onclick=()=>{
+  const n=prompt("Название вида:","Мой вид"); if(!n)return;
+  const v={id:uid(),n:n.slice(0,22),q:S.q,st:S.fStatus.slice(),sort:S.sort};
+  S.views.push(v); S.view=v.id; save(); renderRail(); toast("Вид сохранён");
+};
+$("#bulkX").onclick=()=>{S.bulk=[];renderRail();};
+$("#bulkDel").onclick=()=>delDeals(S.bulk.slice());
+$("#bulkReady").onclick=()=>{ S.bulk.forEach(id=>{const d=S.deals.find(x=>x.id===id); if(d){d.status="ready";touch(d,"Статус: Готов к сделке");}});
+  toast("Статус обновлён: "+S.bulk.length); S.bulk=[]; render(); };
+$("#bulkExport").onclick=()=>{ const a=S.deals.filter(d=>S.bulk.includes(d.id));
+  download("Сделки_"+a.length+".json",JSON.stringify(a,null,2),"application/json;charset=utf-8"); toast("Выгружено сделок: "+a.length); };
+
+/* ---------- командная палитра ---------- */
+let cmdIdx=0,cmdItems=[];
+function openCmd(){
+  $("#cmd").classList.add("on"); $("#cmdIn").value=""; fillCmd(""); setTimeout(()=>$("#cmdIn").focus(),40);
+}
+function fillCmd(q){
+  q=q.toLowerCase();
+  const acts=[
+    {n:"Новая сделка",s:"Ctrl N",f:addDeal},
+    {n:"Источники полей",s:"справка",f:()=>openDrawer("src")},
+    {n:"Выгрузить комплект документов",s:"Word",f:()=>{const d=D(),k=d.docOrder.filter(x=>d.docs[x]);download(fname(d,"Комплект"),buildWord(d,k));toast("Комплект выгружен");}},
+    {n:"Автоподбор остатка",s:"расчёты",f:()=>{S.tab="pay";render();autofill();}},
+    {n:"Перейти: Расчёты",s:"",f:()=>{S.tab="pay";render();}},
+    {n:"Перейти: Комплект",s:"",f:()=>{S.tab="docs";render();}},
+    {n:"Перейти: Проверка",s:"",f:()=>{S.tab="check";render();}},
+    {n:"Сбросить фильтры",s:"",f:()=>{S.q="";S.fStatus=[];$("#q").value="";renderRail();}}
+  ].filter(a=>!q||a.n.toLowerCase().includes(q));
+  const ds=S.deals.filter(d=>!q||(d.obj.addr+d.title+d.obj.cad).toLowerCase().includes(q))
+    .map(d=>({n:d.obj.addr||d.title,s:fmt(d.price)+" ₽",f:()=>selectDeal(d.id)}));
+  cmdItems=[...acts,...ds].slice(0,14); cmdIdx=0; paintCmd();
+}
+function paintCmd(){
+  $("#cmdList").innerHTML=cmdItems.map((it,i)=>"<div class='cmd-it"+(i===cmdIdx?" on":"")+"' data-ci='"+i+"'>"+esc(it.n)+"<small>"+esc(it.s)+"</small></div>").join("");
+}
+$("#cmdIn").addEventListener("input",e=>fillCmd(e.target.value));
+$("#cmdIn").addEventListener("keydown",e=>{
+  if(e.key==="ArrowDown"){ e.preventDefault(); if(cmdItems.length){ cmdIdx=(cmdIdx+1)%cmdItems.length; paintCmd(); } }
+  else if(e.key==="ArrowUp"){ e.preventDefault(); if(cmdItems.length){ cmdIdx=(cmdIdx-1+cmdItems.length)%cmdItems.length; paintCmd(); } }
+  else if(e.key==="Enter"){ e.preventDefault(); if(cmdItems[cmdIdx]){ cmdItems[cmdIdx].f(); closeCmd(); } }
+  else if(e.key==="Escape"){ closeCmd(); }
+});
+function closeCmd(){ $("#cmd").classList.remove("on"); }
+$("#cmd").addEventListener("click",e=>{
+  const it=e.target.closest(".cmd-it");
+  if(it){ const idx=+it.dataset.ci; if(cmdItems[idx]){ cmdItems[idx].f(); closeCmd(); } return; }
+  if(!e.target.closest(".cmd-box"))closeCmd();
+});
+document.addEventListener("keydown",e=>{
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){ e.preventDefault(); openCmd(); }
+  else if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="n"){ e.preventDefault(); addDeal(); }
+  else if(e.key==="Escape"){ closeCmd(); closeDrawer(); $("#rail").classList.remove("on"); }
+});
+
+/* ---------- ИНИЦИАЛИЗАЦИЯ ---------- */
+load();
+render();
+</script>
+</body>
+</html>
